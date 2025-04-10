@@ -42,36 +42,35 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Gửi yêu cầu đến URL đích (GAS)
-    const response = await fetch(targetUrl, {
-      method: event.httpMethod, // Sử dụng phương thức từ yêu cầu (GET, POST, v.v.)
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: event.httpMethod === 'POST' ? event.body : undefined
-    });
+  // Gửi yêu cầu đến URL đích (GAS)
+  const response = await fetch(targetUrl, {
+    method: event.httpMethod,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: event.httpMethod === 'POST' ? event.body : undefined
+  });
 
-    const data = await response.json();
+  const data = await response.json();
 
-    // Trả về phản hồi với header CORS
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      },
-      body: JSON.stringify(data)
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      },
-      body: JSON.stringify({ error: error.message })
-    };
-  }
-};
+  // Trả về phản hồi với header CORS
+  return {
+    statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    },
+    body: JSON.stringify(data)
+  };
+} catch (error) {
+  return {
+    statusCode: 500,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    },
+    body: JSON.stringify({ error: error.message })
+  };
+}
