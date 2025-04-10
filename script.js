@@ -116,19 +116,42 @@ window.fetchTransactions = async function() {
 
 function displayTransactions(data) {
   const container = document.getElementById('transactionsContainer');
+  const summaryContainer = document.getElementById('dailySummary'); // Sửa từ transactionSummary thành dailySummary
   const pageInfo = document.getElementById('pageInfo');
   const prevPageBtn = document.getElementById('prevPage');
   const nextPageBtn = document.getElementById('nextPage');
   container.innerHTML = '';
 
+  // Kiểm tra dữ liệu và hiển thị thống kê
   if (!data || data.error || !Array.isArray(data) || data.length === 0) {
     container.innerHTML = '<div>Không có giao dịch nào trong ngày này</div>';
+    summaryContainer.innerHTML = `
+      <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
+      <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
+      <div class="stat-box balance"><div class="title">Số dư</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
+    `;
     pageInfo.textContent = '';
     prevPageBtn.disabled = true;
     nextPageBtn.disabled = true;
     return;
   }
 
+  // Tính toán tổng thu nhập, tổng chi tiêu, số dư
+  let totalIncome = 0, totalExpense = 0;
+  data.forEach(item => {
+    if (item.type === 'Thu nhập') totalIncome += item.amount;
+    else if (item.type === 'Chi tiêu') totalExpense += item.amount;
+  });
+  const balance = totalIncome - totalExpense;
+
+  // Cập nhật thống kê
+  summaryContainer.innerHTML = `
+    <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount">${totalIncome.toLocaleString('vi-VN')}đ</div></div>
+    <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount">${totalExpense.toLocaleString('vi-VN')}đ</div></div>
+    <div class="stat-box balance"><div class="title">Số dư</div><div class="amount">${balance.toLocaleString('vi-VN')}đ</div></div>
+  `;
+
+  // Hiển thị danh sách giao dịch
   const totalPages = Math.ceil(data.length / transactionsPerPage);
   const startIndex = (currentPage - 1) * transactionsPerPage;
   const endIndex = startIndex + transactionsPerPage;
