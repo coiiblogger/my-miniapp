@@ -2,7 +2,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const apiUrl = urlParams.get('api');
 const sheetId = urlParams.get('sheetId');
-const proxyUrl = 'https://miniappnew.netlify.app/.netlify/functions/proxy?url=';
+const proxyUrl = 'https://miniapphmh.netlify.app/.netlify/functions/proxy?url=';
 
 if (!apiUrl || !sheetId) {
   showToast("Thiếu thông tin API hoặc Sheet ID. Vui lòng kiểm tra lại URL!", "error");
