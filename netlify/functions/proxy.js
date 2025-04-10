@@ -51,6 +51,13 @@ exports.handler = async (event, context) => {
     body: event.httpMethod === 'POST' ? event.body : undefined
   });
 
+  // Kiểm tra Content-Type của phản hồi
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    const text = await response.text();
+    throw new Error(`Expected JSON but received ${contentType || 'unknown content type'}: ${text.slice(0, 100)}...`);
+  }
+
   const data = await response.json();
 
   // Trả về phản hồi với header CORS
