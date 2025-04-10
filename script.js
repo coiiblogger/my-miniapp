@@ -339,11 +339,21 @@ async function deleteTransaction(transactionId) {
   try {
     const transaction = cachedTransactions.data.find(item => String(item.id) === String(transactionId));
     if (!transaction) throw new Error("Không tìm thấy giao dịch để xóa!");
+
+    // Trích xuất month từ transaction.date (định dạng: DD/MM/YYYY)
+    const dateParts = transaction.date.split('/');
+    if (dateParts.length !== 3) throw new Error("Định dạng ngày không hợp lệ!");
+    const transactionMonth = dateParts[1]; // Lấy phần tháng (VD: "04")
+
     const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
     const response = await fetch(finalUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'deleteTransaction', id: transactionId, sheetId: sheetId, date: transaction.date })
+      body: JSON.stringify({ 
+        action: 'deleteTransaction', 
+        id: transactionId, 
+        month: transactionMonth // Gửi month thay vì date và sheetId
+      })
     });
     const result = await response.json();
     if (result.error) throw new Error(result.error);
