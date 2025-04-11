@@ -8,6 +8,10 @@ if (!apiUrl || !sheetId) {
   showToast("Thiếu thông tin API hoặc Sheet ID. Vui lòng kiểm tra lại URL!", "error");
 }
 
+if (!apiUrl || !sheetId) {
+  showToast("Thiếu thông tin API hoặc Sheet ID. Vui lòng kiểm tra lại URL!", "error");
+}
+
 // Biến toàn cục
 let cachedFinancialData = null;
 let cachedChartData = null;
@@ -33,22 +37,6 @@ function showToast(message, type = "info") {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
   }, 3000);
-}
-
-// Hiển thị popup loading
-function showLoadingPopup() {
-  const loadingPopup = document.getElementById('loadingPopup');
-  if (loadingPopup) {
-    loadingPopup.classList.add('show');
-  }
-}
-
-// Ẩn popup loading
-function hideLoadingPopup() {
-  const loadingPopup = document.getElementById('loadingPopup');
-  if (loadingPopup) {
-    loadingPopup.classList.remove('show');
-  }
 }
 
 function showModalError(modalId, message) {
@@ -85,29 +73,15 @@ function formatDateToDDMM(date) {
   return `${day}/${month}`;
 }
 
-// Định dạng số với dấu chấm ngăn cách hàng nghìn
-function formatNumber(value) {
-  if (!value) return '';
-  const number = parseFloat(value.toString().replace(/[^0-9]/g, ''));
-  if (isNaN(number)) return '';
-  return number.toLocaleString('vi-VN', { minimumFractionDigits: 0 });
-}
-
-// Phân tích chuỗi định dạng (ví dụ: "500.000" thành 500000)
-function parseFormattedNumber(value) {
-  if (!value) return '';
-  return parseFloat(value.replace(/\./g, '')) || 0;
-}
-
 // Mở tab
-function openTab(tabId) {
+window.openTab = function(tabId) {
   const tabs = document.querySelectorAll('.nav-item');
   const contents = document.querySelectorAll('.tab-content');
   tabs.forEach(tab => tab.classList.remove('active'));
   contents.forEach(content => content.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add('active');
-}
+};
 
 // Tab 1: Giao dịch
 window.fetchTransactions = async function() {
@@ -142,12 +116,13 @@ window.fetchTransactions = async function() {
 
 function displayTransactions(data) {
   const container = document.getElementById('transactionsContainer');
-  const summaryContainer = document.getElementById('dailySummary');
+  const summaryContainer = document.getElementById('dailySummary'); // Sửa từ transactionSummary thành dailySummary
   const pageInfo = document.getElementById('pageInfo');
   const prevPageBtn = document.getElementById('prevPage');
   const nextPageBtn = document.getElementById('nextPage');
   container.innerHTML = '';
 
+  // Kiểm tra dữ liệu và hiển thị thống kê
   if (!data || data.error || !Array.isArray(data) || data.length === 0) {
     container.innerHTML = '<div>Không có giao dịch nào trong ngày này</div>';
     summaryContainer.innerHTML = `
@@ -161,6 +136,7 @@ function displayTransactions(data) {
     return;
   }
 
+  // Tính toán tổng thu nhập, tổng chi tiêu, số dư
   let totalIncome = 0, totalExpense = 0;
   data.forEach(item => {
     if (item.type === 'Thu nhập') totalIncome += item.amount;
@@ -168,311 +144,694 @@ function displayTransactions(data) {
   });
   const balance = totalIncome - totalExpense;
 
+  // Cập nhật thống kê
   summaryContainer.innerHTML = `
     <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount">${totalIncome.toLocaleString('vi-VN')}đ</div></div>
     <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount">${totalExpense.toLocaleString('vi-VN')}đ</div></div>
     <div class="stat-box balance"><div class="title">Số dư</div><div class="amount">${balance.toLocaleString('vi-VN')}đ</div></div>
   `;
 
+  // Hiển thị danh sách giao dịch
   const totalPages = Math.ceil(data.length / transactionsPerPage);
-  currentPage = Math.min(currentPage, totalPages);
-  currentPage = Math.max(currentPage, 1);
-
   const startIndex = (currentPage - 1) * transactionsPerPage;
   const endIndex = startIndex + transactionsPerPage;
   const paginatedData = data.slice(startIndex, endIndex);
 
   paginatedData.forEach((item, index) => {
-    const transactionDiv = document.createElement('div');
-    transactionDiv.className = 'transaction-box';
-    transactionDiv.innerHTML = `
-      <div class="id">ID: ${item.id}</div>
-      <div class="number">Số thứ tự: ${startIndex + index + 1}</div>
-      <div class="date">${formatDate(item.date)}</div>
-      <div class="content">${item.content}</div>
-      <div class="amount">${item.amount.toLocaleString('vi-VN')}đ</div>
-      <div class="type ${item.type === 'Thu nhập' ? 'income' : 'expense'}">${item.type}</div>
-      <div class="category">${item.category}</div>
-      <div class="action-buttons">
-        <button onclick="openEditForm(${JSON.stringify(item).replace(/"/g, '"')})">Sửa</button>
-        <button onclick="deleteTransaction('${item.id}')">Xóa</button>
+    const transactionBox = document.createElement('div');
+    transactionBox.className = 'transaction-box';
+    const amountColor = item.type === 'Thu nhập' ? '#10B981' : '#EF4444';
+    const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
+    const transactionNumber = startIndex + index + 1;
+    transactionBox.innerHTML = `
+      <div style="display: flex; justify-content: space-between; width: 100%;">
+        <div style="flex: 1;">
+          <div class="date">${formatDate(item.date)}</div>
+          <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
+          <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+          <div class="number">STT của giao dịch: ${transactionNumber}</div>
+          <div class="id">ID của giao dịch: ${item.id}</div>
+        </div>
+        <div style="flex: 1; text-align: right;">
+          <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+          <div class="category">Phân loại chi tiết: ${item.category}</div>
+        </div>
+      </div>
+      <div style="margin-top: 0.5rem;">
+        <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+        <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
       </div>
     `;
-    container.appendChild(transactionDiv);
+    container.appendChild(transactionBox);
   });
 
-  pageInfo.textContent = `Trang ${currentPage}/${totalPages}`;
+  pageInfo.textContent = `Trang ${currentPage} / ${totalPages}`;
   prevPageBtn.disabled = currentPage === 1;
   nextPageBtn.disabled = currentPage === totalPages;
+
+  document.querySelectorAll('.edit-btn').forEach(button => {
+    const transactionId = button.getAttribute('data-id');
+    const transaction = data.find(item => String(item.id) === String(transactionId));
+    if (!transaction) return console.error(`Không tìm thấy giao dịch với ID: ${transactionId}`);
+    button.addEventListener('click', () => openEditForm(transaction));
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', () => deleteTransaction(button.getAttribute('data-id')));
+  });
 }
 
-window.prevPage = function() {
-  if (currentPage > 1) {
-    currentPage--;
-    displayTransactions(cachedTransactions.data);
+async function fetchCategories() {
+  try {
+    const targetUrl = `${apiUrl}?action=getCategories&sheetId=${sheetId}`;
+    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
+    const response = await fetch(finalUrl);
+    const categoriesData = await response.json();
+    if (categoriesData.error) throw new Error(categoriesData.error);
+    return categoriesData;
+  } catch (error) {
+    showToast("Lỗi khi lấy danh sách phân loại: " + error.message, "error");
+    return [];
   }
-};
+}
 
-window.nextPage = function() {
-  const totalPages = Math.ceil(cachedTransactions.data.length / transactionsPerPage);
-  if (currentPage < totalPages) {
-    currentPage++;
-    displayTransactions(cachedTransactions.data);
+async function openEditForm(transaction) {
+  if (!transaction) return showToast('Dữ liệu giao dịch không hợp lệ!', "error");
+  const modal = document.getElementById('editModal');
+  const form = document.getElementById('editForm');
+  const categorySelect = document.getElementById('editCategory');
+  const currentYear = new Date().getFullYear();
+
+  document.getElementById('editTransactionId').value = transaction.id || '';
+  document.getElementById('editContent').value = transaction.content || '';
+  document.getElementById('editAmount').value = transaction.amount || 0;
+  document.getElementById('editType').value = transaction.type || 'Thu nhập';
+  document.getElementById('editNote').value = transaction.note || '';
+
+  // Chuyển đổi định dạng ngày từ DD/MM/YYYY sang YYYY-MM-DD để hiển thị trong date picker
+  let dateValue = '';
+  if (transaction.date && transaction.date.includes('/')) {
+    const [day, month, year] = transaction.date.split('/');
+    dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   }
-};
+  document.getElementById('editDate').value = dateValue;
+
+  const categories = await fetchCategories();
+  categorySelect.innerHTML = '';
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    if (category === transaction.category) option.selected = true;
+    categorySelect.appendChild(option);
+  });
+
+  modal.style.display = 'flex';
+  form.onsubmit = async function(e) {
+    e.preventDefault();
+    const dateInput = document.getElementById('editDate').value; // Dạng YYYY-MM-DD
+    if (!dateInput) return showModalError('edit', 'Vui lòng chọn ngày!');
+    const inputDate = new Date(dateInput);
+    const today = new Date();
+    if (inputDate > today) return showModalError('edit', 'Không thể chọn ngày trong tương lai!');
+    const amount = parseFloat(document.getElementById('editAmount').value);
+    if (amount <= 0) return showModalError('edit', 'Số tiền phải lớn hơn 0!');
+    // Chuyển đổi định dạng ngày từ YYYY-MM-DD sang DD/MM/YYYY để gửi API
+    const [year, month, day] = dateInput.split('-');
+    const formattedDate = `${day}/${month}/${year}`;
+    const updatedTransaction = {
+      id: document.getElementById('editTransactionId').value,
+      content: document.getElementById('editContent').value,
+      amount: amount,
+      type: document.getElementById('editType').value,
+      category: document.getElementById('editCategory').value,
+      note: document.getElementById('editNote').value || '',
+      date: formattedDate,
+      action: 'updateTransaction'
+    };
+    await saveTransaction(updatedTransaction);
+  };
+}
+
+async function openAddForm() {
+  const modal = document.getElementById('addModal');
+  const form = document.getElementById('addForm');
+  const categorySelect = document.getElementById('addCategory');
+  const currentYear = new Date().getFullYear();
+
+  // Điền ngày hiện tại dạng YYYY-MM-DD
+  document.getElementById('addDate').value = formatDateToYYYYMMDD(new Date());
+  document.getElementById('addContent').value = '';
+  document.getElementById('addAmount').value = '';
+  document.getElementById('addType').value = 'Thu nhập';
+  document.getElementById('addNote').value = '';
+
+  const categories = await fetchCategories();
+  categorySelect.innerHTML = '';
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  });
+
+  modal.style.display = 'flex';
+  form.onsubmit = async function(e) {
+    e.preventDefault();
+    const dateInput = document.getElementById('addDate').value; // Dạng YYYY-MM-DD
+    const [year, month, day] = dateInput.split('-');
+    const formattedDate = `${day}/${month}/${year}`; // Chuyển thành DD/MM/YYYY
+    const today = new Date();
+    const inputDate = new Date(year, month - 1, day);
+    if (inputDate > today) return showModalError('add', 'Không thể chọn ngày trong tương lai!');
+    const amount = parseFloat(document.getElementById('addAmount').value);
+    if (amount <= 0) return showModalError('add', 'Số tiền phải lớn hơn 0!');
+    const newTransaction = {
+      content: document.getElementById('addContent').value,
+      amount: amount,
+      type: document.getElementById('addType').value,
+      category: document.getElementById('addCategory').value,
+      note: document.getElementById('addNote').value || '',
+      date: formattedDate, // Gửi dạng DD/MM/YYYY
+      action: 'addTransaction'
+    };
+    await addTransaction(newTransaction);
+  };
+}
+
+function closeEditForm() { document.getElementById('editModal').style.display = 'none'; }
+function closeAddForm() { document.getElementById('addModal').style.display = 'none'; }
+
+async function saveTransaction(updatedTransaction) {
+  // Xác định tab hiện tại
+  const activeTab = document.querySelector('.tab-content.active').id;
+  let loadingTabId = '';
+  
+  if (activeTab === 'tab1') {
+    loadingTabId = 'tab1';
+  } else if (activeTab === 'tab5') {
+    loadingTabId = 'tab5';
+  } else if (activeTab === 'tab6') {
+    loadingTabId = 'tab6';
+  }
+
+  showLoading(true, loadingTabId);
+  try {
+    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
+    const response = await fetch(finalUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedTransaction)
+    });
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+    showToast("Cập nhật giao dịch thành công!", "success");
+    closeEditForm();
+
+    // Cập nhật lại dữ liệu dựa trên tab hiện tại
+    if (activeTab === 'tab1') {
+      window.fetchTransactions();
+    } else if (activeTab === 'tab5') {
+      window.fetchMonthlyExpenses();
+    } else if (activeTab === 'tab6') {
+      window.searchTransactions();
+    }
+  } catch (error) {
+    showToast("Lỗi khi cập nhật giao dịch: " + error.message, "error");
+  } finally {
+    showLoading(false, loadingTabId);
+  }
+}
+async function addTransaction(newTransaction) {
+  showLoading(true, 'tab1');
+  try {
+    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
+    const response = await fetch(finalUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newTransaction)
+    });
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+    showToast("Thêm giao dịch thành công!", "success");
+    closeAddForm();
+    window.fetchTransactions();
+  } catch (error) {
+    showToast("Lỗi khi thêm giao dịch: " + error.message, "error");
+  } finally {
+    showLoading(false, 'tab1');
+  }
+}
+
+async function deleteTransaction(transactionId) {
+  if (!confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) return;
+
+  // Xác định tab hiện tại
+  const activeTab = document.querySelector('.tab-content.active').id;
+  let cacheData = null;
+  let loadingTabId = '';
+
+  if (activeTab === 'tab1') {
+    cacheData = cachedTransactions;
+    loadingTabId = 'tab1';
+  } else if (activeTab === 'tab5') {
+    cacheData = cachedMonthlyExpenses;
+    loadingTabId = 'tab5';
+  } else if (activeTab === 'tab6') {
+    cacheData = cachedSearchResults;
+    loadingTabId = 'tab6';
+  }
+
+  if (!cacheData) {
+    showToast("Không tìm thấy dữ liệu giao dịch!", "error");
+    return;
+  }
+
+  showLoading(true, loadingTabId);
+  try {
+    const transaction = cacheData.data ? cacheData.data.find(item => String(item.id) === String(transactionId)) : 
+                       cacheData.transactions ? cacheData.transactions.find(item => String(item.id) === String(transactionId)) : null;
+    if (!transaction) throw new Error("Không tìm thấy giao dịch để xóa!");
+
+    // Trích xuất tháng từ transaction.date (định dạng: DD/MM/YYYY)
+    const dateParts = transaction.date.split('/');
+    if (dateParts.length !== 3) throw new Error("Định dạng ngày không hợp lệ!");
+    const transactionMonth = dateParts[1]; // Lấy phần tháng (VD: "04")
+
+    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
+    const response = await fetch(finalUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'deleteTransaction', 
+        id: transactionId, 
+        month: transactionMonth
+      })
+    });
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+    showToast("Xóa giao dịch thành công!", "success");
+
+    // Cập nhật lại dữ liệu dựa trên tab hiện tại
+    if (activeTab === 'tab1') {
+      window.fetchTransactions();
+    } else if (activeTab === 'tab5') {
+      window.fetchMonthlyExpenses();
+    } else if (activeTab === 'tab6') {
+      window.searchTransactions();
+    }
+  } catch (error) {
+    showToast("Lỗi khi xóa giao dịch: " + error.message, "error");
+  } finally {
+    showLoading(false, loadingTabId);
+  }
+}
 
 // Tab 2: Thống kê
 window.fetchData = async function() {
-  const startDate = document.getElementById('startDate').value;
-  const endDate = document.getElementById('endDate').value;
-  if (!startDate || !endDate) return showToast("Vui lòng chọn khoảng thời gian để xem thống kê!", "warning");
-  if (new Date(startDate) > new Date(endDate)) return showToast("Ngày bắt đầu không được lớn hơn ngày kết thúc!", "warning");
-
-  const cacheKey = `${startDate}-${endDate}`;
-  if (cachedFinancialData && cachedFinancialData.cacheKey === cacheKey) {
-    displayStats(cachedFinancialData.data);
+  const startDateInput = document.getElementById('startDate').value;
+  const endDateInput = document.getElementById('endDate').value;
+  if (!startDateInput || !endDateInput) {
+    showToast("Vui lòng chọn khoảng thời gian!", "warning");
+    return;
+  }
+  const startDate = new Date(startDateInput);
+  const endDate = new Date(endDateInput);
+  if (startDate > endDate) {
+    showToast("Ngày bắt đầu không thể lớn hơn ngày kết thúc!", "warning");
     return;
   }
 
   showLoading(true, 'tab2');
   try {
-    const targetUrl = `${apiUrl}?action=getFinancialData&startDate=${startDate}&endDate=${endDate}&sheetId=${sheetId}`;
-    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-    const response = await fetch(finalUrl);
-    const financialData = await response.json();
+    const financialUrl = `${apiUrl}?action=getFinancialSummary&startDate=${startDateInput}&endDate=${endDateInput}&sheetId=${sheetId}`;
+    const finalFinancialUrl = proxyUrl + encodeURIComponent(financialUrl);
+    const financialResponse = await fetch(finalFinancialUrl);
+    if (!financialResponse.ok) throw new Error(`HTTP error! Status: ${financialResponse.status}`);
+    const financialData = await financialResponse.json();
     if (financialData.error) throw new Error(financialData.error);
-    cachedFinancialData = { cacheKey, data: financialData };
-    displayStats(financialData);
+    updateFinancialData(financialData);
+
+    const chartUrl = `${apiUrl}?action=getChartData&startDate=${startDateInput}&endDate=${endDateInput}&sheetId=${sheetId}`;
+    const finalChartUrl = proxyUrl + encodeURIComponent(chartUrl);
+    const chartResponse = await fetch(finalChartUrl);
+    if (!chartResponse.ok) throw new Error(`HTTP error! Status: ${chartResponse.status}`);
+    const chartData = await chartResponse.json();
+    if (chartData.error) throw new Error(chartData.error);
+    updateChartData(chartData);
   } catch (error) {
-    showToast("Lỗi khi lấy dữ liệu thống kê: " + error.message, "error");
-    displayStats({ error: true });
+    showToast("Lỗi khi lấy dữ liệu: " + error.message, "error");
+    updateFinancialData({ error: true });
   } finally {
     showLoading(false, 'tab2');
   }
 };
 
-function displayStats(data) {
-  const statsContainer = document.getElementById('statsContainer');
-  const chartCanvas = document.getElementById('myChart');
-  const customLegend = document.getElementById('customLegend');
-
-  if (!data || data.error || !Array.isArray(data) || data.length === 0) {
-    statsContainer.innerHTML = `
-      <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
-      <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
-      <div class="stat-box balance"><div class="title">Số dư</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
+function updateFinancialData(data) {
+  const container = document.getElementById('statsContainer');
+  if (!data || data.error) {
+    container.innerHTML = `
+      <div class="stat-box income">
+        <div class="title">Tổng thu nhập</div>
+        <div class="amount no-data">Không có<br>dữ liệu</div>
+      </div>
+      <div class="stat-box expense">
+        <div class="title">Tổng chi tiêu</div>
+        <div class="amount no-data">Không có<br>dữ liệu</div>
+      </div>
+      <div class="stat-box balance">
+        <div class="title">Số dư</div>
+        <div class="amount no-data">Không có<br>dữ liệu</div>
+      </div>
     `;
-    chartCanvas.style.display = 'none';
-    customLegend.innerHTML = '';
     return;
   }
 
-  let totalIncome = 0, totalExpense = 0;
-  const expenseByCategory = {};
-
-  data.forEach(item => {
-    if (item.type === 'Thu nhập') totalIncome += item.amount;
-    else if (item.type === 'Chi tiêu') {
-      totalExpense += item.amount;
-      expenseByCategory[item.category] = (expenseByCategory[item.category] || 0) + item.amount;
-    }
-  });
+  const totalIncome = Number(data.income) || 0;
+  const totalExpense = Number(data.expense) || 0;
+  if (totalIncome === 0 && totalExpense === 0) {
+    container.innerHTML = `
+      <div class="stat-box income">
+        <div class="title">Tổng thu nhập</div>
+        <div class="amount no-data">Không có<br>dữ liệu</div>
+      </div>
+      <div class="stat-box expense">
+        <div class="title">Tổng chi tiêu</div>
+        <div class="amount no-data">Không có<br>dữ liệu</div>
+      </div>
+      <div class="stat-box balance">
+        <div class="title">Số dư</div>
+        <div class="amount no-data">Không có<br>dữ liệu</div>
+      </div>
+    `;
+    return;
+  }
 
   const balance = totalIncome - totalExpense;
-  statsContainer.innerHTML = `
-    <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount">${totalIncome.toLocaleString('vi-VN')}đ</div></div>
-    <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount">${totalExpense.toLocaleString('vi-VN')}đ</div></div>
-    <div class="stat-box balance"><div class="title">Số dư</div><div class="amount">${balance.toLocaleString('vi-VN')}đ</div></div>
+  container.innerHTML = `
+    <div class="stat-box income">
+      <div class="title">Tổng thu nhập</div>
+      <div class="amount">${totalIncome.toLocaleString('vi-VN')}đ</div>
+    </div>
+    <div class="stat-box expense">
+      <div class="title">Tổng chi tiêu</div>
+      <div class="amount">${totalExpense.toLocaleString('vi-VN')}đ</div>
+    </div>
+    <div class="stat-box balance">
+      <div class="title">Số dư</div>
+      <div class="amount">${balance.toLocaleString('vi-VN')}đ</div>
+    </div>
   `;
+}
 
-  const labels = Object.keys(expenseByCategory);
-  const amounts = Object.values(expenseByCategory);
-  const backgroundColors = labels.map((_, index) => `hsl(${(index * 360 / labels.length) % 360}, 70%, 60%)`);
+function updateChartData(response) {
+  const ctx = document.getElementById('myChart').getContext('2d');
+  if (window.myChart && typeof window.myChart.destroy === 'function') {
+    window.myChart.destroy();
+  }
 
-  if (window.myChart instanceof Chart) window.myChart.destroy();
-  chartCanvas.style.display = 'block';
+  if (response.error) {
+    showToast(response.error, "error");
+    return;
+  }
 
-  window.myChart = new Chart(chartCanvas, {
-    type: 'doughnut',
+  const chartData = response.chartData;
+  const categories = response.categories;
+  const totalAmount = chartData.reduce((sum, item) => sum + item.amount, 0);
+  const backgroundColors = [
+    '#FF6B6B', '#FF9F45', '#FFE156', '#7DC95E', '#40C4FF',
+    '#5A92FF', '#9B5DE5', '#FF66C4', '#FF7D7D', '#F88F70',
+    '#54A0FF', '#C084FC', '#FF82A9', '#6DCFF6', '#FFACC5',
+    '#E4C1F9', '#FF928B', '#FDCB98', '#B5E2FA', '#91E8BC',
+    '#FFD166', '#FF8E72', '#E57373', '#74D3AE', '#43BCCD',
+    '#D1B3E0', '#F78F8F', '#F6B17A', '#F4A261', '#FF6392',
+    '#66D9E8', '#FF85A1', '#6A0572', '#FC7A57', '#A29BFE'
+  ];
+
+  const customLegend = document.getElementById('customLegend');
+  customLegend.innerHTML = '';
+  const leftColumn = document.createElement('div');
+  leftColumn.className = 'custom-legend-column';
+  const rightColumn = document.createElement('div');
+  rightColumn.className = 'custom-legend-column';
+
+  chartData.forEach((item, i) => {
+    const index = categories.indexOf(item.category);
+    const color = backgroundColors[index % backgroundColors.length];
+    const percentage = ((item.amount / totalAmount) * 100).toFixed(1);
+    const legendItem = document.createElement('div');
+    legendItem.className = 'legend-item';
+    legendItem.innerHTML = `
+      <span class="legend-color" style="background-color: ${color};"></span>
+      <span class="legend-text">
+        ${item.category}:
+        <span class="legend-value">${item.amount.toLocaleString('vi-VN')}đ (${percentage}%)</span>
+      </span>
+    `;
+    if (i % 2 === 0) leftColumn.appendChild(legendItem);
+    else rightColumn.appendChild(legendItem);
+  });
+
+  customLegend.appendChild(leftColumn);
+  customLegend.appendChild(rightColumn);
+
+  window.myChart = new Chart(ctx, {
+    type: 'pie',
     data: {
-      labels: labels,
+      labels: chartData.map(item => item.category),
       datasets: [{
-        data: amounts,
-        backgroundColor: backgroundColors,
-        borderWidth: 1,
-        borderColor: '#FFFFFF'
+        data: chartData.map(item => item.amount),
+        backgroundColor: chartData.map(item => {
+          const index = categories.indexOf(item.category);
+          return backgroundColors[index % backgroundColors.length];
+        })
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: true,
+      aspectRatio: 1,
       plugins: {
         legend: { display: false },
-        datalabels: {
-          color: '#FFFFFF',
-          font: { weight: 'bold', size: 12 },
-          formatter: (value, context) => {
-            const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
-            const percentage = ((value / total) * 100).toFixed(1);
-            return percentage >= 5 ? `${percentage}%` : '';
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          callbacks: {
+            label: function(tooltipItem) {
+              const category = tooltipItem.label;
+              const amount = tooltipItem.raw;
+              const percentage = ((amount / totalAmount) * 100).toFixed(1);
+              return `${category}: ${amount.toLocaleString('vi-VN')}đ (${percentage}%)`;
+            }
           },
-          anchor: 'center',
-          align: 'center'
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleFont: { size: 12 },
+          bodyFont: { size: 10 },
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          padding: 8,
+          displayColors: true,
+        },
+        datalabels: {
+          formatter: (value, context) => {
+            const percentage = ((value / totalAmount) * 100).toFixed(1);
+            return percentage >= 1 ? `${value.toLocaleString('vi-VN')}đ (${percentage}%)` : '';
+          },
+          color: '#fff',
+          font: { weight: 'bold', size: 12 },
+          anchor: 'end',
+          align: 'end',
+          clamp: true
         }
       }
-    },
-    plugins: [ChartDataLabels]
+    }
   });
-
-  customLegend.innerHTML = '';
-  const midPoint = Math.ceil(labels.length / 2);
-  const leftColumn = labels.slice(0, midPoint);
-  const rightColumn = labels.slice(midPoint);
-
-  const createLegendColumn = (labelsColumn, startIndex) => {
-    const column = document.createElement('div');
-    column.className = 'custom-legend-column';
-    labelsColumn.forEach((label, index) => {
-      const amount = amounts[startIndex + index];
-      const percentage = ((amount / totalExpense) * 100).toFixed(1);
-      const legendItem = document.createElement('div');
-      legendItem.className = 'legend-item';
-      legendItem.innerHTML = `
-        <div class="legend-color" style="background-color: ${backgroundColors[startIndex + index]};"></div>
-        <div class="legend-text">
-          <span>${label}</span>
-          <span class="legend-value">${amount.toLocaleString('vi-VN')}đ (${percentage}%)</span>
-        </div>
-      `;
-      column.appendChild(legendItem);
-    });
-    return column;
-  };
-
-  customLegend.appendChild(createLegendColumn(leftColumn, 0));
-  customLegend.appendChild(createLegendColumn(rightColumn, midPoint));
 }
 
 // Tab 3: Biểu đồ
 window.fetchMonthlyData = async function() {
-  const startMonth = document.getElementById('startMonth').value;
-  const endMonth = document.getElementById('endMonth').value;
-
-  const currentYear = new Date().getFullYear();
-  const cacheKey = `${startMonth}-${endMonth}-${currentYear}`;
-  if (cachedChartData && cachedChartData.cacheKey === cacheKey) {
-    displayMonthlyChart(cachedChartData.data);
+  const startMonth = parseInt(document.getElementById('startMonth').value);
+  const endMonth = parseInt(document.getElementById('endMonth').value);
+  const year = new Date().getFullYear();
+  if (startMonth > endMonth) {
+    showToast("Tháng bắt đầu không thể lớn hơn tháng kết thúc!", "warning");
     return;
   }
 
   showLoading(true, 'tab3');
   try {
-    const targetUrl = `${apiUrl}?action=getMonthlyData&startMonth=${startMonth}&endMonth=${endMonth}&year=${currentYear}&sheetId=${sheetId}`;
+    const targetUrl = `${apiUrl}?action=getMonthlyData&year=${year}&sheetId=${sheetId}`;
     const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
     const response = await fetch(finalUrl);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const monthlyData = await response.json();
     if (monthlyData.error) throw new Error(monthlyData.error);
-    cachedChartData = { cacheKey, data: monthlyData };
-    displayMonthlyChart(monthlyData);
+
+    const fullYearData = Array.from({ length: 12 }, (_, i) => {
+      const month = i + 1;
+      const existingData = monthlyData.find(item => item.month === month);
+      return existingData || { month, income: 0, expense: 0 };
+    });
+
+    const filteredData = Array.from({ length: endMonth - startMonth + 1 }, (_, i) => {
+      const month = startMonth + i;
+      const existingData = fullYearData.find(item => item.month === month);
+      return existingData || { month, income: 0, expense: 0 };
+    });
+
+    updateMonthlyChart(filteredData);
   } catch (error) {
-    showToast("Lỗi khi lấy dữ liệu biểu đồ: " + error.message, "error");
-    displayMonthlyChart({ error: true });
+    showToast("Lỗi khi lấy dữ liệu biểu đồ tháng: " + error.message, "error");
+    const filteredData = Array.from({ length: endMonth - startMonth + 1 }, (_, i) => ({
+      month: startMonth + i,
+      income: 0,
+      expense: 0
+    }));
+    updateMonthlyChart(filteredData);
   } finally {
     showLoading(false, 'tab3');
   }
 };
 
-function displayMonthlyChart(data) {
-  const chartCanvas = document.getElementById('monthlyChart');
-  const monthlyLegend = document.getElementById('monthlyLegend');
+function updateMonthlyChart(filteredData) {
+  const ctx = document.getElementById('monthlyChart').getContext('2d');
+  if (window.monthlyChart && typeof window.monthlyChart.destroy === 'function') {
+    window.monthlyChart.destroy();
+  }
 
-  if (!data || data.error || !Array.isArray(data) || data.length === 0) {
-    chartCanvas.style.display = 'none';
-    monthlyLegend.innerHTML = '<div>Không có dữ liệu để hiển thị biểu đồ</div>';
+  if (!filteredData || filteredData.length === 0) {
+    window.monthlyChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Không có dữ liệu'],
+        datasets: [
+          { label: 'Thu nhập', data: [0], backgroundColor: '#10B981' },
+          { label: 'Chi tiêu', data: [0], backgroundColor: '#EF4444' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
+        scales: {
+          y: { 
+            beginAtZero: true, 
+            title: { display: true, text: 'Số tiền (đ)', font: { size: 14 } }, 
+            ticks: { font: { size: 12 } } 
+          },
+          x: { 
+            title: { display: true, text: 'Tháng', font: { size: 14 } }, 
+            ticks: { font: { size: 12 } } 
+          }
+        },
+        plugins: {
+          legend: { display: true, labels: { font: { size: 12 } } },
+          tooltip: {
+            titleFont: { size: 12 },
+            bodyFont: { size: 12 },
+            callbacks: {
+              label: function(tooltipItem) {
+                return `${tooltipItem.dataset.label}: ${tooltipItem.raw.toLocaleString('vi-VN')}đ`;
+              }
+            }
+          },
+          datalabels: { display: false }
+        }
+      }
+    });
+    document.getElementById('monthlyLegend').innerHTML = '<div>Không có dữ liệu</div>';
     return;
   }
 
-  const labels = data.map(item => `Tháng ${item.month}`);
-  const incomeData = data.map(item => item.totalIncome);
-  const expenseData = data.map(item => item.totalExpense);
+  const labels = filteredData.map(item => `Tháng ${item.month}`);
+  const incomes = filteredData.map(item => item.income || 0);
+  const expenses = filteredData.map(item => item.expense || 0);
 
-  if (window.monthlyChart instanceof Chart) window.monthlyChart.destroy();
-  chartCanvas.style.display = 'block';
-
-  window.monthlyChart = new Chart(chartCanvas, {
+  window.monthlyChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [
-        {
-          label: 'Thu nhập',
-          data: incomeData,
-          backgroundColor: 'rgba(16, 185, 129, 0.6)',
-          borderColor: 'rgba(16, 185, 129, 1)',
-          borderWidth: 1
-        },
-        {
-          label: 'Chi tiêu',
-          data: expenseData,
-          backgroundColor: 'rgba(239, 68, 68, 0.6)',
-          borderColor: 'rgba(239, 68, 68, 1)',
-          borderWidth: 1
-        }
+        { label: 'Thu nhập', data: incomes, backgroundColor: '#10B981', borderColor: '#10B981', borderWidth: 1 },
+        { label: 'Chi tiêu', data: expenses, backgroundColor: '#EF4444', borderColor: '#EF4444', borderWidth: 1 }
       ]
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
+      aspectRatio: 1,
       scales: {
         y: {
           beginAtZero: true,
-          title: { display: true, text: 'Số tiền (đ)' },
+          title: { display: true, text: 'Số tiền (đ)', font: { size: 14 } },
           ticks: {
-            callback: function(value) {
-              return value.toLocaleString('vi-VN');
-            }
+            callback: function(value) { return value.toLocaleString('vi-VN') + 'đ'; },
+            font: { size: 12 }
           }
         },
         x: {
-          title: { display: true, text: 'Tháng' }
+          title: { display: true, text: 'Tháng', font: { size: 14 } },
+          ticks: {
+            font: { size: 10 },
+            maxRotation: 45,
+            minRotation: 45,
+            autoSkip: false
+          }
         }
       },
       plugins: {
-        legend: { display: false },
+        legend: { display: true, labels: { font: { size: 12 } } },
+        tooltip: {
+          titleFont: { size: 12 },
+          bodyFont: { size: 12 },
+          callbacks: {
+            label: function(tooltipItem) {
+              return `${tooltipItem.dataset.label}: ${tooltipItem.raw.toLocaleString('vi-VN')}đ`;
+            }
+          }
+        },
         datalabels: {
-          display: false
+          display: true,
+          align: 'end',
+          anchor: 'end',
+          formatter: (value) => value.toLocaleString('vi-VN') + 'đ',
+          color: '#1F2A44',
+          font: { weight: 'bold', size: 12 }
         }
       }
     }
   });
 
+  const monthlyLegend = document.getElementById('monthlyLegend');
   monthlyLegend.innerHTML = '';
-  const monthlyColumn = document.createElement('div');
-  monthlyColumn.className = 'monthly-column';
+  const column = document.createElement('div');
+  column.className = 'monthly-column';
 
-  data.forEach(item => {
-    const difference = item.totalIncome - item.totalExpense;
+  filteredData.forEach(item => {
+    const difference = (item.income || 0) - (item.expense || 0);
+    const diffClass = difference >= 0 ? 'positive' : 'negative';
+    const diffIcon = difference >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
     const monthItem = document.createElement('div');
     monthItem.className = 'month-item';
     monthItem.innerHTML = `
-      <h3>Tháng ${item.month}</h3>
-      <p><span class="color-box" style="background-color: rgba(16, 185, 129, 0.6);"></span>Thu nhập: <span class="amount">${item.totalIncome.toLocaleString('vi-VN')}đ</span></p>
-      <p><span class="color-box" style="background-color: rgba(239, 68, 68, 0.6);"></span>Chi tiêu: <span class="amount">${item.totalExpense.toLocaleString('vi-VN')}đ</span></p>
-      <p>Số dư: <i class="fas fa-arrow-${difference >= 0 ? 'up' : 'down'} difference-icon ${difference >= 0 ? 'positive' : 'negative'}"></i><span class="difference ${difference >= 0 ? 'positive' : 'negative'}">${Math.abs(difference).toLocaleString('vi-VN')}đ</span></p>
+      <h3>Tháng ${item.month}:</h3>
+      <p><span class="color-box" style="background-color: #10B981;"></span>Tổng thu nhập: <strong>${(item.income || 0).toLocaleString('vi-VN')}đ</strong></p>
+      <p><span class="color-box" style="background-color: #EF4444;"></span>Tổng chi tiêu: <strong>${(item.expense || 0).toLocaleString('vi-VN')}đ</strong></p>
+      <p><i class="fas ${diffIcon} difference-icon ${diffClass}"></i>Chênh lệch: <span class="difference ${diffClass}"><strong>${difference.toLocaleString('vi-VN')}đ</strong></span></p>
     `;
-    monthlyColumn.appendChild(monthItem);
+    column.appendChild(monthItem);
   });
 
-  monthlyLegend.appendChild(monthlyColumn);
+  monthlyLegend.appendChild(column);
 }
 
 // Tab 5: Chi tiêu trong tháng
 window.fetchMonthlyExpenses = async function() {
-  const expenseMonth = document.getElementById('expenseMonth').value;
-  if (!expenseMonth) return showToast("Vui lòng chọn tháng để xem chi tiêu!", "warning");
+  const month = document.getElementById('expenseMonth').value;
+  if (!month) return showToast("Vui lòng chọn tháng để xem giao dịch!", "warning");
+  const year = new Date().getFullYear();
+  const cacheKey = `${year}-${month}`;
 
-  const currentYear = new Date().getFullYear();
-  const cacheKey = `${expenseMonth}-${currentYear}`;
   if (cachedMonthlyExpenses && cachedMonthlyExpenses.cacheKey === cacheKey) {
     displayMonthlyExpenses(cachedMonthlyExpenses.data);
     return;
@@ -480,15 +839,15 @@ window.fetchMonthlyExpenses = async function() {
 
   showLoading(true, 'tab5');
   try {
-    const targetUrl = `${apiUrl}?action=getMonthlyExpenses&month=${expenseMonth}&year=${currentYear}&sheetId=${sheetId}`;
+    const targetUrl = `${apiUrl}?action=getTransactionsByMonth&month=${month}&year=${year}&sheetId=${sheetId}`;
     const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
     const response = await fetch(finalUrl);
-    const monthlyExpenses = await response.json();
-    if (monthlyExpenses.error) throw new Error(monthlyExpenses.error);
-    cachedMonthlyExpenses = { cacheKey, data: monthlyExpenses };
-    displayMonthlyExpenses(monthlyExpenses);
+    const transactionData = await response.json();
+    if (transactionData.error) throw new Error(transactionData.error);
+    cachedMonthlyExpenses = { cacheKey, data: transactionData };
+    displayMonthlyExpenses(transactionData);
   } catch (error) {
-    showToast("Lỗi khi lấy dữ liệu chi tiêu: " + error.message, "error");
+    showToast("Lỗi khi lấy dữ liệu giao dịch: " + error.message, "error");
     displayMonthlyExpenses({ error: true });
   } finally {
     showLoading(false, 'tab5');
@@ -504,7 +863,7 @@ function displayMonthlyExpenses(data) {
   container.innerHTML = '';
 
   if (!data || data.error || !Array.isArray(data) || data.length === 0) {
-    container.innerHTML = '<div>Không có giao dịch nào trong tháng này</div>';
+    container.innerHTML = '<div>Không có giao dịch trong tháng này</div>';
     summaryContainer.innerHTML = `
       <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
       <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount no-data">Không có<br>dữ liệu</div></div>
@@ -529,96 +888,104 @@ function displayMonthlyExpenses(data) {
     <div class="stat-box balance"><div class="title">Số dư</div><div class="amount">${balance.toLocaleString('vi-VN')}đ</div></div>
   `;
 
-  const totalPages = Math.ceil(data.length / expensesPerPage);
-  currentPageMonthly = Math.min(currentPageMonthly, totalPages);
-  currentPageMonthly = Math.max(currentPageMonthly, 1);
+  const totalTransactions = data.length;
+  container.innerHTML = `<div class="notification">Bạn có ${totalTransactions} giao dịch trong tháng</div>`;
 
+  const totalPages = Math.ceil(data.length / expensesPerPage);
   const startIndex = (currentPageMonthly - 1) * expensesPerPage;
   const endIndex = startIndex + expensesPerPage;
   const paginatedData = data.slice(startIndex, endIndex);
 
   paginatedData.forEach((item, index) => {
-    const transactionDiv = document.createElement('div');
-    transactionDiv.className = 'transaction-box';
-    transactionDiv.innerHTML = `
-      <div class="id">ID: ${item.id}</div>
-      <div class="number">Số thứ tự: ${startIndex + index + 1}</div>
-      <div class="date">${formatDate(item.date)}</div>
-      <div class="content">${item.content}</div>
-      <div class="amount">${item.amount.toLocaleString('vi-VN')}đ</div>
-      <div class="type ${item.type === 'Thu nhập' ? 'income' : 'expense'}">${item.type}</div>
-      <div class="category">${item.category}</div>
-      <div class="action-buttons">
-        <button onclick="openEditForm(${JSON.stringify(item).replace(/"/g, '"')})">Sửa</button>
-        <button onclick="deleteTransaction('${item.id}')">Xóa</button>
+    const transactionBox = document.createElement('div');
+    transactionBox.className = 'transaction-box';
+    const amountColor = item.type === 'Thu nhập' ? '#10B981' : '#EF4444';
+    const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
+    const transactionNumber = startIndex + index + 1;
+    transactionBox.innerHTML = `
+      <div style="display: flex; justify-content: space-between; width: 100%;">
+        <div style="flex: 1;">
+          <div class="date">${formatDate(item.date)}</div>
+          <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
+          <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+          <div class="number">STT của giao dịch: ${transactionNumber}</div>
+          <div class="id">ID của giao dịch: ${item.id}</div>
+        </div>
+        <div style="flex: 1; text-align: right;">
+          <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+          <div class="category">Phân loại chi tiết: ${item.category}</div>
+        </div>
+      </div>
+      <div style="margin-top: 0.5rem;">
+        <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+        <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
       </div>
     `;
-    container.appendChild(transactionDiv);
+    container.appendChild(transactionBox);
   });
 
-  pageInfo.textContent = `Trang ${currentPageMonthly}/${totalPages}`;
+  pageInfo.textContent = `Trang ${currentPageMonthly} / ${totalPages}`;
   prevPageBtn.disabled = currentPageMonthly === 1;
   nextPageBtn.disabled = currentPageMonthly === totalPages;
+
+  document.querySelectorAll('.edit-btn').forEach(button => {
+    const transactionId = button.getAttribute('data-id');
+    const transaction = data.find(item => String(item.id) === String(transactionId));
+    if (!transaction) return console.error(`Không tìm thấy giao dịch với ID: ${transactionId}`);
+    button.addEventListener('click', () => openEditForm(transaction));
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', () => deleteTransaction(button.getAttribute('data-id')));
+  });
 }
 
-window.prevPageMonthly = function() {
-  if (currentPageMonthly > 1) {
-    currentPageMonthly--;
-    displayMonthlyExpenses(cachedMonthlyExpenses.data);
-  }
-};
-
-window.nextPageMonthly = function() {
-  const totalPages = Math.ceil(cachedMonthlyExpenses.data.length / expensesPerPage);
-  if (currentPageMonthly < totalPages) {
-    currentPageMonthly++;
-    displayMonthlyExpenses(cachedMonthlyExpenses.data);
-  }
-};
-
-// Tab 6: Tìm kiếm
+// Tab 6: Tìm kiếm giao dịch
 async function populateSearchCategories() {
-  const searchCategory = document.getElementById('searchCategory');
-  const searchAmount = document.getElementById('searchAmount');
-  const searchContent = document.getElementById('searchContent');
+  const categorySelect = document.getElementById('searchCategory');
   const categories = await fetchCategories();
-  searchCategory.innerHTML = '<option value="">Tất cả</option>';
+  categorySelect.innerHTML = '<option value="">Tất cả</option>';
   categories.forEach(category => {
     const option = document.createElement('option');
     option.value = category;
     option.textContent = category;
-    searchCategory.appendChild(option);
+    categorySelect.appendChild(option);
   });
 }
 
 window.searchTransactions = async function() {
-  const searchMonth = document.getElementById('searchMonth').value;
-  const searchContent = document.getElementById('searchContent').value.trim();
-  const searchAmountInput = document.getElementById('searchAmount').value;
-  const searchCategory = document.getElementById('searchCategory').value;
-  const currentYear = new Date().getFullYear();
+  const month = document.getElementById('searchMonth').value;
+  const content = document.getElementById('searchContent').value.trim();
+  const amount = document.getElementById('searchAmount').value;
+  const category = document.getElementById('searchCategory').value;
+  const year = new Date().getFullYear();
 
-  const searchAmount = searchAmountInput ? parseFormattedNumber(searchAmountInput) : '';
-
-  if (!searchContent && !searchAmount && !searchCategory) {
-    return showToast("Vui lòng nhập ít nhất một tiêu chí tìm kiếm (nội dung, số tiền, hoặc phân loại chi tiết)!", "warning");
-  }
-
-  const cacheKey = `${searchMonth || 'all'}-${searchContent || 'none'}-${searchAmount || 'none'}-${searchCategory || 'none'}-${currentYear}`;
-  if (cachedSearchResults && cachedSearchResults.cacheKey === cacheKey) {
-    displaySearchResults(cachedSearchResults.data);
-    return;
+  if (!content && !amount && !category) {
+    return showToast("Vui lòng nhập ít nhất một tiêu chí: nội dung, số tiền, hoặc phân loại chi tiết!", "warning");
   }
 
   showLoading(true, 'tab6');
   try {
-    const targetUrl = `${apiUrl}?action=searchTransactions${searchMonth ? `&month=${searchMonth}` : ''}${searchContent ? `&content=${encodeURIComponent(searchContent)}` : ''}${searchAmount ? `&amount=${searchAmount}` : ''}${searchCategory ? `&category=${encodeURIComponent(searchCategory)}` : ''}&year=${currentYear}&sheetId=${sheetId}`;
+    let targetUrl = `${apiUrl}?action=searchTransactions&sheetId=${sheetId}`;
+    if (month) targetUrl += `&month=${month}&year=${year}`;
+    if (content) targetUrl += `&content=${encodeURIComponent(content)}`;
+    if (amount) targetUrl += `&amount=${encodeURIComponent(amount)}`;
+    if (category) targetUrl += `&category=${encodeURIComponent(category)}`;
+
     const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
     const response = await fetch(finalUrl);
     const searchData = await response.json();
     if (searchData.error) throw new Error(searchData.error);
-    cachedSearchResults = { cacheKey, data: searchData };
-    displaySearchResults(searchData);
+
+    cachedSearchResults = {
+      transactions: searchData.transactions,
+      totalTransactions: searchData.totalTransactions,
+      totalPages: searchData.totalPages,
+      currentPage: searchData.currentPage
+    };
+    currentPageSearch = searchData.currentPage || 1;
+
+    displaySearchResults(searchData.transactions);
   } catch (error) {
     showToast("Lỗi khi tìm kiếm giao dịch: " + error.message, "error");
     displaySearchResults({ error: true });
@@ -642,323 +1009,135 @@ function displaySearchResults(data) {
     return;
   }
 
-  const totalPages = Math.ceil(data.length / searchPerPage);
-  currentPageSearch = Math.min(currentPageSearch, totalPages);
-  currentPageSearch = Math.max(currentPageSearch, 1);
+  container.innerHTML = `<div class="notification">Tìm thấy ${data.length} giao dịch phù hợp</div>`;
 
+  const totalPages = Math.ceil(data.length / searchPerPage);
   const startIndex = (currentPageSearch - 1) * searchPerPage;
   const endIndex = startIndex + searchPerPage;
   const paginatedData = data.slice(startIndex, endIndex);
 
   paginatedData.forEach((item, index) => {
-    const transactionDiv = document.createElement('div');
-    transactionDiv.className = 'transaction-box';
-    transactionDiv.innerHTML = `
-      <div class="id">ID: ${item.id}</div>
-      <div class="number">Số thứ tự: ${startIndex + index + 1}</div>
-      <div class="date">${formatDate(item.date)}</div>
-      <div class="content">${item.content}</div>
-      <div class="amount">${item.amount.toLocaleString('vi-VN')}đ</div>
-      <div class="type ${item.type === 'Thu nhập' ? 'income' : 'expense'}">${item.type}</div>
-      <div class="category">${item.category}</div>
-      <div class="action-buttons">
-        <button onclick="openEditForm(${JSON.stringify(item).replace(/"/g, '"')})">Sửa</button>
-        <button onclick="deleteTransaction('${item.id}')">Xóa</button>
+    const transactionBox = document.createElement('div');
+    transactionBox.className = 'transaction-box';
+    const amountColor = item.type === 'Thu nhập' ? '#10B981' : '#EF4444';
+    const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
+    const transactionNumber = startIndex + index + 1;
+    transactionBox.innerHTML = `
+      <div style="display: flex; justify-content: space-between; width: 100%;">
+        <div style="flex: 1;">
+          <div class="date">${formatDate(item.date)}</div>
+          <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
+          <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+          <div class="number">STT của giao dịch: ${transactionNumber}</div>
+          <div class="id">ID của giao dịch: ${item.id}</div>
+        </div>
+        <div style="flex: 1; text-align: right;">
+          <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+          <div class="category">Phân loại chi tiết: ${item.category}</div>
+        </div>
+      </div>
+      <div style="margin-top: 0.5rem;">
+        <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+        <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
       </div>
     `;
-    container.appendChild(transactionDiv);
+    container.appendChild(transactionBox);
   });
 
-  pageInfo.textContent = `Trang ${currentPageSearch}/${totalPages}`;
+  pageInfo.textContent = `Trang ${currentPageSearch} / ${totalPages}`;
   prevPageBtn.disabled = currentPageSearch === 1;
   nextPageBtn.disabled = currentPageSearch === totalPages;
-}
 
-window.prevPageSearch = function() {
-  if (currentPageSearch > 1) {
-    currentPageSearch--;
-    displaySearchResults(cachedSearchResults.data);
-  }
-};
-
-window.nextPageSearch = function() {
-  const totalPages = Math.ceil(cachedSearchResults.data.length / searchPerPage);
-  if (currentPageSearch < totalPages) {
-    currentPageSearch++;
-    displaySearchResults(cachedSearchResults.data);
-  }
-};
-
-// Form chỉnh sửa giao dịch
-async function fetchCategories() {
-  try {
-    const targetUrl = `${apiUrl}?action=getCategories&sheetId=${sheetId}`;
-    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-    const response = await fetch(finalUrl);
-    const categories = await response.json();
-    if (categories.error) throw new Error(categories.error);
-    return categories;
-  } catch (error) {
-    showToast("Lỗi khi lấy danh sách phân loại: " + error.message, "error");
-    return [];
-  }
-}
-
-window.openEditForm = async function(transaction) {
-  if (!transaction) return showToast('Dữ liệu giao dịch không hợp lệ!', "error");
-  const modal = document.getElementById('editModal');
-  const form = document.getElementById('editForm');
-  const categorySelect = document.getElementById('editCategory');
-  const amountInput = document.getElementById('editAmount');
-  const contentInput = document.getElementById('editContent');
-
-  document.getElementById('editTransactionId').value = transaction.id || '';
-  contentInput.value = transaction.content || '';
-  amountInput.value = formatNumber(transaction.amount || 0);
-  document.getElementById('editType').value = transaction.type || 'Thu nhập';
-  document.getElementById('editNote').value = transaction.note || '';
-
-  let dateValue = '';
-  if (transaction.date && transaction.date.includes('/')) {
-    const [day, month, year] = transaction.date.split('/');
-    dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  }
-  document.getElementById('editDate').value = dateValue;
-
-  const categories = await fetchCategories();
-  categorySelect.innerHTML = '';
-  categories.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category;
-    option.textContent = category;
-    if (category === transaction.category) option.selected = true;
-    categorySelect.appendChild(option);
+  document.querySelectorAll('.edit-btn').forEach(button => {
+    const transactionId = button.getAttribute('data-id');
+    const transaction = data.find(item => String(item.id) === String(transactionId));
+    if (!transaction) return console.error(`Không tìm thấy giao dịch với ID: ${transactionId}`);
+    button.addEventListener('click', () => openEditForm(transaction));
   });
 
-  modal.style.display = 'flex';
-  form.onsubmit = async function(e) {
-    e.preventDefault();
-    const dateInput = document.getElementById('editDate').value;
-    if (!dateInput) return showModalError('edit', 'Vui lòng chọn ngày!');
-    const inputDate = new Date(dateInput);
-    const today = new Date();
-    if (inputDate > today) return showModalError('edit', 'Không thể chọn ngày trong tương lai!');
-    const amount = parseFormattedNumber(document.getElementById('editAmount').value);
-    if (amount <= 0) return showModalError('edit', 'Số tiền phải lớn hơn 0!');
-    const [year, month, day] = dateInput.split('-');
-    const formattedDate = `${day}/${month}/${year}`;
-    const updatedTransaction = {
-      id: document.getElementById('editTransactionId').value,
-      content: document.getElementById('editContent').value,
-      amount: amount,
-      type: document.getElementById('editType').value,
-      category: document.getElementById('editCategory').value,
-      note: document.getElementById('editNote').value || '',
-      date: formattedDate,
-      action: 'updateTransaction'
-    };
-    await saveTransaction(updatedTransaction);
-  };
-};
-
-window.closeEditForm = function() {
-  document.getElementById('editModal').style.display = 'none';
-  document.getElementById('editError').style.display = 'none';
-};
-
-// Form thêm giao dịch
-window.openAddForm = async function() {
-  const modal = document.getElementById('addModal');
-  const form = document.getElementById('addForm');
-  const categorySelect = document.getElementById('addCategory');
-  const amountInput = document.getElementById('addAmount');
-  const contentInput = document.getElementById('addContent');
-
-  document.getElementById('addDate').value = formatDateToYYYYMMDD(new Date());
-  contentInput.value = '';
-  amountInput.value = '';
-  document.getElementById('addType').value = 'Thu nhập';
-  document.getElementById('addNote').value = '';
-
-  const categories = await fetchCategories();
-  categorySelect.innerHTML = '';
-  categories.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category;
-    option.textContent = category;
-    categorySelect.appendChild(option);
+  document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', () => deleteTransaction(button.getAttribute('data-id')));
   });
-
-  modal.style.display = 'flex';
-  form.onsubmit = async function(e) {
-    e.preventDefault();
-    const dateInput = document.getElementById('addDate').value;
-    const [year, month, day] = dateInput.split('-');
-    const formattedDate = `${day}/${month}/${year}`;
-    const today = new Date();
-    const inputDate = new Date(year, month - 1, day);
-    if (inputDate > today) return showModalError('add', 'Không thể chọn ngày trong tương lai!');
-    const amount = parseFormattedNumber(document.getElementById('addAmount').value);
-    if (amount <= 0) return showModalError('add', 'Số tiền phải lớn hơn 0!');
-    const newTransaction = {
-      content: document.getElementById('addContent').value,
-      amount: amount,
-      type: document.getElementById('addType').value,
-      category: document.getElementById('addCategory').value,
-      note: document.getElementById('addNote').value || '',
-      date: formattedDate,
-      action: 'addTransaction'
-    };
-    await addTransaction(newTransaction);
-  };
-};
-
-window.closeAddForm = function() {
-  document.getElementById('addModal').style.display = 'none';
-  document.getElementById('addError').style.display = 'none';
-};
-
-// Lưu giao dịch
-async function saveTransaction(transaction) {
-  showLoadingPopup();
-  try {
-    const targetUrl = `${apiUrl}?action=updateTransaction&id=${transaction.id}&content=${encodeURIComponent(transaction.content)}&amount=${transaction.amount}&type=${encodeURIComponent(transaction.type)}&category=${encodeURIComponent(transaction.category)}¬e=${encodeURIComponent(transaction.note)}&date=${encodeURIComponent(transaction.date)}&sheetId=${sheetId}`;
-    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-    const response = await fetch(finalUrl, { method: 'POST' });
-    const result = await response.json();
-    if (result.error) throw new Error(result.error);
-    showToast("Cập nhật giao dịch thành công!", "success");
-    closeEditForm();
-    cachedTransactions = null;
-    cachedMonthlyExpenses = null;
-    cachedSearchResults = null;
-    cachedFinancialData = null;
-    cachedChartData = null;
-    await fetchTransactions();
-  } catch (error) {
-    showToast("Lỗi khi cập nhật giao dịch: " + error.message, "error");
-  } finally {
-    hideLoadingPopup();
-  }
 }
-
-async function addTransaction(transaction) {
-  showLoadingPopup();
-  try {
-    const targetUrl = `${apiUrl}?action=addTransaction&content=${encodeURIComponent(transaction.content)}&amount=${transaction.amount}&type=${encodeURIComponent(transaction.type)}&category=${encodeURIComponent(transaction.category)}¬e=${encodeURIComponent(transaction.note)}&date=${encodeURIComponent(transaction.date)}&sheetId=${sheetId}`;
-    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-    const response = await fetch(finalUrl, { method: 'POST' });
-    const result = await response.json();
-    if (result.error) throw new Error(result.error);
-    showToast("Thêm giao dịch thành công!", "success");
-    closeAddForm();
-    cachedTransactions = null;
-    cachedMonthlyExpenses = null;
-    cachedSearchResults = null;
-    cachedFinancialData = null;
-    cachedChartData = null;
-    await fetchTransactions();
-  } catch (error) {
-    showToast("Lỗi khi thêm giao dịch: " + error.message, "error");
-  } finally {
-    hideLoadingPopup();
-  }
-}
-
-window.deleteTransaction = async function(id) {
-  if (!confirm('Bạn có chắc chắn muốn xóa giao dịch này?')) return;
-  showLoadingPopup();
-  try {
-    const targetUrl = `${apiUrl}?action=deleteTransaction&id=${id}&sheetId=${sheetId}`;
-    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-    const response = await fetch(finalUrl, { method: 'POST' });
-    const result = await response.json();
-    if (result.error) throw new Error(result.error);
-    showToast("Xóa giao dịch thành công!", "success");
-    cachedTransactions = null;
-    cachedMonthlyExpenses = null;
-    cachedSearchResults = null;
-    cachedFinancialData = null;
-    cachedChartData = null;
-    await fetchTransactions();
-  } catch (error) {
-    showToast("Lỗi khi xóa giao dịch: " + error.message, "error");
-  } finally {
-    hideLoadingPopup();
-  }
-};
 
 // Khởi tạo
-document.addEventListener('DOMContentLoaded', () => {
-  // Gắn sự kiện click cho các tab
-  const tabs = document.querySelectorAll('.nav-item');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const tabId = tab.getAttribute('data-tab');
-      openTab(tabId);
-    });
+document.addEventListener('DOMContentLoaded', function() {
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => window.openTab(item.getAttribute('data-tab')));
   });
 
-  // Gắn sự kiện cho các nút
-  document.getElementById('fetchTransactionsBtn').addEventListener('click', fetchTransactions);
+  document.getElementById('fetchDataBtn').addEventListener('click', window.fetchData);
+  document.getElementById('fetchMonthlyDataBtn').addEventListener('click', window.fetchMonthlyData);
+  document.getElementById('fetchTransactionsBtn').addEventListener('click', window.fetchTransactions);
   document.getElementById('addTransactionBtn').addEventListener('click', openAddForm);
-  document.getElementById('fetchDataBtn').addEventListener('click', fetchData);
-  document.getElementById('fetchMonthlyDataBtn').addEventListener('click', fetchMonthlyData); // Thêm lại sự kiện cho nút "Xem biểu đồ"
-  document.getElementById('fetchMonthlyExpensesBtn').addEventListener('click', fetchMonthlyExpenses);
-  document.getElementById('searchTransactionsBtn').addEventListener('click', searchTransactions);
-  document.getElementById('prevPage').addEventListener('click', prevPage);
-  document.getElementById('nextPage').addEventListener('click', nextPage);
-  document.getElementById('prevPageMonthly').addEventListener('click', prevPageMonthly);
-  document.getElementById('nextPageMonthly').addEventListener('click', nextPageMonthly);
-  document.getElementById('prevPageSearch').addEventListener('click', prevPageSearch);
-  document.getElementById('nextPageSearch').addEventListener('click', nextPageSearch);
+  document.getElementById('fetchMonthlyExpensesBtn').addEventListener('click', window.fetchMonthlyExpenses);
+  document.getElementById('searchTransactionsBtn').addEventListener('click', window.searchTransactions);
 
-  // Đặt ngày mặc định
+  document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      window.fetchTransactions();
+    }
+  });
+  document.getElementById('nextPage').addEventListener('click', () => {
+    const totalPages = Math.ceil((cachedTransactions?.data.length || 0) / transactionsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      window.fetchTransactions();
+    }
+  });
+
+  document.getElementById('prevPageMonthly').addEventListener('click', () => {
+    if (currentPageMonthly > 1) {
+      currentPageMonthly--;
+      window.fetchMonthlyExpenses();
+    }
+  });
+  document.getElementById('nextPageMonthly').addEventListener('click', () => {
+    const totalPages = Math.ceil((cachedMonthlyExpenses?.data.length || 0) / expensesPerPage);
+    if (currentPageMonthly < totalPages) {
+      currentPageMonthly++;
+      window.fetchMonthlyExpenses();
+    }
+  });
+
+  document.getElementById('prevPageSearch').addEventListener('click', () => {
+    if (currentPageSearch > 1) {
+      currentPageSearch--;
+      window.searchTransactions();
+    }
+  });
+  document.getElementById('nextPageSearch').addEventListener('click', () => {
+    const totalPages = Math.ceil((cachedSearchResults?.transactions.length || 0) / searchPerPage);
+    if (currentPageSearch < totalPages) {
+      currentPageSearch++;
+      window.searchTransactions();
+    }
+  });
+
+  // Điền ngày hiện tại và khoảng thời gian mặc định khi mở Mini App
   const today = new Date();
-  document.getElementById('transactionDate').value = formatDateToYYYYMMDD(today);
-  document.getElementById('startDate').value = formatDateToYYYYMMDD(new Date(today.getFullYear(), today.getMonth(), 1));
-  document.getElementById('endDate').value = formatDateToYYYYMMDD(today);
+  const formattedToday = formatDateToYYYYMMDD(today); // Ngày hiện tại: YYYY-MM-DD
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng
+  const formattedFirstDay = formatDateToYYYYMMDD(firstDayOfMonth);
 
-  // Thiết lập mặc định cho Tab Biểu đồ: từ tháng 1 đến tháng hiện tại
-  const currentMonth = today.getMonth() + 1; // Tháng hiện tại (1-12)
-  document.getElementById('startMonth').value = 1; // Tháng 1
-  document.getElementById('endMonth').value = currentMonth; // Tháng hiện tại
-  document.getElementById('expenseMonth').value = currentMonth;
-  document.getElementById('searchMonth').value = currentMonth;
+  // Tab 1: Điền ngày hiện tại vào transactionDate
+  const transactionDateInput = document.getElementById('transactionDate');
+  if (transactionDateInput) {
+    transactionDateInput.value = formattedToday;
+    // window.fetchTransactions(); // Tự động tải dữ liệu (tuỳ chọn)
+  }
 
-  // Khởi tạo danh mục tìm kiếm
+  // Tab 2: Điền ngày đầu tháng vào startDate và ngày hiện tại vào endDate
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+  if (startDateInput && endDateInput) {
+    startDateInput.value = formattedFirstDay;
+    endDateInput.value = formattedToday;
+    // window.fetchData(); // Tự động tải dữ liệu thống kê (tuỳ chọn)
+  }
+
   populateSearchCategories();
-
-  // Thêm sự kiện định dạng số tiền và xử lý placeholder cho các trường
-  const editAmount = document.getElementById('editAmount');
-  const addAmount = document.getElementById('addAmount');
-  const searchAmount = document.getElementById('searchAmount');
-  const editContent = document.getElementById('editContent');
-  const addContent = document.getElementById('addContent');
-  const searchContent = document.getElementById('searchContent');
-
-  [editAmount, addAmount, searchAmount].forEach(input => {
-    if (input) {
-      input.addEventListener('input', function(e) {
-        let cursorPosition = e.target.selectionStart;
-        const originalLength = e.target.value.length;
-        e.target.value = formatNumber(e.target.value);
-        const newLength = e.target.value.length;
-        cursorPosition += newLength - originalLength;
-        e.target.setSelectionRange(cursorPosition, cursorPosition);
-      });
-    }
-  });
-
-  [editContent, addContent, searchContent].forEach(input => {
-    if (input) {
-      input.addEventListener('input', function(e) {
-        if (e.target.value) {
-          e.target.placeholder = '';
-        } else {
-          e.target.placeholder = 'Nhập nội dung';
-        }
-      });
-    }
-  });
+  window.openTab('tab1'); // Mặc định mở tab Giao dịch
 });
