@@ -543,10 +543,12 @@ canvas#monthlyChart {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Đảm bảo date picker có kích thước đồng nhất trên các trình duyệt */
+/* Đảm bảo date picker có kích thước đồng nhất trên các trình duyệt và căn trái */
 .modal-content input[type="date"] {
   width: 100%;
   padding: 0.7rem;
+  padding-left: 0.7rem; /* Thêm padding trái để nội dung không sát mép */
+  text-align: left !important; /* Căn trái dữ liệu ngày */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -554,11 +556,6 @@ canvas#monthlyChart {
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
   background-size: 1rem;
-}
-
-/* Căn trái chỉ cho date picker trong addModal */
-#addModal .modal-content input[type="date"] {
-  text-align: left;
 }
 
 /* Đảm bảo các trường select có mũi tên tùy chỉnh */
@@ -710,6 +707,12 @@ canvas#monthlyChart {
 
   .qr-image {
     width: 250px;
+  }
+
+  /* Đảm bảo date picker căn trái trên thiết bị di động */
+  .modal-content input[type="date"] {
+    text-align: left !important;
+    padding-left: 0.7rem;
   }
 }
 
