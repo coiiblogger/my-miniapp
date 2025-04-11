@@ -130,7 +130,7 @@
             <p><i class="fas fa-user" style="color: var(--primary-color);"></i><strong>Người tạo:</strong> <span class="highlight-color">Hoàng Hùng</span></p>
             <p><i class="fab fa-telegram-plane" style="color: var(--primary-color);"></i><strong>Telegram:</strong> <a href="https://t.me/masterhmh" target="_blank">@masterhmh</a></p>
             <p><i class="fab fa-facebook" style="color: var(--primary-color);"></i><strong>Facebook:</strong> <a href="https://facebook.com/masterhmh" target="_blank">facebook.com/masterhmh</a></p>
-            <p><i class="fas fa-envelope" style="color: var(--primary-color);"></i><strong>Email:</strong> <a href="mailto:hoanghung@gmail.com">hoanghung@gmail.com</a></p>
+            <p><i class="fas fa-envelope" style="color: var(--primary-color);"></i><strong>Email:</strong> <a href="mailto:masterhmh@gmail.com">masterhmh@gmail.com</a></p>
           </div>
         </div>
       </div>
@@ -167,106 +167,112 @@
       </div>
     </div>
 
-   <div id="tab6" class="tab-content">
-  <h1>TÌM KIẾM GIAO DỊCH</h1>
-  <p class="notification">Nhập ít nhất một tiêu chí (nội dung, số tiền, hoặc phân loại chi tiết) để tìm kiếm. Tháng là tùy chọn.</p>
-  <div id="errorMessageTab6" style="color: red; text-align: center; display: none; margin-bottom: 1rem;"></div>
-  <div id="successMessageTab6" style="color: green; text-align: center; display: none; margin-bottom: 1rem;"></div>
-  <div id="loadingTab6" style="display: none; text-align: center; margin: 1rem 0;">
-    <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: var(--primary-color);"></i>
-  </div>
-  <div class="input-group vertical">
-    <div class="input-field">
-      <label>Tháng: </label>
-      <select id="searchMonth" class="uniform-input">
-        <option value="">Tất cả</option>
-        <option value="1">Tháng 1</option><option value="2">Tháng 2</option><option value="3">Tháng 3</option>
-        <option value="4">Tháng 4</option><option value="5">Tháng 5</option><option value="6">Tháng 6</option>
-        <option value="7">Tháng 7</option><option value="8">Tháng 8</option><option value="9">Tháng 9</option>
-        <option value="10">Tháng 10</option><option value="11">Tháng 11</option><option value="12">Tháng 12</option>
-      </select>
+    <div id="tab6" class="tab-content">
+      <h1>TÌM KIẾM GIAO DỊCH</h1>
+      <p class="notification">Nhập ít nhất một tiêu chí (nội dung, số tiền, hoặc phân loại chi tiết) để tìm kiếm. Tháng là tùy chọn.</p>
+      <div id="errorMessageTab6" style="color: red; text-align: center; display: none; margin-bottom: 1rem;"></div>
+      <div id="successMessageTab6" style="color: green; text-align: center; display: none; margin-bottom: 1rem;"></div>
+      <div id="loadingTab6" style="display: none; text-align: center; margin: 1rem 0;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+      </div>
+      <div class="input-group vertical">
+        <div class="input-field">
+          <label>Tháng: </label>
+          <select id="searchMonth" class="uniform-input">
+            <option value="">Tất cả</option>
+            <option value="1">Tháng 1</option><option value="2">Tháng 2</option><option value="3">Tháng 3</option>
+            <option value="4">Tháng 4</option><option value="5">Tháng 5</option><option value="6">Tháng 6</option>
+            <option value="7">Tháng 7</option><option value="8">Tháng 8</option><option value="9">Tháng 9</option>
+            <option value="10">Tháng 10</option><option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+          </select>
+        </div>
+        <div class="input-field">
+          <label>Nội dung: </label>
+          <input type="text" id="searchContent" class="uniform-input" placeholder="Nhập nội dung">
+        </div>
+        <div class="input-field">
+          <label>Số tiền: </label>
+          <input type="text" id="searchAmount" class="uniform-input" placeholder="Nhập số tiền">
+        </div>
+        <div class="input-field">
+          <label>Phân loại chi tiết: </label>
+          <select id="searchCategory" class="uniform-input">
+            <option value="">Tất cả</option>
+          </select>
+        </div>
+        <button id="searchTransactionsBtn">Tìm kiếm</button>
+      </div>
+      <div class="transactions-list" id="searchResultsContainer"></div>
+      <div id="paginationSearch">
+        <button id="prevPageSearch" class="pagination-btn" disabled>Trang trước</button>
+        <span id="pageInfoSearch"></span>
+        <button id="nextPageSearch" class="pagination-btn">Trang sau</button>
+      </div>
     </div>
-    <div class="input-field">
-      <label>Nội dung: </label>
-      <input type="text" id="searchContent" class="uniform-input" placeholder="Nhập nội dung">
-    </div>
-    <div class="input-field">
-      <label>Số tiền: </label>
-      <input type="number" id="searchAmount" class="uniform-input" min="0" placeholder="Nhập số tiền">
-    </div>
-    <div class="input-field">
-      <label>Phân loại chi tiết: </label>
-      <select id="searchCategory" class="uniform-input">
-        <option value="">Tất cả</option>
-      </select>
-    </div>
-    <button id="searchTransactionsBtn">Tìm kiếm</button>
-  </div>
-  <div class="transactions-list" id="searchResultsContainer"></div>
-  <div id="paginationSearch">
-    <button id="prevPageSearch" class="pagination-btn" disabled>Trang trước</button>
-    <span id="pageInfoSearch"></span>
-    <button id="nextPageSearch" class="pagination-btn">Trang sau</button>
-  </div>
-</div>
 
     <div id="editModal" class="modal">
-  <div class="modal-content">
-    <h2>Chỉnh sửa giao dịch</h2>
-    <div id="editError" class="error-message"></div>
-    <form id="editForm">
-      <label for="editTransactionId">ID của giao dịch:</label>
-      <input type="text" id="editTransactionId" readonly>
-      <label for="editDate">Ngày:</label>
-      <input type="date" id="editDate" required>
-      <label for="editContent">Nội dung:</label>
-      <input type="text" id="editContent" required>
-      <label for="editAmount">Số tiền:</label>
-      <input type="number" id="editAmount" min="0" required>
-      <label for="editType">Phân loại:</label>
-      <select id="editType" required>
-        <option value="Thu nhập">Thu nhập</option>
-        <option value="Chi tiêu">Chi tiêu</option>
-      </select>
-      <label for="editCategory">Phân loại chi tiết:</label>
-      <select id="editCategory" required></select>
-      <label for="editNote">Ghi chú (nếu có):</label>
-      <textarea id="editNote"></textarea>
-      <div class="btn-group">
-        <button type="button" class="cancel-btn" onclick="closeEditForm()">Hủy</button>
-        <button type="submit" class="save-btn">Lưu</button>
+      <div class="modal-content">
+        <h2>Chỉnh sửa giao dịch</h2>
+        <div id="editError" class="error-message"></div>
+        <form id="editForm">
+          <label for="editTransactionId">ID của giao dịch:</label>
+          <input type="text" id="editTransactionId" readonly>
+          <label for="editDate">Ngày:</label>
+          <input type="date" id="editDate" required>
+          <label for="editContent">Nội dung:</label>
+          <input type="text" id="editContent" placeholder="Nhập nội dung" required>
+          <label for="editAmount">Số tiền:</label>
+          <input type="text" id="editAmount" placeholder="Nhập số tiền" required>
+          <label for="editType">Phân loại:</label>
+          <select id="editType" required>
+            <option value="Thu nhập">Thu nhập</option>
+            <option value="Chi tiêu">Chi tiêu</option>
+          </select>
+          <label for="editCategory">Phân loại chi tiết:</label>
+          <select id="editCategory" required></select>
+          <label for="editNote">Ghi chú (nếu có):</label>
+          <textarea id="editNote" placeholder="Nhập ghi chú"></textarea>
+          <div class="btn-group">
+            <button type="button" class="cancel-btn" onclick="closeEditForm()">Hủy</button>
+            <button type="submit" class="save-btn">Lưu</button>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
+    </div>
 
     <div id="addModal" class="modal">
-  <div class="modal-content">
-    <h2>Thêm giao dịch mới</h2>
-    <div id="addError" class="error-message"></div>
-    <form id="addForm">
-      <label for="addDate">Ngày:</label>
-      <input type="date" id="addDate" required>
-      <label for="addContent">Nội dung:</label>
-      <input type="text" id="addContent" required>
-      <label for="addAmount">Số tiền:</label>
-      <input type="number" id="addAmount" min="0" required>
-      <label for="addType">Phân loại:</label>
-      <select id="addType" required>
-        <option value="Thu nhập">Thu nhập</option>
-        <option value="Chi tiêu">Chi tiêu</option>
-      </select>
-      <label for="addCategory">Phân loại chi tiết:</label>
-      <select id="addCategory" required></select>
-      <label for="addNote">Ghi chú (nếu có):</label>
-      <textarea id="addNote"></textarea>
-      <div class="btn-group">
-        <button type="button" class="cancel-btn" onclick="closeAddForm()">Hủy</button>
-        <button type="submit" class="save-btn">Lưu</button>
+      <div class="modal-content">
+        <h2>Thêm giao dịch mới</h2>
+        <div id="addError" class="error-message"></div>
+        <form id="addForm">
+          <label for="addDate">Ngày:</label>
+          <input type="date" id="addDate" required>
+          <label for="addContent">Nội dung:</label>
+          <input type="text" id="addContent" placeholder="Nhập nội dung" required>
+          <label for="addAmount">Số tiền:</label>
+          <input type="text" id="addAmount" placeholder="Nhập số tiền" required>
+          <label for="addType">Phân loại:</label>
+          <select id="addType" required>
+            <option value="Thu nhập">Thu nhập</option>
+            <option value="Chi tiêu">Chi tiêu</option>
+          </select>
+          <label for="addCategory">Phân loại chi tiết:</label>
+          <select id="addCategory" required></select>
+          <label for="addNote">Ghi chú (nếu có):</label>
+          <textarea id="addNote" placeholder="Nhập ghi chú"></textarea>
+          <div class="btn-group">
+            <button type="button" class="cancel-btn" onclick="closeAddForm()">Hủy</button>
+            <button type="submit" class="save-btn">Lưu</button>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
+    </div>
+
+    <!-- Popup loading -->
+    <div id="loadingPopup" class="loading-popup">
+      <div class="loading-spinner"></div>
+      <p>Đang xử lý...</p>
+    </div>
 
     <script src="script.js"></script>
   </div>
