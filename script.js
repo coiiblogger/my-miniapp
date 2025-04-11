@@ -226,8 +226,15 @@ async function openEditForm(transaction) {
   document.getElementById('editContent').value = transaction.content || '';
   document.getElementById('editAmount').value = transaction.amount || 0;
   document.getElementById('editType').value = transaction.type || 'Thu nhập';
-  document.getElementById('editDate').value = transaction.date ? transaction.date.split('/').slice(0, 2).join('/') : '';
   document.getElementById('editNote').value = transaction.note || '';
+
+  // Chuyển đổi định dạng ngày từ DD/MM/YYYY sang YYYY-MM-DD để hiển thị trong date picker
+  let dateValue = '';
+  if (transaction.date && transaction.date.includes('/')) {
+    const [day, month, year] = transaction.date.split('/');
+    dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  document.getElementById('editDate').value = dateValue;
 
   const categories = await fetchCategories();
   categorySelect.innerHTML = '';
@@ -242,15 +249,16 @@ async function openEditForm(transaction) {
   modal.style.display = 'flex';
   form.onsubmit = async function(e) {
     e.preventDefault();
-    const dateInput = document.getElementById('editDate').value;
-    if (!/^\d{1,2}\/\d{1,2}$/.test(dateInput)) return showModalError('edit', 'Ngày phải có định dạng dd/MM!');
-    const [day, month] = dateInput.split('/').map(Number);
+    const dateInput = document.getElementById('editDate').value; // Dạng YYYY-MM-DD
+    if (!dateInput) return showModalError('edit', 'Vui lòng chọn ngày!');
+    const inputDate = new Date(dateInput);
     const today = new Date();
-    const inputDate = new Date(currentYear, month - 1, day);
     if (inputDate > today) return showModalError('edit', 'Không thể chọn ngày trong tương lai!');
-    if (day < 1 || day > 31 || month < 1 || month > 12) return showModalError('edit', 'Ngày hoặc tháng không hợp lệ!');
     const amount = parseFloat(document.getElementById('editAmount').value);
     if (amount <= 0) return showModalError('edit', 'Số tiền phải lớn hơn 0!');
+    // Chuyển đổi định dạng ngày từ YYYY-MM-DD sang DD/MM/YYYY để gửi API
+    const [year, month, day] = dateInput.split('-');
+    const formattedDate = `${day}/${month}/${year}`;
     const updatedTransaction = {
       id: document.getElementById('editTransactionId').value,
       content: document.getElementById('editContent').value,
@@ -258,7 +266,7 @@ async function openEditForm(transaction) {
       type: document.getElementById('editType').value,
       category: document.getElementById('editCategory').value,
       note: document.getElementById('editNote').value || '',
-      date: `${dateInput}/${currentYear}`,
+      date: formattedDate,
       action: 'updateTransaction'
     };
     await saveTransaction(updatedTransaction);
@@ -315,7 +323,19 @@ function closeEditForm() { document.getElementById('editModal').style.display = 
 function closeAddForm() { document.getElementById('addModal').style.display = 'none'; }
 
 async function saveTransaction(updatedTransaction) {
-  showLoading(true, 'tab1');
+  // Xác định tab hiện tại
+  const activeTab = document.querySelector('.tab-content.active').id;
+  let loadingTabId = '';
+  
+  if (activeTab === 'tab1') {
+    loadingTabId = 'tab1';
+  } else if (activeTab === 'tab5') {
+    loadingTabId = 'tab5';
+  } else if (activeTab === 'tab6') {
+    loadingTabId = 'tab6';
+  }
+
+  showLoading(true, loadingTabId);
   try {
     const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
     const response = await fetch(finalUrl, {
@@ -327,14 +347,21 @@ async function saveTransaction(updatedTransaction) {
     if (result.error) throw new Error(result.error);
     showToast("Cập nhật giao dịch thành công!", "success");
     closeEditForm();
-    window.fetchTransactions();
+
+    // Cập nhật lại dữ liệu dựa trên tab hiện tại
+    if (activeTab === 'tab1') {
+      window.fetchTransactions();
+    } else if (activeTab === 'tab5') {
+      window.fetchMonthlyExpenses();
+    } else if (activeTab === 'tab6') {
+      window.searchTransactions();
+    }
   } catch (error) {
     showToast("Lỗi khi cập nhật giao dịch: " + error.message, "error");
   } finally {
-    showLoading(false, 'tab1');
+    showLoading(false, loadingTabId);
   }
 }
-
 async function addTransaction(newTransaction) {
   showLoading(true, 'tab1');
   try {
@@ -358,12 +385,35 @@ async function addTransaction(newTransaction) {
 
 async function deleteTransaction(transactionId) {
   if (!confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) return;
-  showLoading(true, 'tab1');
+
+  // Xác định tab hiện tại
+  const activeTab = document.querySelector('.tab-content.active').id;
+  let cacheData = null;
+  let loadingTabId = '';
+
+  if (activeTab === 'tab1') {
+    cacheData = cachedTransactions;
+    loadingTabId = 'tab1';
+  } else if (activeTab === 'tab5') {
+    cacheData = cachedMonthlyExpenses;
+    loadingTabId = 'tab5';
+  } else if (activeTab === 'tab6') {
+    cacheData = cachedSearchResults;
+    loadingTabId = 'tab6';
+  }
+
+  if (!cacheData) {
+    showToast("Không tìm thấy dữ liệu giao dịch!", "error");
+    return;
+  }
+
+  showLoading(true, loadingTabId);
   try {
-    const transaction = cachedTransactions.data.find(item => String(item.id) === String(transactionId));
+    const transaction = cacheData.data ? cacheData.data.find(item => String(item.id) === String(transactionId)) : 
+                       cacheData.transactions ? cacheData.transactions.find(item => String(item.id) === String(transactionId)) : null;
     if (!transaction) throw new Error("Không tìm thấy giao dịch để xóa!");
 
-    // Trích xuất month từ transaction.date (định dạng: DD/MM/YYYY)
+    // Trích xuất tháng từ transaction.date (định dạng: DD/MM/YYYY)
     const dateParts = transaction.date.split('/');
     if (dateParts.length !== 3) throw new Error("Định dạng ngày không hợp lệ!");
     const transactionMonth = dateParts[1]; // Lấy phần tháng (VD: "04")
@@ -375,17 +425,25 @@ async function deleteTransaction(transactionId) {
       body: JSON.stringify({ 
         action: 'deleteTransaction', 
         id: transactionId, 
-        month: transactionMonth // Gửi month thay vì date và sheetId
+        month: transactionMonth
       })
     });
     const result = await response.json();
     if (result.error) throw new Error(result.error);
     showToast("Xóa giao dịch thành công!", "success");
-    window.fetchTransactions();
+
+    // Cập nhật lại dữ liệu dựa trên tab hiện tại
+    if (activeTab === 'tab1') {
+      window.fetchTransactions();
+    } else if (activeTab === 'tab5') {
+      window.fetchMonthlyExpenses();
+    } else if (activeTab === 'tab6') {
+      window.searchTransactions();
+    }
   } catch (error) {
     showToast("Lỗi khi xóa giao dịch: " + error.message, "error");
   } finally {
-    showLoading(false, 'tab1');
+    showLoading(false, loadingTabId);
   }
 }
 
