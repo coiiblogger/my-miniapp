@@ -211,34 +211,34 @@
 </div>
 
     <div id="editModal" class="modal">
-      <div class="modal-content">
-        <h2>Chỉnh sửa giao dịch</h2>
-        <div id="editError" class="error-message"></div>
-        <form id="editForm">
-          <label for="editTransactionId">ID của giao dịch:</label>
-          <input type="text" id="editTransactionId" readonly>
-          <label for="editDate">Ngày (dd/MM):</label>
-          <input type="text" id="editDate" required pattern="\d{1,2}/\d{1,2}" placeholder="dd/MM">
-          <label for="editContent">Nội dung:</label>
-          <input type="text" id="editContent" required>
-          <label for="editAmount">Số tiền:</label>
-          <input type="number" id="editAmount" min="0" required>
-          <label for="editType">Phân loại:</label>
-          <select id="editType" required>
-            <option value="Thu nhập">Thu nhập</option>
-            <option value="Chi tiêu">Chi tiêu</option>
-          </select>
-          <label for="editCategory">Phân loại chi tiết:</label>
-          <select id="editCategory" required></select>
-          <label for="editNote">Ghi chú (nếu có):</label>
-          <textarea id="editNote"></textarea>
-          <div class="btn-group">
-            <button type="button" class="cancel-btn" onclick="closeEditForm()">Hủy</button>
-            <button type="submit" class="save-btn">Lưu</button>
-          </div>
-        </form>
+  <div class="modal-content">
+    <h2>Chỉnh sửa giao dịch</h2>
+    <div id="editError" class="error-message"></div>
+    <form id="editForm">
+      <label for="editTransactionId">ID của giao dịch:</label>
+      <input type="text" id="editTransactionId" readonly>
+      <label for="editDate">Ngày:</label>
+      <input type="date" id="editDate" required>
+      <label for="editContent">Nội dung:</label>
+      <input type="text" id="editContent" required>
+      <label for="editAmount">Số tiền:</label>
+      <input type="number" id="editAmount" min="0" required>
+      <label for="editType">Phân loại:</label>
+      <select id="editType" required>
+        <option value="Thu nhập">Thu nhập</option>
+        <option value="Chi tiêu">Chi tiêu</option>
+      </select>
+      <label for="editCategory">Phân loại chi tiết:</label>
+      <select id="editCategory" required></select>
+      <label for="editNote">Ghi chú (nếu có):</label>
+      <textarea id="editNote"></textarea>
+      <div class="btn-group">
+        <button type="button" class="cancel-btn" onclick="closeEditForm()">Hủy</button>
+        <button type="submit" class="save-btn">Lưu</button>
       </div>
-    </div>
+    </form>
+  </div>
+</div>
 
     <div id="addModal" class="modal">
   <div class="modal-content">
