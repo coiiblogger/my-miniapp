@@ -271,7 +271,8 @@ async function openAddForm() {
   const categorySelect = document.getElementById('addCategory');
   const currentYear = new Date().getFullYear();
 
-  document.getElementById('addDate').value = formatDateToDDMM(new Date());
+  // Điền ngày hiện tại dạng YYYY-MM-DD
+  document.getElementById('addDate').value = formatDateToYYYYMMDD(new Date());
   document.getElementById('addContent').value = '';
   document.getElementById('addAmount').value = '';
   document.getElementById('addType').value = 'Thu nhập';
@@ -289,13 +290,12 @@ async function openAddForm() {
   modal.style.display = 'flex';
   form.onsubmit = async function(e) {
     e.preventDefault();
-    const dateInput = document.getElementById('addDate').value;
-    if (!/^\d{1,2}\/\d{1,2}$/.test(dateInput)) return showModalError('add', 'Ngày phải có định dạng dd/MM!');
-    const [day, month] = dateInput.split('/').map(Number);
+    const dateInput = document.getElementById('addDate').value; // Dạng YYYY-MM-DD
+    const [year, month, day] = dateInput.split('-');
+    const formattedDate = `${day}/${month}/${year}`; // Chuyển thành DD/MM/YYYY
     const today = new Date();
-    const inputDate = new Date(currentYear, month - 1, day);
+    const inputDate = new Date(year, month - 1, day);
     if (inputDate > today) return showModalError('add', 'Không thể chọn ngày trong tương lai!');
-    if (day < 1 || day > 31 || month < 1 || month > 12) return showModalError('add', 'Ngày hoặc tháng không hợp lệ!');
     const amount = parseFloat(document.getElementById('addAmount').value);
     if (amount <= 0) return showModalError('add', 'Số tiền phải lớn hơn 0!');
     const newTransaction = {
@@ -304,7 +304,7 @@ async function openAddForm() {
       type: document.getElementById('addType').value,
       category: document.getElementById('addCategory').value,
       note: document.getElementById('addNote').value || '',
-      date: `${dateInput}/${currentYear}`,
+      date: formattedDate, // Gửi dạng DD/MM/YYYY
       action: 'addTransaction'
     };
     await addTransaction(newTransaction);
