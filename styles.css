@@ -543,12 +543,27 @@ canvas#monthlyChart {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Đảm bảo date picker có kích thước đồng nhất trên các trình duyệt và căn trái */
+/* Đảm bảo date picker căn trái trên tất cả thiết bị */
+input[type="date"] {
+  text-align: left !important;
+  padding-left: 0.7rem !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Định kiểu cụ thể cho date picker trong modal */
 .modal-content input[type="date"] {
   width: 100%;
   padding: 0.7rem;
-  padding-left: 0.7rem; /* Thêm padding trái để nội dung không sát mép */
-  text-align: left !important; /* Căn trái dữ liệu ngày */
+  padding-left: 0.7rem !important;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  font-size: 1rem;
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+  text-align: left !important;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -556,6 +571,19 @@ canvas#monthlyChart {
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
   background-size: 1rem;
+}
+
+/* Ghi đè kiểu dáng gốc trên iOS */
+.modal-content input[type="date"]::-webkit-date-and-time-value {
+  text-align: left !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Ghi đè biểu tượng điều khiển trên Webkit */
+.modal-content input[type="date"]::-webkit-inner-spin-button,
+.modal-content input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-right: 0.7rem;
 }
 
 /* Đảm bảo các trường select có mũi tên tùy chỉnh */
@@ -711,8 +739,14 @@ canvas#monthlyChart {
 
   /* Đảm bảo date picker căn trái trên thiết bị di động */
   .modal-content input[type="date"] {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    padding-left: 0.7rem !important;
     text-align: left !important;
-    padding-left: 0.7rem;
+  }
+
+  .modal-content input[type="date"]::-webkit-date-and-time-value {
+    text-align: left !important;
   }
 }
 
@@ -929,13 +963,13 @@ canvas#monthlyChart {
 }
 
 .toast.success {
-  background: #10B981; /* Xanh lá cho thành công */
+  background: #10B981;
 }
 
 .toast.error {
-  background: #EF4444; /* Đỏ cho lỗi */
+  background: #EF4444;
 }
 
 .toast.warning {
-  background: #F59E0B; /* Vàng cho cảnh báo */
+  background: #F59E0B;
 }
