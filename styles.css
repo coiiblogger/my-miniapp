@@ -526,18 +526,54 @@ canvas#monthlyChart {
   font-size: 1rem;
   margin-bottom: 0.5rem;
   color: var(--text-color);
+  font-weight: 500;
 }
 
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.7rem;
   margin-bottom: 1rem;
   border-radius: 8px;
   border: 1px solid #E5E7EB;
   font-size: 1rem;
   box-sizing: border-box;
+  background-color: #FFFFFF;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Đảm bảo date picker có kích thước đồng nhất trên các trình duyệt */
+.modal-content input[type="date"] {
+  width: 100%;
+  padding: 0.7rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1rem;
+}
+
+/* Đảm bảo các trường select có mũi tên tùy chỉnh */
+.modal-content select {
+  background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Hiệu ứng khi focus */
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 
 .modal-content textarea {
