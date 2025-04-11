@@ -555,10 +555,12 @@ canvas#monthlyChart {
   background-position: right 0.7rem center;
   background-size: 1rem;
 }
+
 /* Căn trái chỉ cho date picker trong addModal */
 #addModal .modal-content input[type="date"] {
   text-align: left;
 }
+
 /* Đảm bảo các trường select có mũi tên tùy chỉnh */
 .modal-content select {
   background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
