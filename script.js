@@ -220,11 +220,11 @@ async function openEditForm(transaction) {
   const modal = document.getElementById('editModal');
   const form = document.getElementById('editForm');
   const categorySelect = document.getElementById('editCategory');
-  const currentYear = new Date().getFullYear();
+  const amountInput = document.getElementById('editAmount');
 
   document.getElementById('editTransactionId').value = transaction.id || '';
   document.getElementById('editContent').value = transaction.content || '';
-  document.getElementById('editAmount').value = transaction.amount || 0;
+  amountInput.value = formatNumberWithCommas(transaction.amount.toString());
   document.getElementById('editType').value = transaction.type || 'Thu nhập';
   document.getElementById('editNote').value = transaction.note || '';
 
@@ -246,6 +246,23 @@ async function openEditForm(transaction) {
     categorySelect.appendChild(option);
   });
 
+  // Xử lý định dạng số tiền khi nhập
+  amountInput.addEventListener('input', function() {
+    const cursorPosition = this.selectionStart;
+    const oldLength = this.value.length;
+    this.value = formatNumberWithCommas(this.value);
+    const newLength = this.value.length;
+    // Điều chỉnh vị trí con trỏ
+    this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
+  });
+
+  // Ngăn nhập ký tự không phải số
+  amountInput.addEventListener('keypress', function(e) {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  });
+
   modal.style.display = 'flex';
   form.onsubmit = async function(e) {
     e.preventDefault();
@@ -254,7 +271,7 @@ async function openEditForm(transaction) {
     const inputDate = new Date(dateInput);
     const today = new Date();
     if (inputDate > today) return showModalError('edit', 'Không thể chọn ngày trong tương lai!');
-    const amount = parseFloat(document.getElementById('editAmount').value);
+    const amount = parseNumber(document.getElementById('editAmount').value);
     if (amount <= 0) return showModalError('edit', 'Số tiền phải lớn hơn 0!');
     // Chuyển đổi định dạng ngày từ YYYY-MM-DD sang DD/MM/YYYY để gửi API
     const [year, month, day] = dateInput.split('-');
@@ -1141,3 +1158,81 @@ document.addEventListener('DOMContentLoaded', function() {
   populateSearchCategories();
   window.openTab('tab1'); // Mặc định mở tab Giao dịch
 });
+// Xử lý định dạng tiền (Ví dụ 5.000 hoặc 50.000)
+// Hàm định dạng số với dấu chấm phân cách
+function formatNumberWithCommas(value) {
+  if (!value) return '';
+  // Chỉ giữ các chữ số
+  const digitsOnly = value.replace(/[^0-9]/g, '');
+  // Định dạng với dấu chấm
+  return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// Hàm loại bỏ dấu chấm để lấy số nguyên
+function parseNumber(value) {
+  return parseInt(value.replace(/[^0-9]/g, '')) || 0;
+}
+
+// Cập nhật hàm openAddForm
+async function openAddForm() {
+  const modal = document.getElementById('addModal');
+  const form = document.getElementById('addForm');
+  const categorySelect = document.getElementById('addCategory');
+  const amountInput = document.getElementById('addAmount');
+
+  // Điền ngày hiện tại dạng YYYY-MM-DD
+  document.getElementById('addDate').value = formatDateToYYYYMMDD(new Date());
+  document.getElementById('addContent').value = '';
+  amountInput.value = '';
+  document.getElementById('addType').value = 'Thu nhập';
+  document.getElementById('addNote').value = '';
+
+  const categories = await fetchCategories();
+  categorySelect.innerHTML = '';
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  });
+
+  // Xử lý định dạng số tiền khi nhập
+  amountInput.addEventListener('input', function() {
+    const cursorPosition = this.selectionStart;
+    const oldLength = this.value.length;
+    this.value = formatNumberWithCommas(this.value);
+    const newLength = this.value.length;
+    // Điều chỉnh vị trí con trỏ
+    this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
+  });
+
+  // Ngăn nhập ký tự không phải số
+  amountInput.addEventListener('keypress', function(e) {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  });
+
+  modal.style.display = 'flex';
+  form.onsubmit = async function(e) {
+    e.preventDefault();
+    const dateInput = document.getElementById('addDate').value; // Dạng YYYY-MM-DD
+    const [year, month, day] = dateInput.split('-');
+    const formattedDate = `${day}/${month}/${year}`; // Chuyển thành DD/MM/YYYY
+    const today = new Date();
+    const inputDate = new Date(year, month - 1, day);
+    if (inputDate > today) return showModalError('add', 'Không thể chọn ngày trong tương lai!');
+    const amount = parseNumber(document.getElementById('addAmount').value);
+    if (amount <= 0) return showModalError('add', 'Số tiền phải lớn hơn 0!');
+    const newTransaction = {
+      content: document.getElementById('addContent').value,
+      amount: amount,
+      type: document.getElementById('addType').value,
+      category: document.getElementById('addCategory').value,
+      note: document.getElementById('addNote').value || '',
+      date: formattedDate, // Gửi dạng DD/MM/YYYY
+      action: 'addTransaction'
+    };
+    await addTransaction(newTransaction);
+  };
+}
