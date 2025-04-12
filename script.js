@@ -1100,7 +1100,11 @@ document.addEventListener('DOMContentLoaded', function() {
     startMonthInput.value = 1; // Tháng 1
     endMonthInput.value = currentMonth; // Tháng hiện tại
   }
-  
+  // Tab 5: Liệt kê - Đặt tháng hiện tại
+  const expenseMonthInput = document.getElementById('expenseMonth');
+  if (expenseMonthInput) {
+    expenseMonthInput.value = currentMonth; // Đặt tháng hiện tại
+  }
   document.getElementById('prevPage').addEventListener('click', () => {
     if (currentPage > 1) {
       currentPage--;
