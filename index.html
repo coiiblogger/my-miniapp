@@ -213,7 +213,7 @@
 
 <div id="tab7" class="tab-content">
   <h1>QUẢN LÝ TỪ KHÓA</h1>
-  <p class="notification">Chọn phân loại chi tiết và nhập từ khóa để thêm vào sheet Từ khóa.</p>
+  <p class="notification">Chọn phân loại chi tiết và nhập từ khóa để thêm hoặc xóa khỏi sheet Từ khóa.</p>
   <div id="errorMessageTab7" style="color: red; text-align: center; display: none; margin-bottom: 1rem;"></div>
   <div id="successMessageTab7" style="color: green; text-align: center; display: none; margin-bottom: 1rem;"></div>
   <div id="loadingTab7" style="display: none; text-align: center; margin: 1rem 0;">
@@ -230,7 +230,10 @@
       <label>Từ khóa: </label>
       <input type="text" id="keywordInput" class="uniform-input" placeholder="Nhập từ khóa (VD: đổ dầu, đổ xăng)">
     </div>
-    <button id="addKeywordBtn">Thêm từ khóa</button>
+    <div class="button-group">
+      <button id="addKeywordBtn">Thêm từ khóa</button>
+      <button id="deleteKeywordBtn">Xóa từ khóa</button>
+    </div>
   </div>
   <div class="keywords-list" id="keywordsContainer"></div>
 </div>
