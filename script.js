@@ -1091,7 +1091,16 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('addTransactionBtn').addEventListener('click', openAddForm);
   document.getElementById('fetchMonthlyExpensesBtn').addEventListener('click', window.fetchMonthlyExpenses);
   document.getElementById('searchTransactionsBtn').addEventListener('click', window.searchTransactions);
-
+  
+  const currentMonth = new Date().getMonth() + 1; // Lấy tháng hiện tại (1-12)
+  // Tab 3: Biểu đồ - Tháng 1 đến tháng hiện tại
+  const startMonthInput = document.getElementById('startMonth');
+  const endMonthInput = document.getElementById('endMonth');
+  if (startMonthInput && endMonthInput) {
+    startMonthInput.value = 1; // Tháng 1
+    endMonthInput.value = currentMonth; // Tháng hiện tại
+  }
+  
   document.getElementById('prevPage').addEventListener('click', () => {
     if (currentPage > 1) {
       currentPage--;
