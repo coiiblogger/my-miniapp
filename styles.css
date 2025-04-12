@@ -1013,3 +1013,67 @@ input[type="date"] {
   white-space: normal;
   word-wrap: break-word;
 }
+/* Style cho nhóm nút trong tab Từ khóa */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+/* Style cho nút Thêm từ khóa (thu nhỏ) */
+#addKeywordBtn {
+  width: 150px; /* Thu nhỏ nút */
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+#addKeywordBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Style cho nút Xóa từ khóa (màu khác biệt) */
+#deleteKeywordBtn {
+  width: 150px; /* Cùng kích thước với nút Thêm */
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #EF4444, #F87171); /* Màu đỏ để khác biệt */
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+#deleteKeywordBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Điều chỉnh cho màn hình nhỏ */
+@media (max-width: 600px) {
+  .button-group {
+    gap: 0.5rem;
+    max-width: 300px;
+  }
+
+  #addKeywordBtn,
+  #deleteKeywordBtn {
+    width: 130px;
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+}
