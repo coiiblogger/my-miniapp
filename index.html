@@ -192,7 +192,7 @@
     </div>
     <div class="input-field">
       <label>Số tiền: </label>
-      <input type="number" id="searchAmount" class="uniform-input" min="0" placeholder="Nhập số tiền">
+      <input type="text" id="searchAmount" class="uniform-input" placeholder="Nhập số tiền (VD: 50.000)">
     </div>
     <div class="input-field">
       <label>Phân loại chi tiết: </label>
@@ -220,9 +220,9 @@
       <label for="editDate">Ngày:</label>
       <input type="date" id="editDate" required>
       <label for="editContent">Nội dung:</label>
-      <input type="text" id="editContent" required>
+      <input type="text" id="editContent" placeholder="Nhập nội dung giao dịch" required>
       <label for="editAmount">Số tiền:</label>
-      <input type="number" id="editAmount" min="0" required>
+      <input type="text" id="editAmount" placeholder="Nhập số tiền (VD: 5.000)" required>
       <label for="editType">Phân loại:</label>
       <select id="editType" required>
         <option value="Thu nhập">Thu nhập</option>
@@ -231,7 +231,7 @@
       <label for="editCategory">Phân loại chi tiết:</label>
       <select id="editCategory" required></select>
       <label for="editNote">Ghi chú (nếu có):</label>
-      <textarea id="editNote"></textarea>
+      <textarea id="editNote" placeholder="Nhập ghi chú (tùy chọn)"></textarea>
       <div class="btn-group">
         <button type="button" class="cancel-btn" onclick="closeEditForm()">Hủy</button>
         <button type="submit" class="save-btn">Lưu</button>
@@ -248,9 +248,9 @@
       <label for="addDate">Ngày:</label>
       <input type="date" id="addDate" required>
       <label for="addContent">Nội dung:</label>
-      <input type="text" id="addContent" required>
+      <input type="text" id="addContent" placeholder="Nhập nội dung giao dịch" required>
       <label for="addAmount">Số tiền:</label>
-      <input type="number" id="addAmount" min="0" required>
+      <input type="text" id="addAmount" placeholder="Nhập số tiền (VD: 5.000)" required>
       <label for="addType">Phân loại:</label>
       <select id="addType" required>
         <option value="Thu nhập">Thu nhập</option>
@@ -259,7 +259,7 @@
       <label for="addCategory">Phân loại chi tiết:</label>
       <select id="addCategory" required></select>
       <label for="addNote">Ghi chú (nếu có):</label>
-      <textarea id="addNote"></textarea>
+      <textarea id="addNote" placeholder="Nhập ghi chú (tùy chọn)"></textarea>
       <div class="btn-group">
         <button type="button" class="cancel-btn" onclick="closeAddForm()">Hủy</button>
         <button type="submit" class="save-btn">Lưu</button>
