@@ -1111,6 +1111,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   // Tab 7: Từ khóa
   document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
+  document.getElementById('deleteKeywordBtn').addEventListener('click', window.deleteKeyword); // Thêm sự kiện cho nút Xóa từ khóa
   // Gọi hàm để điền danh sách phân loại chi tiết cho tab Từ khóa
   populateKeywordCategories();
   document.getElementById('prevPage').addEventListener('click', () => {
@@ -1155,20 +1156,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   const searchAmountInput = document.getElementById('searchAmount');
-if (searchAmountInput) {
-  searchAmountInput.addEventListener('input', function() {
-    const cursorPosition = this.selectionStart;
-    const oldLength = this.value.length;
-    this.value = formatNumberWithCommas(this.value);
-    const newLength = this.value.length;
-    this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
-  });
+  if (searchAmountInput) {
+    searchAmountInput.addEventListener('input', function() {
+      const cursorPosition = this.selectionStart;
+      const oldLength = this.value.length;
+      this.value = formatNumberWithCommas(this.value);
+      const newLength = this.value.length;
+      this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
+    });
 
-  searchAmountInput.addEventListener('keypress', function(e) {
-    if (!/[0-9]/.test(e.key)) {
-      e.preventDefault();
-    }
-  });
+    searchAmountInput.addEventListener('keypress', function(e) {
+      if (!/[0-9]/.test(e.key)) {
+        e.preventDefault();
+      }
+    });
 }
 
   // Điền ngày hiện tại và khoảng thời gian mặc định khi mở Mini App
