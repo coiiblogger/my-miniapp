@@ -18,6 +18,7 @@
     <div class="nav-item" data-tab="tab4"><i class="fas fa-info-circle"></i><span>Giới thiệu</span></div>
     <div class="nav-item" data-tab="tab5"><i class="fas fa-money-bill-wave"></i><span>Liệt kê</span></div>
     <div class="nav-item" data-tab="tab6"><i class="fas fa-search"></i><span>Tìm kiếm</span></div>
+    <div class="nav-item" data-tab="tab7"><i class="fas fa-key"></i><span>Từ khóa</span></div>
   </div>
 
   <div class="content-wrapper">
@@ -208,6 +209,30 @@
     <span id="pageInfoSearch"></span>
     <button id="nextPageSearch" class="pagination-btn">Trang sau</button>
   </div>
+</div>
+
+<div id="tab7" class="tab-content">
+  <h1>QUẢN LÝ TỪ KHÓA</h1>
+  <p class="notification">Chọn phân loại chi tiết và nhập từ khóa để thêm vào sheet Từ khóa.</p>
+  <div id="errorMessageTab7" style="color: red; text-align: center; display: none; margin-bottom: 1rem;"></div>
+  <div id="successMessageTab7" style="color: green; text-align: center; display: none; margin-bottom: 1rem;"></div>
+  <div id="loadingTab7" style="display: none; text-align: center; margin: 1rem 0;">
+    <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+  </div>
+  <div class="input-group vertical">
+    <div class="input-field">
+      <label>Phân loại chi tiết: </label>
+      <select id="keywordCategory" class="uniform-input">
+        <option value="">Chọn phân loại</option>
+      </select>
+    </div>
+    <div class="input-field">
+      <label>Từ khóa: </label>
+      <input type="text" id="keywordInput" class="uniform-input" placeholder="Nhập từ khóa (VD: đổ dầu, đổ xăng)">
+    </div>
+    <button id="addKeywordBtn">Thêm từ khóa</button>
+  </div>
+  <div class="keywords-list" id="keywordsContainer"></div>
 </div>
 
     <div id="editModal" class="modal">
