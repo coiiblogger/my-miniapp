@@ -1369,7 +1369,6 @@ window.addKeyword = async function() {
 
 // Hàm xóa từ khóa
 window.deleteKeyword = async function() {
-  // Kiểm tra các biến toàn cục trước khi sử dụng
   if (!apiUrl || !proxyUrl || !sheetId) {
     console.error("Lỗi: apiUrl, proxyUrl hoặc sheetId không được định nghĩa!");
     showToast("Lỗi hệ thống: Thiếu thông tin cấu hình!", "error");
@@ -1379,7 +1378,6 @@ window.deleteKeyword = async function() {
   const category = document.getElementById('keywordCategory')?.value;
   const keywordInput = document.getElementById('keywordInput')?.value?.trim();
 
-  // Kiểm tra đầu vào
   if (!category) {
     showToast("Vui lòng chọn phân loại chi tiết!", "warning");
     return;
@@ -1390,11 +1388,9 @@ window.deleteKeyword = async function() {
   }
 
   try {
-    // Hiển thị loading
     console.log("Bắt đầu xóa từ khóa...");
     showLoading(true, 'tab7');
 
-    // Lấy danh sách từ khóa hiện tại để kiểm tra
     const targetUrl = `${apiUrl}?action=getKeywords&sheetId=${sheetId}`;
     const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
     console.log("Gửi yêu cầu lấy từ khóa:", finalUrl);
@@ -1409,22 +1405,24 @@ window.deleteKeyword = async function() {
       throw new Error(keywordsData.error);
     }
 
-    // Kiểm tra xem danh mục có tồn tại không
     const categoryData = keywordsData.find(item => item.category === category);
     if (!categoryData) {
       showToast(`Danh mục '${category}' không tồn tại.`, "warning");
       return;
     }
 
-    // Kiểm tra xem từ khóa có tồn tại trong danh mục không
+    // Chuẩn hóa danh sách từ khóa và từ khóa nhập vào
     const keywordsArray = categoryData.keywords.split(", ").map(k => k.trim().toLowerCase());
-    const keywordToDelete = keywordInput.toLowerCase();
+    const keywordToDelete = keywordInput.trim().toLowerCase();
+
+    console.log("Danh sách từ khóa trong danh mục:", keywordsArray);
+    console.log("Từ khóa cần xóa:", keywordToDelete);
+
     if (!keywordsArray.includes(keywordToDelete)) {
       showToast(`Từ khóa '${keywordInput}' không tồn tại trong danh mục '${category}'.`, "warning");
       return;
     }
 
-    // Gửi yêu cầu xóa từ khóa
     const deleteUrl = proxyUrl + encodeURIComponent(apiUrl);
     console.log("Gửi yêu cầu xóa từ khóa:", deleteUrl);
 
@@ -1448,11 +1446,10 @@ window.deleteKeyword = async function() {
       throw new Error(result.error);
     }
 
-    // Xóa thành công
     showToast("Xóa từ khóa thành công!", "success");
-    document.getElementById('keywordInput').value = ''; // Xóa trường nhập
+    document.getElementById('keywordInput').value = '';
     if (typeof window.fetchKeywords === 'function') {
-      window.fetchKeywords(); // Cập nhật lại danh sách từ khóa
+      window.fetchKeywords();
     } else {
       console.error("Lỗi: Hàm fetchKeywords không được định nghĩa!");
       showToast("Lỗi: Không thể cập nhật danh sách từ khóa!", "error");
