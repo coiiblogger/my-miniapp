@@ -973,3 +973,43 @@ input[type="date"] {
 .toast.warning {
   background: #F59E0B;
 }
+.keywords-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.keyword-box {
+  padding: 1rem;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #F8FAFC, #E5E7EB);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.keyword-box:hover {
+  transform: translateY(-5px);
+}
+
+.keyword-box .category {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.keyword-box .keywords {
+  font-size: 1rem;
+  color: var(--secondary-color);
+  white-space: normal;
+  word-wrap: break-word;
+}
