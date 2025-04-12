@@ -81,6 +81,10 @@ window.openTab = function(tabId) {
   contents.forEach(content => content.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add('active');
+// Tải dữ liệu từ khóa khi mở tab Từ khóa
+  if (tabId === 'tab7') {
+    window.fetchKeywords();
+  }
 };
 
 // Tab 1: Giao dịch
@@ -1105,6 +1109,10 @@ document.addEventListener('DOMContentLoaded', function() {
   if (expenseMonthInput) {
     expenseMonthInput.value = currentMonth; // Đặt tháng hiện tại
   }
+  // Tab 7: Từ khóa
+  document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
+  // Gọi hàm để điền danh sách phân loại chi tiết cho tab Từ khóa
+  populateKeywordCategories();
   document.getElementById('prevPage').addEventListener('click', () => {
     if (currentPage > 1) {
       currentPage--;
@@ -1266,3 +1274,94 @@ async function openAddForm() {
     await addTransaction(newTransaction);
   };
 }
+
+// Tab 7: Từ khóa
+window.fetchKeywords = async function() {
+  showLoading(true, 'tab7');
+  try {
+    const targetUrl = `${apiUrl}?action=getKeywords&sheetId=${sheetId}`;
+    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
+    const response = await fetch(finalUrl);
+    const keywordsData = await response.json();
+    if (keywordsData.error) throw new Error(keywordsData.error);
+    displayKeywords(keywordsData);
+  } catch (error) {
+    showToast("Lỗi khi lấy dữ liệu từ khóa: " + error.message, "error");
+    displayKeywords({ error: true });
+  } finally {
+    showLoading(false, 'tab7');
+  }
+};
+// Hàm hiển thị danh sách từ khóa
+function displayKeywords(data) {
+  const container = document.getElementById('keywordsContainer');
+  container.innerHTML = '';
+
+  if (!data || data.error || !Array.isArray(data) || data.length === 0) {
+    container.innerHTML = '<div>Không có từ khóa nào</div>';
+    return;
+  }
+
+  data.forEach(item => {
+    const keywordBox = document.createElement('div');
+    keywordBox.className = 'keyword-box';
+    keywordBox.innerHTML = `
+      <div class="category">${item.category}</div>
+      <div class="keywords">Từ khóa: ${item.keywords}</div>
+    `;
+    container.appendChild(keywordBox);
+  });
+}
+// Hàm điền danh sách phân loại chi tiết vào dropdown
+async function populateKeywordCategories() {
+  const categorySelect = document.getElementById('keywordCategory');
+  const categories = await fetchCategories();
+  categorySelect.innerHTML = '<option value="">Chọn phân loại</option>';
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  });
+}
+
+//Hàm thêm từ khóa:
+window.addKeyword = async function() {
+  const category = document.getElementById('keywordCategory').value;
+  const keywordsInput = document.getElementById('keywordInput').value.trim();
+
+  if (!category) {
+    return showToast("Vui lòng chọn phân loại chi tiết!", "warning");
+  }
+  if (!keywordsInput) {
+    return showToast("Vui lòng nhập từ khóa!", "warning");
+  }
+
+  // Chuẩn hóa từ khóa: loại bỏ khoảng trắng thừa, phân cách bằng ", "
+  const keywordsArray = keywordsInput.split(',').map(keyword => keyword.trim()).filter(keyword => keyword);
+  const formattedKeywords = keywordsArray.join(', ');
+
+  showLoading(true, 'tab7');
+  try {
+    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
+    const response = await fetch(finalUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'addKeyword',
+        category: category,
+        keywords: formattedKeywords,
+        sheetId: sheetId
+      })
+    });
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+    showToast("Thêm từ khóa thành công!", "success");
+    document.getElementById('keywordInput').value = ''; // Xóa trường nhập sau khi thêm
+    window.fetchKeywords(); // Cập nhật lại danh sách từ khóa
+  } catch (error) {
+    showToast("Lỗi khi thêm từ khóa: " + error.message, "error");
+  } finally {
+    showLoading(false, 'tab7');
+  }
+};
