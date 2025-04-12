@@ -973,7 +973,8 @@ async function populateSearchCategories() {
 window.searchTransactions = async function() {
   const month = document.getElementById('searchMonth').value;
   const content = document.getElementById('searchContent').value.trim();
-  const amount = document.getElementById('searchAmount').value;
+  let amount = document.getElementById('searchAmount').value;
+  amount = amount ? parseNumber(amount).toString() : '';
   const category = document.getElementById('searchCategory').value;
   const year = new Date().getFullYear();
 
@@ -1132,6 +1133,22 @@ document.addEventListener('DOMContentLoaded', function() {
       window.searchTransactions();
     }
   });
+  const searchAmountInput = document.getElementById('searchAmount');
+if (searchAmountInput) {
+  searchAmountInput.addEventListener('input', function() {
+    const cursorPosition = this.selectionStart;
+    const oldLength = this.value.length;
+    this.value = formatNumberWithCommas(this.value);
+    const newLength = this.value.length;
+    this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
+  });
+
+  searchAmountInput.addEventListener('keypress', function(e) {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  });
+}
 
   // Điền ngày hiện tại và khoảng thời gian mặc định khi mở Mini App
   const today = new Date();
