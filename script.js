@@ -1366,41 +1366,69 @@ window.addKeyword = async function() {
     showLoading(false, 'tab7');
   }
 };
+
 // Hàm xóa từ khóa
 window.deleteKeyword = async function() {
-  const category = document.getElementById('keywordCategory').value;
-  const keywordInput = document.getElementById('keywordInput').value.trim();
+  // Kiểm tra các biến toàn cục trước khi sử dụng
+  if (!apiUrl || !proxyUrl || !sheetId) {
+    console.error("Lỗi: apiUrl, proxyUrl hoặc sheetId không được định nghĩa!");
+    showToast("Lỗi hệ thống: Thiếu thông tin cấu hình!", "error");
+    return;
+  }
 
+  const category = document.getElementById('keywordCategory')?.value;
+  const keywordInput = document.getElementById('keywordInput')?.value?.trim();
+
+  // Kiểm tra đầu vào
   if (!category) {
-    return showToast("Vui lòng chọn phân loại chi tiết!", "warning");
+    showToast("Vui lòng chọn phân loại chi tiết!", "warning");
+    return;
   }
   if (!keywordInput) {
-    return showToast("Vui lòng nhập từ khóa cần xóa!", "warning");
+    showToast("Vui lòng nhập từ khóa cần xóa!", "warning");
+    return;
   }
 
-  // Kiểm tra xem từ khóa có tồn tại trong danh mục không
   try {
+    // Hiển thị loading
+    console.log("Bắt đầu xóa từ khóa...");
+    showLoading(true, 'tab7');
+
+    // Lấy danh sách từ khóa hiện tại để kiểm tra
     const targetUrl = `${apiUrl}?action=getKeywords&sheetId=${sheetId}`;
     const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-    const response = await fetch(finalUrl);
-    const keywordsData = await response.json();
-    if (keywordsData.error) throw new Error(keywordsData.error);
+    console.log("Gửi yêu cầu lấy từ khóa:", finalUrl);
 
-    const categoryData = keywordsData.find(item => item.category === category);
-    if (!categoryData) {
-      return showToast(`Danh mục '${category}' không tồn tại.`, "warning");
+    const response = await fetch(finalUrl);
+    if (!response.ok) {
+      throw new Error(`Lỗi khi lấy danh sách từ khóa: HTTP status ${response.status}`);
     }
 
+    const keywordsData = await response.json();
+    if (keywordsData.error) {
+      throw new Error(keywordsData.error);
+    }
+
+    // Kiểm tra xem danh mục có tồn tại không
+    const categoryData = keywordsData.find(item => item.category === category);
+    if (!categoryData) {
+      showToast(`Danh mục '${category}' không tồn tại.`, "warning");
+      return;
+    }
+
+    // Kiểm tra xem từ khóa có tồn tại trong danh mục không
     const keywordsArray = categoryData.keywords.split(", ").map(k => k.trim().toLowerCase());
     const keywordToDelete = keywordInput.toLowerCase();
     if (!keywordsArray.includes(keywordToDelete)) {
-      return showToast(`Từ khóa '${keywordInput}' không tồn tại trong danh mục '${category}'.`, "warning");
+      showToast(`Từ khóa '${keywordInput}' không tồn tại trong danh mục '${category}'.`, "warning");
+      return;
     }
 
     // Gửi yêu cầu xóa từ khóa
-    showLoading(true, 'tab7');
-    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
-    const responseDelete = await fetch(finalUrl, {
+    const deleteUrl = proxyUrl + encodeURIComponent(apiUrl);
+    console.log("Gửi yêu cầu xóa từ khóa:", deleteUrl);
+
+    const responseDelete = await fetch(deleteUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1410,15 +1438,30 @@ window.deleteKeyword = async function() {
         sheetId: sheetId
       })
     });
-    const result = await responseDelete.json();
-    if (result.error) throw new Error(result.error);
 
+    if (!responseDelete.ok) {
+      throw new Error(`Lỗi khi xóa từ khóa: HTTP status ${responseDelete.status}`);
+    }
+
+    const result = await responseDelete.json();
+    if (result.error) {
+      throw new Error(result.error);
+    }
+
+    // Xóa thành công
     showToast("Xóa từ khóa thành công!", "success");
-    document.getElementById('keywordInput').value = ''; // Xóa trường nhập sau khi xóa
-    window.fetchKeywords(); // Cập nhật lại danh sách từ khóa
+    document.getElementById('keywordInput').value = ''; // Xóa trường nhập
+    if (typeof window.fetchKeywords === 'function') {
+      window.fetchKeywords(); // Cập nhật lại danh sách từ khóa
+    } else {
+      console.error("Lỗi: Hàm fetchKeywords không được định nghĩa!");
+      showToast("Lỗi: Không thể cập nhật danh sách từ khóa!", "error");
+    }
   } catch (error) {
+    console.error("Lỗi trong deleteKeyword:", error);
     showToast("Lỗi khi xóa từ khóa: " + error.message, "error");
   } finally {
     showLoading(false, 'tab7');
+    console.log("Kết thúc xóa từ khóa.");
   }
 };
