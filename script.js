@@ -1366,3 +1366,59 @@ window.addKeyword = async function() {
     showLoading(false, 'tab7');
   }
 };
+// Hàm xóa từ khóa
+window.deleteKeyword = async function() {
+  const category = document.getElementById('keywordCategory').value;
+  const keywordInput = document.getElementById('keywordInput').value.trim();
+
+  if (!category) {
+    return showToast("Vui lòng chọn phân loại chi tiết!", "warning");
+  }
+  if (!keywordInput) {
+    return showToast("Vui lòng nhập từ khóa cần xóa!", "warning");
+  }
+
+  // Kiểm tra xem từ khóa có tồn tại trong danh mục không
+  try {
+    const targetUrl = `${apiUrl}?action=getKeywords&sheetId=${sheetId}`;
+    const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
+    const response = await fetch(finalUrl);
+    const keywordsData = await response.json();
+    if (keywordsData.error) throw new Error(keywordsData.error);
+
+    const categoryData = keywordsData.find(item => item.category === category);
+    if (!categoryData) {
+      return showToast(`Danh mục '${category}' không tồn tại.`, "warning");
+    }
+
+    const keywordsArray = categoryData.keywords.split(", ").map(k => k.trim().toLowerCase());
+    const keywordToDelete = keywordInput.toLowerCase();
+    if (!keywordsArray.includes(keywordToDelete)) {
+      return showToast(`Từ khóa '${keywordInput}' không tồn tại trong danh mục '${category}'.`, "warning");
+    }
+
+    // Gửi yêu cầu xóa từ khóa
+    showLoading(true, 'tab7');
+    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
+    const responseDelete = await fetch(finalUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'deleteKeyword',
+        category: category,
+        keyword: keywordInput,
+        sheetId: sheetId
+      })
+    });
+    const result = await responseDelete.json();
+    if (result.error) throw new Error(result.error);
+
+    showToast("Xóa từ khóa thành công!", "success");
+    document.getElementById('keywordInput').value = ''; // Xóa trường nhập sau khi xóa
+    window.fetchKeywords(); // Cập nhật lại danh sách từ khóa
+  } catch (error) {
+    showToast("Lỗi khi xóa từ khóa: " + error.message, "error");
+  } finally {
+    showLoading(false, 'tab7');
+  }
+};
