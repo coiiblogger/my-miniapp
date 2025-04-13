@@ -124,13 +124,12 @@ window.fetchTransactions = async function() {
 
 function displayTransactions(data) {
   const container = document.getElementById('transactionsContainer');
-  const summaryContainer = document.getElementById('dailySummary'); // Sửa từ transactionSummary thành dailySummary
+  const summaryContainer = document.getElementById('dailySummary');
   const pageInfo = document.getElementById('pageInfo');
   const prevPageBtn = document.getElementById('prevPage');
   const nextPageBtn = document.getElementById('nextPage');
   container.innerHTML = '';
 
-  // Kiểm tra dữ liệu và hiển thị thống kê
   if (!data || data.error || !Array.isArray(data) || data.length === 0) {
     container.innerHTML = '<div>Không có giao dịch nào trong ngày này</div>';
     summaryContainer.innerHTML = `
@@ -144,7 +143,6 @@ function displayTransactions(data) {
     return;
   }
 
-  // Tính toán tổng thu nhập, tổng chi tiêu, số dư
   let totalIncome = 0, totalExpense = 0;
   data.forEach(item => {
     if (item.type === 'Thu nhập') totalIncome += item.amount;
@@ -152,14 +150,12 @@ function displayTransactions(data) {
   });
   const balance = totalIncome - totalExpense;
 
-  // Cập nhật thống kê
   summaryContainer.innerHTML = `
     <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount">${totalIncome.toLocaleString('vi-VN')}đ</div></div>
     <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount">${totalExpense.toLocaleString('vi-VN')}đ</div></div>
     <div class="stat-box balance"><div class="title">Số dư</div><div class="amount">${balance.toLocaleString('vi-VN')}đ</div></div>
   `;
 
-  // Hiển thị danh sách giao dịch
   const totalPages = Math.ceil(data.length / transactionsPerPage);
   const startIndex = (currentPage - 1) * transactionsPerPage;
   const endIndex = startIndex + transactionsPerPage;
@@ -177,7 +173,7 @@ function displayTransactions(data) {
           <div class="date">${formatDate(item.date)}</div>
           <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
           <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-          <div class="number">STT của giao dịch: ${transactionNumber}</div>
+          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
           <div class="id">ID của giao dịch: ${item.id}</div>
         </div>
         <div style="flex: 1; text-align: right;">
@@ -964,7 +960,7 @@ function displayMonthlyExpenses(data) {
           <div class="date">${formatDate(item.date)}</div>
           <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
           <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-          <div class="number">STT của giao dịch: ${transactionNumber}</div>
+          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
           <div class="id">ID của giao dịch: ${item.id}</div>
         </div>
         <div style="flex: 1; text-align: right;">
@@ -1085,7 +1081,7 @@ function displaySearchResults(data) {
           <div class="date">${formatDate(item.date)}</div>
           <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
           <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-          <div class="number">STT của giao dịch: ${transactionNumber}</div>
+          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
           <div class="id">ID của giao dịch: ${item.id}</div>
         </div>
         <div style="flex: 1; text-align: right;">
