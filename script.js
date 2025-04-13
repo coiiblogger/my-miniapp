@@ -81,9 +81,13 @@ window.openTab = function(tabId) {
   contents.forEach(content => content.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add('active');
-// Tải dữ liệu từ khóa khi mở tab Từ khóa
+  
+  // Xóa danh sách từ khóa khi mở tab 7
   if (tabId === 'tab7') {
-    window.fetchKeywords();
+    const container = document.getElementById('keywordsContainer');
+    if (container) {
+      container.innerHTML = '<div>Vui lòng nhấn "Tải dữ liệu" để xem danh sách từ khóa.</div>';
+    }
   }
 };
 
@@ -1095,7 +1099,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('addTransactionBtn').addEventListener('click', openAddForm);
   document.getElementById('fetchMonthlyExpensesBtn').addEventListener('click', window.fetchMonthlyExpenses);
   document.getElementById('searchTransactionsBtn').addEventListener('click', window.searchTransactions);
-  
+  document.getElementById('fetchKeywordsBtn').addEventListener('click', window.fetchKeywords);
   const currentMonth = new Date().getMonth() + 1; // Lấy tháng hiện tại (1-12)
   // Tab 3: Biểu đồ - Tháng 1 đến tháng hiện tại
   const startMonthInput = document.getElementById('startMonth');
