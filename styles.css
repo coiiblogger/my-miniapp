@@ -1077,3 +1077,32 @@ input[type="date"] {
     padding: 0.6rem 0.8rem;
   }
 }
+/* Đảm bảo nút Tải dữ liệu trong input-group vertical có cùng kiểu dáng */
+.input-group.vertical button#fetchKeywordsBtn {
+  width: 100%;
+  max-width: 350px;
+  margin: 1rem auto 0;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #16A34A, #4ADE80);
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.input-group.vertical button#fetchKeywordsBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 600px) {
+  .input-group.vertical button#fetchKeywordsBtn {
+    max-width: 300px;
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+}
