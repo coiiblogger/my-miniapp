@@ -78,11 +78,20 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  /* Thêm thuộc tính để tối ưu */
+  min-width: 0; /* Đảm bảo flex item không vượt quá kích thước container */
 }
 
 .nav-item:hover { opacity: 0.8; }
 .nav-item i { font-size: 1.5rem; margin-bottom: 5px; }
-.nav-item span { display: block; font-size: 0.9rem; }
+.nav-item span {
+  display: block;
+  font-size: 0.9rem;
+  /* Thêm các thuộc tính để ngăn xuống dòng */
+  white-space: nowrap; /* Ép văn bản hiển thị trên 1 dòng */
+  overflow: hidden; /* Ẩn phần văn bản dư thừa */
+  text-overflow: ellipsis; /* Thêm dấu "..." nếu văn bản bị cắt */
+}
 .nav-item.active {
   font-weight: 600;
   color: #FFFFFF;
@@ -663,8 +672,12 @@ input[type="date"] {
   }
 
   .nav-item span {
-    font-size: 0.75rem;
+    font-size: 0.65rem; /* Giảm font-size nhỏ hơn để vừa với màn hình nhỏ */
+    white-space: nowrap; /* Đảm bảo không xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+}
 
   .input-group {
     gap: 0.5rem;
