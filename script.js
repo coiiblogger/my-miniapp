@@ -240,7 +240,15 @@ async function openEditForm(transaction) {
   let dateValue = '';
   if (transaction.date && transaction.date.includes('/')) {
     const [day, month, year] = transaction.date.split('/');
-    dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    if (day && month && year && day.length === 2 && month.length === 2 && year.length === 4) {
+      dateValue = `${year}-${month}-${day}`;
+    } else {
+      showToast("Định dạng ngày giao dịch không hợp lệ!", "error");
+      return;
+    }
+  } else {
+    showToast("Ngày giao dịch không hợp lệ!", "error");
+    return;
   }
   document.getElementById('editDate').value = dateValue;
 
@@ -260,7 +268,6 @@ async function openEditForm(transaction) {
     const oldLength = this.value.length;
     this.value = formatNumberWithCommas(this.value);
     const newLength = this.value.length;
-    // Điều chỉnh vị trí con trỏ
     this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
   });
 
@@ -351,7 +358,7 @@ async function saveTransaction(updatedTransaction) {
   // Xác định tab hiện tại
   const activeTab = document.querySelector('.tab-content.active').id;
   let loadingTabId = '';
-  
+
   if (activeTab === 'tab1') {
     loadingTabId = 'tab1';
   } else if (activeTab === 'tab5') {
@@ -359,6 +366,22 @@ async function saveTransaction(updatedTransaction) {
   } else if (activeTab === 'tab6') {
     loadingTabId = 'tab6';
   }
+
+  // Trích xuất tháng từ updatedTransaction.date (định dạng: DD/MM/YYYY)
+  if (!updatedTransaction.date || !updatedTransaction.date.includes('/')) {
+    showToast("Ngày giao dịch không hợp lệ!", "error");
+    return;
+  }
+  const dateParts = updatedTransaction.date.split('/');
+  if (dateParts.length !== 3) {
+    showToast("Định dạng ngày không hợp lệ!", "error");
+    return;
+  }
+  const transactionMonth = dateParts[1].padStart(2, '0'); // Đảm bảo dạng "MM"
+
+  // Thêm month và sheetId vào payload
+  updatedTransaction.month = transactionMonth;
+  updatedTransaction.sheetId = sheetId;
 
   showLoading(true, loadingTabId);
   try {
@@ -434,25 +457,34 @@ async function deleteTransaction(transactionId) {
 
   showLoading(true, loadingTabId);
   try {
-    const transaction = cacheData.data ? cacheData.data.find(item => String(item.id) === String(transactionId)) : 
-                       cacheData.transactions ? cacheData.transactions.find(item => String(item.id) === String(transactionId)) : null;
+    const transaction = cacheData.data
+      ? cacheData.data.find(item => String(item.id) === String(transactionId))
+      : cacheData.transactions
+      ? cacheData.transactions.find(item => String(item.id) === String(transactionId))
+      : null;
+
     if (!transaction) throw new Error("Không tìm thấy giao dịch để xóa!");
 
     // Trích xuất tháng từ transaction.date (định dạng: DD/MM/YYYY)
+    if (!transaction.date || !transaction.date.includes('/')) {
+      throw new Error("Ngày giao dịch không hợp lệ!");
+    }
     const dateParts = transaction.date.split('/');
     if (dateParts.length !== 3) throw new Error("Định dạng ngày không hợp lệ!");
-    const transactionMonth = dateParts[1]; // Lấy phần tháng (VD: "04")
+    const transactionMonth = dateParts[1].padStart(2, '0'); // Đảm bảo dạng "MM"
 
     const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
     const response = await fetch(finalUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        action: 'deleteTransaction', 
-        id: transactionId, 
-        month: transactionMonth
+      body: JSON.stringify({
+        action: 'deleteTransaction',
+        id: transactionId,
+        month: transactionMonth,
+        sheetId: sheetId
       })
     });
+
     const result = await response.json();
     if (result.error) throw new Error(result.error);
     showToast("Xóa giao dịch thành công!", "success");
@@ -471,7 +503,6 @@ async function deleteTransaction(transactionId) {
     showLoading(false, loadingTabId);
   }
 }
-
 // Tab 2: Thống kê
 window.fetchData = async function() {
   const startDateInput = document.getElementById('startDate').value;
