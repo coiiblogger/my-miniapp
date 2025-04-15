@@ -17,7 +17,7 @@ html {
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
-  padding: 80px 20px 20px;
+  padding: 140px 20px 20px; /* Giữ padding-top để nội dung không bị che */
   background-color: var(--background-color);
   box-sizing: border-box;
   width: 100%;
@@ -25,6 +25,25 @@ body {
   overflow-x: hidden;
   height: 100vh;
   font-size: 1rem;
+  color: var(--text-color);
+}
+
+/* Làm cho tiêu đề liền khối với nền bên dưới */
+.app-header {
+  background: var(--background-color); /* Đồng bộ màu với nền của body */
+  padding: 16px;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001; /* Đảm bảo nằm trên các phần tử khác */
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
   color: var(--text-color);
 }
 
@@ -52,7 +71,9 @@ body {
 
 .top-nav {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 60px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-around;
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
@@ -64,6 +85,7 @@ body {
   max-width: 100%;
   margin: 0;
   overflow-x: hidden;
+  border-radius: 12px 12px 0 0;
 }
 
 .nav-item {
@@ -78,8 +100,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* Thêm thuộc tính để tối ưu */
-  min-width: 0; /* Đảm bảo flex item không vượt quá kích thước container */
+  min-width: 0;
 }
 
 .nav-item:hover { opacity: 0.8; }
@@ -87,10 +108,9 @@ body {
 .nav-item span {
   display: block;
   font-size: 0.9rem;
-  /* Thêm các thuộc tính để ngăn xuống dòng */
-  white-space: nowrap; /* Ép văn bản hiển thị trên 1 dòng */
-  overflow: hidden; /* Ẩn phần văn bản dư thừa */
-  text-overflow: ellipsis; /* Thêm dấu "..." nếu văn bản bị cắt */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .nav-item.active {
   font-weight: 600;
@@ -101,8 +121,11 @@ body {
 .nav-item.active::after {
   content: '';
   position: absolute;
-  bottom: -2px; left: 50%; transform: translateX(-50%);
-  width: 70px; height: 2px;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 2px;
   background-color: #FFFFFF;
 }
 
@@ -653,8 +676,12 @@ input[type="date"] {
 
 @media (max-width: 600px) {
   body {
-    padding: 60px 5px 10px;
+    padding: 130px 5px 10px;
     font-size: 0.9rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.3rem;
   }
 
   h1 {
@@ -672,12 +699,11 @@ input[type="date"] {
   }
 
   .nav-item span {
-    font-size: 0.65rem; /* Giảm font-size nhỏ hơn để vừa với màn hình nhỏ */
-    white-space: nowrap; /* Đảm bảo không xuống dòng */
+    font-size: 0.65rem;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-}
 
   .input-group {
     gap: 0.5rem;
@@ -750,7 +776,6 @@ input[type="date"] {
     width: 250px;
   }
 
-  /* Đảm bảo date picker căn trái trên thiết bị di động */
   .modal-content input[type="date"] {
     font-size: 0.9rem;
     padding: 0.6rem;
@@ -765,7 +790,7 @@ input[type="date"] {
 
 @media (min-width: 601px) and (max-width: 1023px) {
   body {
-    padding: 70px 20px 20px;
+    padding: 140px 20px 20px;
   }
 
   h1 {
@@ -802,7 +827,7 @@ input[type="date"] {
   }
 
   body {
-    padding: 80px 30px 30px;
+    padding: 150px 30px 30px;
   }
 
   h1 {
@@ -986,6 +1011,7 @@ input[type="date"] {
 .toast.warning {
   background: #F59E0B;
 }
+
 .keywords-list {
   display: flex;
   flex-direction: column;
@@ -1026,6 +1052,7 @@ input[type="date"] {
   white-space: normal;
   word-wrap: break-word;
 }
+
 /* Style cho nhóm nút trong tab Từ khóa */
 .button-group {
   display: flex;
@@ -1038,7 +1065,7 @@ input[type="date"] {
 
 /* Style cho nút Thêm từ khóa (thu nhỏ) */
 #addKeywordBtn {
-  width: 150px; /* Thu nhỏ nút */
+  width: 150px;
   padding: 0.7rem 1rem;
   font-size: 1rem;
   font-weight: 500;
@@ -1058,12 +1085,12 @@ input[type="date"] {
 
 /* Style cho nút Xóa từ khóa (màu khác biệt) */
 #deleteKeywordBtn {
-  width: 150px; /* Cùng kích thước với nút Thêm */
+  width: 150px;
   padding: 0.7rem 1rem;
   font-size: 1rem;
   font-weight: 500;
   border-radius: 10px;
-  background: linear-gradient(135deg, #EF4444, #F87171); /* Màu đỏ để khác biệt */
+  background: linear-gradient(135deg, #EF4444, #F87171);
   color: white;
   border: none;
   cursor: pointer;
@@ -1090,6 +1117,7 @@ input[type="date"] {
     padding: 0.6rem 0.8rem;
   }
 }
+
 /* Đảm bảo nút Tải dữ liệu trong input-group vertical có cùng kiểu dáng */
 .input-group.vertical button#fetchKeywordsBtn {
   width: 100%;
