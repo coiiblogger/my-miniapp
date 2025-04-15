@@ -1,3 +1,4 @@
+// Lấy thông số API và Sheet ID từ URL
 const urlParams = new URLSearchParams(window.location.search);
 const apiUrl = urlParams.get('api');
 const sheetId = urlParams.get('sheetId');
@@ -24,10 +25,17 @@ const searchPerPage = 10;
 function showToast(message, type = "info") {
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.textContent = message;
+  toast.innerHTML = `
+    <div>
+      <span>${message}</span>
+    </div>
+  `;
   document.body.appendChild(toast);
 
+  // Show the toast
   setTimeout(() => toast.classList.add('show'), 100);
+
+  // Hide and remove the toast after 3 seconds
   setTimeout(() => {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
