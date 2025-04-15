@@ -1,12 +1,7 @@
-// Lấy thông số API và Sheet ID từ URL
 const urlParams = new URLSearchParams(window.location.search);
 const apiUrl = urlParams.get('api');
 const sheetId = urlParams.get('sheetId');
 const proxyUrl = 'https://miniapphmh.netlify.app/.netlify/functions/proxy?url=';
-
-if (!apiUrl || !sheetId) {
-  showToast("Thiếu thông tin API hoặc Sheet ID. Vui lòng kiểm tra lại URL!", "error");
-}
 
 if (!apiUrl || !sheetId) {
   showToast("Thiếu thông tin API hoặc Sheet ID. Vui lòng kiểm tra lại URL!", "error");
@@ -73,6 +68,55 @@ function formatDateToDDMM(date) {
   return `${day}/${month}`;
 }
 
+// Hàm hiển thị Popup Loading
+function showLoadingPopup(show) {
+  let loadingPopup = document.getElementById('loadingPopup');
+  if (!loadingPopup) {
+    loadingPopup = document.createElement('div');
+    loadingPopup.id = 'loadingPopup';
+    loadingPopup.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    `;
+    loadingPopup.innerHTML = `
+      <div style="
+        background: #FFFFFF;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      ">
+        <div style="
+          border: 4px solid #16A34A;
+          border-top: 4px solid transparent;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          animation: spin 1s linear infinite;
+        "></div>
+        <span style="
+          font-size: 1rem;
+          color: #1F2A44;
+          font-weight: 500;
+        ">Đang xử lý...</span>
+      </div>
+    `;
+    document.body.appendChild(loadingPopup);
+  }
+  loadingPopup.style.display = show ? 'flex' : 'none';
+}
+
 // Mở tab
 window.openTab = function(tabId) {
   const tabs = document.querySelectorAll('.nav-item');
@@ -82,7 +126,6 @@ window.openTab = function(tabId) {
   document.getElementById(tabId).classList.add('active');
   document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add('active');
   
-  // Xóa danh sách từ khóa khi mở tab 7
   if (tabId === 'tab7') {
     const container = document.getElementById('keywordsContainer');
     if (container) {
@@ -130,7 +173,6 @@ function displayTransactions(data) {
   const nextPageBtn = document.getElementById('nextPage');
   container.innerHTML = '';
 
-  // Kiểm tra dữ liệu và hiển thị thống kê
   if (!data || data.error || !Array.isArray(data) || data.length === 0) {
     container.innerHTML = '<div>Không có giao dịch nào trong ngày này</div>';
     summaryContainer.innerHTML = `
@@ -144,10 +186,8 @@ function displayTransactions(data) {
     return;
   }
 
-  // Thêm thông báo số lượng giao dịch
   container.innerHTML = `<div class="notification">Bạn có ${data.length} giao dịch trong ngày</div>`;
 
-  // Tính toán tổng thu nhập, tổng chi tiêu, số dư
   let totalIncome = 0, totalExpense = 0;
   data.forEach(item => {
     if (item.type === 'Thu nhập') totalIncome += item.amount;
@@ -155,14 +195,12 @@ function displayTransactions(data) {
   });
   const balance = totalIncome - totalExpense;
 
-  // Cập nhật thống kê
   summaryContainer.innerHTML = `
     <div class="stat-box income"><div class="title">Tổng thu nhập</div><div class="amount">${totalIncome.toLocaleString('vi-VN')}đ</div></div>
     <div class="stat-box expense"><div class="title">Tổng chi tiêu</div><div class="amount">${totalExpense.toLocaleString('vi-VN')}đ</div></div>
     <div class="stat-box balance"><div class="title">Số dư</div><div class="amount">${balance.toLocaleString('vi-VN')}đ</div></div>
   `;
 
-  // Hiển thị danh sách giao dịch
   const totalPages = Math.ceil(data.length / transactionsPerPage);
   const startIndex = (currentPage - 1) * transactionsPerPage;
   const endIndex = startIndex + transactionsPerPage;
@@ -211,6 +249,7 @@ function displayTransactions(data) {
     button.addEventListener('click', () => deleteTransaction(button.getAttribute('data-id')));
   });
 }
+
 async function fetchCategories() {
   try {
     const targetUrl = `${apiUrl}?action=getCategories&sheetId=${sheetId}`;
@@ -238,7 +277,6 @@ async function openEditForm(transaction) {
   document.getElementById('editType').value = transaction.type || 'Thu nhập';
   document.getElementById('editNote').value = transaction.note || '';
 
-  // Chuyển đổi định dạng ngày từ DD/MM/YYYY sang YYYY-MM-DD để hiển thị trong date picker
   let dateValue = '';
   if (transaction.date && transaction.date.includes('/')) {
     const [day, month, year] = transaction.date.split('/');
@@ -264,7 +302,6 @@ async function openEditForm(transaction) {
     categorySelect.appendChild(option);
   });
 
-  // Xử lý định dạng số tiền khi nhập
   amountInput.addEventListener('input', function() {
     const cursorPosition = this.selectionStart;
     const oldLength = this.value.length;
@@ -273,7 +310,6 @@ async function openEditForm(transaction) {
     this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
   });
 
-  // Ngăn nhập ký tự không phải số
   amountInput.addEventListener('keypress', function(e) {
     if (!/[0-9]/.test(e.key)) {
       e.preventDefault();
@@ -283,14 +319,13 @@ async function openEditForm(transaction) {
   modal.style.display = 'flex';
   form.onsubmit = async function(e) {
     e.preventDefault();
-    const dateInput = document.getElementById('editDate').value; // Dạng YYYY-MM-DD
+    const dateInput = document.getElementById('editDate').value;
     if (!dateInput) return showModalError('edit', 'Vui lòng chọn ngày!');
     const inputDate = new Date(dateInput);
     const today = new Date();
     if (inputDate > today) return showModalError('edit', 'Không thể chọn ngày trong tương lai!');
     const amount = parseNumber(document.getElementById('editAmount').value);
     if (amount <= 0) return showModalError('edit', 'Số tiền phải lớn hơn 0!');
-    // Chuyển đổi định dạng ngày từ YYYY-MM-DD sang DD/MM/YYYY để gửi API
     const [year, month, day] = dateInput.split('-');
     const formattedDate = `${day}/${month}/${year}`;
     const updatedTransaction = {
@@ -311,12 +346,11 @@ async function openAddForm() {
   const modal = document.getElementById('addModal');
   const form = document.getElementById('addForm');
   const categorySelect = document.getElementById('addCategory');
-  const currentYear = new Date().getFullYear();
+  const amountInput = document.getElementById('addAmount');
 
-  // Điền ngày hiện tại dạng YYYY-MM-DD
   document.getElementById('addDate').value = formatDateToYYYYMMDD(new Date());
   document.getElementById('addContent').value = '';
-  document.getElementById('addAmount').value = '';
+  amountInput.value = '';
   document.getElementById('addType').value = 'Thu nhập';
   document.getElementById('addNote').value = '';
 
@@ -329,16 +363,30 @@ async function openAddForm() {
     categorySelect.appendChild(option);
   });
 
+  amountInput.addEventListener('input', function() {
+    const cursorPosition = this.selectionStart;
+    const oldLength = this.value.length;
+    this.value = formatNumberWithCommas(this.value);
+    const newLength = this.value.length;
+    this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
+  });
+
+  amountInput.addEventListener('keypress', function(e) {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  });
+
   modal.style.display = 'flex';
   form.onsubmit = async function(e) {
     e.preventDefault();
-    const dateInput = document.getElementById('addDate').value; // Dạng YYYY-MM-DD
+    const dateInput = document.getElementById('addDate').value;
     const [year, month, day] = dateInput.split('-');
-    const formattedDate = `${day}/${month}/${year}`; // Chuyển thành DD/MM/YYYY
+    const formattedDate = `${day}/${month}/${year}`;
     const today = new Date();
     const inputDate = new Date(year, month - 1, day);
     if (inputDate > today) return showModalError('add', 'Không thể chọn ngày trong tương lai!');
-    const amount = parseFloat(document.getElementById('addAmount').value);
+    const amount = parseNumber(document.getElementById('addAmount').value);
     if (amount <= 0) return showModalError('add', 'Số tiền phải lớn hơn 0!');
     const newTransaction = {
       content: document.getElementById('addContent').value,
@@ -346,7 +394,7 @@ async function openAddForm() {
       type: document.getElementById('addType').value,
       category: document.getElementById('addCategory').value,
       note: document.getElementById('addNote').value || '',
-      date: formattedDate, // Gửi dạng DD/MM/YYYY
+      date: formattedDate,
       action: 'addTransaction'
     };
     await addTransaction(newTransaction);
@@ -357,19 +405,7 @@ function closeEditForm() { document.getElementById('editModal').style.display = 
 function closeAddForm() { document.getElementById('addModal').style.display = 'none'; }
 
 async function saveTransaction(updatedTransaction) {
-  // Xác định tab hiện tại
   const activeTab = document.querySelector('.tab-content.active').id;
-  let loadingTabId = '';
-
-  if (activeTab === 'tab1') {
-    loadingTabId = 'tab1';
-  } else if (activeTab === 'tab5') {
-    loadingTabId = 'tab5';
-  } else if (activeTab === 'tab6') {
-    loadingTabId = 'tab6';
-  }
-
-  // Trích xuất tháng từ updatedTransaction.date (định dạng: DD/MM/YYYY)
   if (!updatedTransaction.date || !updatedTransaction.date.includes('/')) {
     showToast("Ngày giao dịch không hợp lệ!", "error");
     return;
@@ -379,13 +415,11 @@ async function saveTransaction(updatedTransaction) {
     showToast("Định dạng ngày không hợp lệ!", "error");
     return;
   }
-  const transactionMonth = dateParts[1].padStart(2, '0'); // Đảm bảo dạng "MM"
-
-  // Thêm month và sheetId vào payload
+  const transactionMonth = dateParts[1].padStart(2, '0');
   updatedTransaction.month = transactionMonth;
   updatedTransaction.sheetId = sheetId;
 
-  showLoading(true, loadingTabId);
+  showLoadingPopup(true);
   try {
     const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
     const response = await fetch(finalUrl, {
@@ -398,7 +432,6 @@ async function saveTransaction(updatedTransaction) {
     showToast("Cập nhật giao dịch thành công!", "success");
     closeEditForm();
 
-    // Cập nhật lại dữ liệu dựa trên tab hiện tại
     if (activeTab === 'tab1') {
       window.fetchTransactions();
     } else if (activeTab === 'tab5') {
@@ -409,9 +442,10 @@ async function saveTransaction(updatedTransaction) {
   } catch (error) {
     showToast("Lỗi khi cập nhật giao dịch: " + error.message, "error");
   } finally {
-    showLoading(false, loadingTabId);
+    showLoadingPopup(false);
   }
 }
+
 async function addTransaction(newTransaction) {
   showLoading(true, 'tab1');
   try {
@@ -436,20 +470,15 @@ async function addTransaction(newTransaction) {
 async function deleteTransaction(transactionId) {
   if (!confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) return;
 
-  // Xác định tab hiện tại
   const activeTab = document.querySelector('.tab-content.active').id;
   let cacheData = null;
-  let loadingTabId = '';
 
   if (activeTab === 'tab1') {
     cacheData = cachedTransactions;
-    loadingTabId = 'tab1';
   } else if (activeTab === 'tab5') {
     cacheData = cachedMonthlyExpenses;
-    loadingTabId = 'tab5';
   } else if (activeTab === 'tab6') {
     cacheData = cachedSearchResults;
-    loadingTabId = 'tab6';
   }
 
   if (!cacheData) {
@@ -457,7 +486,7 @@ async function deleteTransaction(transactionId) {
     return;
   }
 
-  showLoading(true, loadingTabId);
+  showLoadingPopup(true);
   try {
     const transaction = cacheData.data
       ? cacheData.data.find(item => String(item.id) === String(transactionId))
@@ -467,13 +496,12 @@ async function deleteTransaction(transactionId) {
 
     if (!transaction) throw new Error("Không tìm thấy giao dịch để xóa!");
 
-    // Trích xuất tháng từ transaction.date (định dạng: DD/MM/YYYY)
     if (!transaction.date || !transaction.date.includes('/')) {
       throw new Error("Ngày giao dịch không hợp lệ!");
     }
     const dateParts = transaction.date.split('/');
     if (dateParts.length !== 3) throw new Error("Định dạng ngày không hợp lệ!");
-    const transactionMonth = dateParts[1].padStart(2, '0'); // Đảm bảo dạng "MM"
+    const transactionMonth = dateParts[1].padStart(2, '0');
 
     const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
     const response = await fetch(finalUrl, {
@@ -491,7 +519,6 @@ async function deleteTransaction(transactionId) {
     if (result.error) throw new Error(result.error);
     showToast("Xóa giao dịch thành công!", "success");
 
-    // Cập nhật lại dữ liệu dựa trên tab hiện tại
     if (activeTab === 'tab1') {
       window.fetchTransactions();
     } else if (activeTab === 'tab5') {
@@ -502,9 +529,10 @@ async function deleteTransaction(transactionId) {
   } catch (error) {
     showToast("Lỗi khi xóa giao dịch: " + error.message, "error");
   } finally {
-    showLoading(false, loadingTabId);
+    showLoadingPopup(false);
   }
 }
+
 // Tab 2: Thống kê
 window.fetchData = async function() {
   const startDateInput = document.getElementById('startDate').value;
@@ -1119,200 +1147,6 @@ function displaySearchResults(data) {
   });
 }
 
-// Khởi tạo
-document.addEventListener('DOMContentLoaded', function() {
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(item => {
-    item.addEventListener('click', () => window.openTab(item.getAttribute('data-tab')));
-  });
-
-  document.getElementById('fetchDataBtn').addEventListener('click', window.fetchData);
-  document.getElementById('fetchMonthlyDataBtn').addEventListener('click', window.fetchMonthlyData);
-  document.getElementById('fetchTransactionsBtn').addEventListener('click', window.fetchTransactions);
-  document.getElementById('addTransactionBtn').addEventListener('click', openAddForm);
-  document.getElementById('fetchMonthlyExpensesBtn').addEventListener('click', window.fetchMonthlyExpenses);
-  document.getElementById('searchTransactionsBtn').addEventListener('click', window.searchTransactions);
-  document.getElementById('fetchKeywordsBtn').addEventListener('click', window.fetchKeywords);
-  const currentMonth = new Date().getMonth() + 1; // Lấy tháng hiện tại (1-12)
-  // Tab 3: Biểu đồ - Tháng 1 đến tháng hiện tại
-  const startMonthInput = document.getElementById('startMonth');
-  const endMonthInput = document.getElementById('endMonth');
-  if (startMonthInput && endMonthInput) {
-    startMonthInput.value = 1; // Tháng 1
-    endMonthInput.value = currentMonth; // Tháng hiện tại
-  }
-  // Tab 5: Liệt kê - Đặt tháng hiện tại
-  const expenseMonthInput = document.getElementById('expenseMonth');
-  if (expenseMonthInput) {
-    expenseMonthInput.value = currentMonth; // Đặt tháng hiện tại
-  }
-  // Tab 7: Từ khóa
-  document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
-  document.getElementById('deleteKeywordBtn').addEventListener('click', window.deleteKeyword); // Thêm sự kiện cho nút Xóa từ khóa
-  // Gọi hàm để điền danh sách phân loại chi tiết cho tab Từ khóa
-  populateKeywordCategories();
-  document.getElementById('prevPage').addEventListener('click', () => {
-    if (currentPage > 1) {
-      currentPage--;
-      window.fetchTransactions();
-    }
-  });
-  document.getElementById('nextPage').addEventListener('click', () => {
-    const totalPages = Math.ceil((cachedTransactions?.data.length || 0) / transactionsPerPage);
-    if (currentPage < totalPages) {
-      currentPage++;
-      window.fetchTransactions();
-    }
-  });
-
-  document.getElementById('prevPageMonthly').addEventListener('click', () => {
-    if (currentPageMonthly > 1) {
-      currentPageMonthly--;
-      window.fetchMonthlyExpenses();
-    }
-  });
-  document.getElementById('nextPageMonthly').addEventListener('click', () => {
-    const totalPages = Math.ceil((cachedMonthlyExpenses?.data.length || 0) / expensesPerPage);
-    if (currentPageMonthly < totalPages) {
-      currentPageMonthly++;
-      window.fetchMonthlyExpenses();
-    }
-  });
-
-  document.getElementById('prevPageSearch').addEventListener('click', () => {
-    if (currentPageSearch > 1) {
-      currentPageSearch--;
-      window.searchTransactions();
-    }
-  });
-  document.getElementById('nextPageSearch').addEventListener('click', () => {
-    const totalPages = Math.ceil((cachedSearchResults?.transactions.length || 0) / searchPerPage);
-    if (currentPageSearch < totalPages) {
-      currentPageSearch++;
-      window.searchTransactions();
-    }
-  });
-  const searchAmountInput = document.getElementById('searchAmount');
-  if (searchAmountInput) {
-    searchAmountInput.addEventListener('input', function() {
-      const cursorPosition = this.selectionStart;
-      const oldLength = this.value.length;
-      this.value = formatNumberWithCommas(this.value);
-      const newLength = this.value.length;
-      this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
-    });
-
-    searchAmountInput.addEventListener('keypress', function(e) {
-      if (!/[0-9]/.test(e.key)) {
-        e.preventDefault();
-      }
-    });
-}
-
-  // Điền ngày hiện tại và khoảng thời gian mặc định khi mở Mini App
-  const today = new Date();
-  const formattedToday = formatDateToYYYYMMDD(today); // Ngày hiện tại: YYYY-MM-DD
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Ngày đầu tháng
-  const formattedFirstDay = formatDateToYYYYMMDD(firstDayOfMonth);
-
-  // Tab 1: Điền ngày hiện tại vào transactionDate
-  const transactionDateInput = document.getElementById('transactionDate');
-  if (transactionDateInput) {
-    transactionDateInput.value = formattedToday;
-    // window.fetchTransactions(); // Tự động tải dữ liệu (tuỳ chọn)
-  }
-
-  // Tab 2: Điền ngày đầu tháng vào startDate và ngày hiện tại vào endDate
-  const startDateInput = document.getElementById('startDate');
-  const endDateInput = document.getElementById('endDate');
-  if (startDateInput && endDateInput) {
-    startDateInput.value = formattedFirstDay;
-    endDateInput.value = formattedToday;
-    // window.fetchData(); // Tự động tải dữ liệu thống kê (tuỳ chọn)
-  }
-
-  populateSearchCategories();
-  window.openTab('tab1'); // Mặc định mở tab Giao dịch
-});
-// Xử lý định dạng tiền (Ví dụ 5.000 hoặc 50.000)
-// Hàm định dạng số với dấu chấm phân cách
-function formatNumberWithCommas(value) {
-  if (!value) return '';
-  // Chỉ giữ các chữ số
-  const digitsOnly = value.replace(/[^0-9]/g, '');
-  // Định dạng với dấu chấm
-  return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-// Hàm loại bỏ dấu chấm để lấy số nguyên
-function parseNumber(value) {
-  return parseInt(value.replace(/[^0-9]/g, '')) || 0;
-}
-
-// Cập nhật hàm openAddForm
-async function openAddForm() {
-  const modal = document.getElementById('addModal');
-  const form = document.getElementById('addForm');
-  const categorySelect = document.getElementById('addCategory');
-  const amountInput = document.getElementById('addAmount');
-
-  // Điền ngày hiện tại dạng YYYY-MM-DD
-  document.getElementById('addDate').value = formatDateToYYYYMMDD(new Date());
-  document.getElementById('addContent').value = '';
-  amountInput.value = '';
-  document.getElementById('addType').value = 'Thu nhập';
-  document.getElementById('addNote').value = '';
-
-  const categories = await fetchCategories();
-  categorySelect.innerHTML = '';
-  categories.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category;
-    option.textContent = category;
-    categorySelect.appendChild(option);
-  });
-
-  // Xử lý định dạng số tiền khi nhập
-  amountInput.addEventListener('input', function() {
-    const cursorPosition = this.selectionStart;
-    const oldLength = this.value.length;
-    this.value = formatNumberWithCommas(this.value);
-    const newLength = this.value.length;
-    // Điều chỉnh vị trí con trỏ
-    this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
-  });
-
-  // Ngăn nhập ký tự không phải số
-  amountInput.addEventListener('keypress', function(e) {
-    if (!/[0-9]/.test(e.key)) {
-      e.preventDefault();
-    }
-  });
-
-  modal.style.display = 'flex';
-  form.onsubmit = async function(e) {
-    e.preventDefault();
-    const dateInput = document.getElementById('addDate').value; // Dạng YYYY-MM-DD
-    const [year, month, day] = dateInput.split('-');
-    const formattedDate = `${day}/${month}/${year}`; // Chuyển thành DD/MM/YYYY
-    const today = new Date();
-    const inputDate = new Date(year, month - 1, day);
-    if (inputDate > today) return showModalError('add', 'Không thể chọn ngày trong tương lai!');
-    const amount = parseNumber(document.getElementById('addAmount').value);
-    if (amount <= 0) return showModalError('add', 'Số tiền phải lớn hơn 0!');
-    const newTransaction = {
-      content: document.getElementById('addContent').value,
-      amount: amount,
-      type: document.getElementById('addType').value,
-      category: document.getElementById('addCategory').value,
-      note: document.getElementById('addNote').value || '',
-      date: formattedDate, // Gửi dạng DD/MM/YYYY
-      action: 'addTransaction'
-    };
-    await addTransaction(newTransaction);
-  };
-}
-
 // Tab 7: Từ khóa
 window.fetchKeywords = async function() {
   showLoading(true, 'tab7');
@@ -1330,7 +1164,7 @@ window.fetchKeywords = async function() {
     showLoading(false, 'tab7');
   }
 };
-// Hàm hiển thị danh sách từ khóa
+
 function displayKeywords(data) {
   const container = document.getElementById('keywordsContainer');
   container.innerHTML = '';
@@ -1350,7 +1184,7 @@ function displayKeywords(data) {
     container.appendChild(keywordBox);
   });
 }
-// Hàm điền danh sách phân loại chi tiết vào dropdown
+
 async function populateKeywordCategories() {
   const categorySelect = document.getElementById('keywordCategory');
   const categories = await fetchCategories();
@@ -1363,7 +1197,6 @@ async function populateKeywordCategories() {
   });
 }
 
-//Hàm thêm từ khóa:
 window.addKeyword = async function() {
   const category = document.getElementById('keywordCategory').value;
   const keywordsInput = document.getElementById('keywordInput').value.trim();
@@ -1375,7 +1208,6 @@ window.addKeyword = async function() {
     return showToast("Vui lòng nhập từ khóa!", "warning");
   }
 
-  // Chuẩn hóa từ khóa: loại bỏ khoảng trắng thừa, phân cách bằng ", "
   const keywordsArray = keywordsInput.split(',').map(keyword => keyword.trim()).filter(keyword => keyword);
   const formattedKeywords = keywordsArray.join(', ');
 
@@ -1395,8 +1227,8 @@ window.addKeyword = async function() {
     const result = await response.json();
     if (result.error) throw new Error(result.error);
     showToast("Thêm từ khóa thành công!", "success");
-    document.getElementById('keywordInput').value = ''; // Xóa trường nhập sau khi thêm
-    window.fetchKeywords(); // Cập nhật lại danh sách từ khóa
+    document.getElementById('keywordInput').value = '';
+    window.fetchKeywords();
   } catch (error) {
     showToast("Lỗi khi thêm từ khóa: " + error.message, "error");
   } finally {
@@ -1404,7 +1236,6 @@ window.addKeyword = async function() {
   }
 };
 
-// Hàm xóa từ khóa
 window.deleteKeyword = async function() {
   if (!apiUrl || !proxyUrl || !sheetId) {
     console.error("Lỗi: apiUrl, proxyUrl hoặc sheetId không được định nghĩa!");
@@ -1448,7 +1279,6 @@ window.deleteKeyword = async function() {
       return;
     }
 
-    // Chuẩn hóa danh sách từ khóa và từ khóa nhập vào
     const keywordsArray = categoryData.keywords.split(", ").map(k => k.trim().toLowerCase());
     const keywordToDelete = keywordInput.trim().toLowerCase();
 
@@ -1499,59 +1329,126 @@ window.deleteKeyword = async function() {
     console.log("Kết thúc xóa từ khóa.");
   }
 };
-// Hàm hiển thị Popup Loading hiện đại
-function showLoadingPopup(show) {
-  let loadingPopup = document.getElementById('loadingPopup');
-  if (!loadingPopup) {
-    loadingPopup = document.createElement('div');
-    loadingPopup.id = 'loadingPopup';
-    loadingPopup.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 3000;
-    `;
-    loadingPopup.innerHTML = `
-      <div style="
-        background: #FFFFFF;
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-      ">
-        <div style="
-          border: 4px solid #16A34A;
-          border-top: 4px solid transparent;
-          border-radius: 50%;
-          width: 40px;
-          height: 40px;
-          animation: spin 1s linear infinite;
-        "></div>
-        <span style="
-          font-size: 1rem;
-          color: #1F2A44;
-          font-weight: 500;
-        ">Đang xử lý...</span>
-      </div>
-    `;
-    document.body.appendChild(loadingPopup);
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(style);
+
+// Khởi tạo
+document.addEventListener('DOMContentLoaded', function() {
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => window.openTab(item.getAttribute('data-tab')));
+  });
+
+  document.getElementById('fetchDataBtn').addEventListener('click', window.fetchData);
+  document.getElementById('fetchMonthlyDataBtn').addEventListener('click', window.fetchMonthlyData);
+  document.getElementById('fetchTransactionsBtn').addEventListener('click', window.fetchTransactions);
+  document.getElementById('addTransactionBtn').addEventListener('click', openAddForm);
+  document.getElementById('fetchMonthlyExpensesBtn').addEventListener('click', window.fetchMonthlyExpenses);
+  document.getElementById('searchTransactionsBtn').addEventListener('click', window.searchTransactions);
+  document.getElementById('fetchKeywordsBtn').addEventListener('click', window.fetchKeywords);
+
+  const currentMonth = new Date().getMonth() + 1;
+  const startMonthInput = document.getElementById('startMonth');
+  const endMonthInput = document.getElementById('endMonth');
+  if (startMonthInput && endMonthInput) {
+    startMonthInput.value = 1;
+    endMonthInput.value = currentMonth;
   }
-  loadingPopup.style.display = show ? 'flex' : 'none';
+
+  const expenseMonthInput = document.getElementById('expenseMonth');
+  if (expenseMonthInput) {
+    expenseMonthInput.value = currentMonth;
+  }
+
+  document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
+  document.getElementById('deleteKeywordBtn').addEventListener('click', window.deleteKeyword);
+  populateKeywordCategories();
+
+  document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      window.fetchTransactions();
+    }
+  });
+  document.getElementById('nextPage').addEventListener('click', () => {
+    const totalPages = Math.ceil((cachedTransactions?.data.length || 0) / transactionsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      window.fetchTransactions();
+    }
+  });
+
+  document.getElementById('prevPageMonthly').addEventListener('click', () => {
+    if (currentPageMonthly > 1) {
+      currentPageMonthly--;
+      window.fetchMonthlyExpenses();
+    }
+  });
+  document.getElementById('nextPageMonthly').addEventListener('click', () => {
+    const totalPages = Math.ceil((cachedMonthlyExpenses?.data.length || 0) / expensesPerPage);
+    if (currentPageMonthly < totalPages) {
+      currentPageMonthly++;
+      window.fetchMonthlyExpenses();
+    }
+  });
+
+  document.getElementById('prevPageSearch').addEventListener('click', () => {
+    if (currentPageSearch > 1) {
+      currentPageSearch--;
+      window.searchTransactions();
+    }
+  });
+  document.getElementById('nextPageSearch').addEventListener('click', () => {
+    const totalPages = Math.ceil((cachedSearchResults?.transactions.length || 0) / searchPerPage);
+    if (currentPageSearch < totalPages) {
+      currentPageSearch++;
+      window.searchTransactions();
+    }
+  });
+
+  const searchAmountInput = document.getElementById('searchAmount');
+  if (searchAmountInput) {
+    searchAmountInput.addEventListener('input', function() {
+      const cursorPosition = this.selectionStart;
+      const oldLength = this.value.length;
+      this.value = formatNumberWithCommas(this.value);
+      const newLength = this.value.length;
+      this.selectionStart = this.selectionEnd = cursorPosition + (newLength - oldLength);
+    });
+
+    searchAmountInput.addEventListener('keypress', function(e) {
+      if (!/[0-9]/.test(e.key)) {
+        e.preventDefault();
+      }
+    });
+  }
+
+  const today = new Date();
+  const formattedToday = formatDateToYYYYMMDD(today);
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const formattedFirstDay = formatDateToYYYYMMDD(firstDayOfMonth);
+
+  const transactionDateInput = document.getElementById('transactionDate');
+  if (transactionDateInput) {
+    transactionDateInput.value = formattedToday;
+  }
+
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+  if (startDateInput && endDateInput) {
+    startDateInput.value = formattedFirstDay;
+    endDateInput.value = formattedToday;
+  }
+
+  populateSearchCategories();
+  window.openTab('tab1');
+});
+
+// Hàm định dạng số
+function formatNumberWithCommas(value) {
+  if (!value) return '';
+  const digitsOnly = value.replace(/[^0-9]/g, '');
+  return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function parseNumber(value) {
+  return parseInt(value.replace(/[^0-9]/g, '')) || 0;
 }
