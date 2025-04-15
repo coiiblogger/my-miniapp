@@ -1499,3 +1499,59 @@ window.deleteKeyword = async function() {
     console.log("Kết thúc xóa từ khóa.");
   }
 };
+// Hàm hiển thị Popup Loading hiện đại
+function showLoadingPopup(show) {
+  let loadingPopup = document.getElementById('loadingPopup');
+  if (!loadingPopup) {
+    loadingPopup = document.createElement('div');
+    loadingPopup.id = 'loadingPopup';
+    loadingPopup.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    `;
+    loadingPopup.innerHTML = `
+      <div style="
+        background: #FFFFFF;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      ">
+        <div style="
+          border: 4px solid #16A34A;
+          border-top: 4px solid transparent;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          animation: spin 1s linear infinite;
+        "></div>
+        <span style="
+          font-size: 1rem;
+          color: #1F2A44;
+          font-weight: 500;
+        ">Đang xử lý...</span>
+      </div>
+    `;
+    document.body.appendChild(loadingPopup);
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  loadingPopup.style.display = show ? 'flex' : 'none';
+}
