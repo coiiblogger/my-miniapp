@@ -180,8 +180,8 @@ function displayTransactions(data) {
           <div class="date">${formatDate(item.date)}</div>
           <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
           <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-          <div class="number">STT của giao dịch: ${transactionNumber}</div>
-          <div class="id">ID của giao dịch: ${item.id}</div>
+          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
+          <div class="id">Mã giao dịch: ${item.id}</div>
         </div>
         <div style="flex: 1; text-align: right;">
           <div class="type ${typeClass}">Phân loại: ${item.type}</div>
