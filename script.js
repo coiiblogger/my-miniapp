@@ -1,3 +1,4 @@
+// Lấy thông số API và Sheet ID từ URL
 const urlParams = new URLSearchParams(window.location.search);
 const apiUrl = urlParams.get('api');
 const sheetId = urlParams.get('sheetId');
@@ -395,7 +396,8 @@ async function openAddForm() {
       category: document.getElementById('addCategory').value,
       note: document.getElementById('addNote').value || '',
       date: formattedDate,
-      action: 'addTransaction'
+      action: 'addTransaction',
+      sheetId: sheetId
     };
     await addTransaction(newTransaction);
   };
@@ -447,7 +449,7 @@ async function saveTransaction(updatedTransaction) {
 }
 
 async function addTransaction(newTransaction) {
-  showLoading(true, 'tab1');
+  showLoadingPopup(true);
   try {
     const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
     const response = await fetch(finalUrl, {
@@ -463,7 +465,7 @@ async function addTransaction(newTransaction) {
   } catch (error) {
     showToast("Lỗi khi thêm giao dịch: " + error.message, "error");
   } finally {
-    showLoading(false, 'tab1');
+    showLoadingPopup(false);
   }
 }
 
@@ -895,7 +897,7 @@ function updateMonthlyChart(filteredData) {
 
   filteredData.forEach(item => {
     const difference = (item.income || 0) - (item.expense || 0);
-    const diffClass = difference >= 0 ? 'positive' : 'negative';
+    const diffClass  = difference >= 0 ? 'positive' : 'negative';
     const diffIcon = difference >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
     const monthItem = document.createElement('div');
     monthItem.className = 'month-item';
