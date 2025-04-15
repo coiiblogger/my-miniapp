@@ -85,7 +85,7 @@ body {
   max-width: 100%;
   margin: 0;
   overflow-x: hidden;
-  border-radius: 12px 12px 0 0; /* Giữ bo tròn hai góc trên */
+  border-radius: 25px 25px 0 0; /* Giữ bo tròn hai góc trên */
 }
 
 .nav-item {
