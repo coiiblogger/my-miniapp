@@ -1,4 +1,3 @@
-// Lấy thông số API và Sheet ID từ URL
 const urlParams = new URLSearchParams(window.location.search);
 const apiUrl = urlParams.get('api');
 const sheetId = urlParams.get('sheetId');
@@ -407,7 +406,6 @@ function closeEditForm() { document.getElementById('editModal').style.display = 
 function closeAddForm() { document.getElementById('addModal').style.display = 'none'; }
 
 async function saveTransaction(updatedTransaction) {
-  const activeTab = document.querySelector('.tab-content.active').id;
   if (!updatedTransaction.date || !updatedTransaction.date.includes('/')) {
     showToast("Ngày giao dịch không hợp lệ!", "error");
     return;
@@ -433,7 +431,7 @@ async function saveTransaction(updatedTransaction) {
     if (result.error) throw new Error(result.error);
     showToast("Cập nhật giao dịch thành công!", "success");
     closeEditForm();
-
+    const activeTab = document.querySelector('.tab-content.active').id;
     if (activeTab === 'tab1') {
       window.fetchTransactions();
     } else if (activeTab === 'tab5') {
@@ -461,7 +459,14 @@ async function addTransaction(newTransaction) {
     if (result.error) throw new Error(result.error);
     showToast("Thêm giao dịch thành công!", "success");
     closeAddForm();
-    window.fetchTransactions();
+    const activeTab = document.querySelector('.tab-content.active').id;
+    if (activeTab === 'tab1') {
+      window.fetchTransactions();
+    } else if (activeTab === 'tab5') {
+      window.fetchMonthlyExpenses();
+    } else if (activeTab === 'tab6') {
+      window.searchTransactions();
+    }
   } catch (error) {
     showToast("Lỗi khi thêm giao dịch: " + error.message, "error");
   } finally {
@@ -472,8 +477,8 @@ async function addTransaction(newTransaction) {
 async function deleteTransaction(transactionId) {
   if (!confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) return;
 
-  const activeTab = document.querySelector('.tab-content.active').id;
   let cacheData = null;
+  const activeTab = document.querySelector('.tab-content.active').id;
 
   if (activeTab === 'tab1') {
     cacheData = cachedTransactions;
