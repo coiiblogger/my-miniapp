@@ -17,7 +17,7 @@ html {
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
-  padding: 140px 20px 20px; /* Giữ padding-top để nội dung không bị che */
+  padding: 100px 20px 20px; /* Giảm từ 105px xuống 100px để nội dung gần hơn */
   background-color: var(--background-color);
   box-sizing: border-box;
   width: 100%;
@@ -28,23 +28,22 @@ body {
   color: var(--text-color);
 }
 
-/* Làm cho tiêu đề liền khối với nền bên dưới */
 .app-header {
-  background: var(--background-color); /* Đồng bộ màu với nền của body */
-  padding: 16px;
+  background: var(--background-color);
+  padding: 4px;
   text-align: center;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1001; /* Đảm bảo nằm trên các phần tử khác */
+  z-index: 1001;
 }
 
-.app-header h1 {
-  font-size: 1.5rem;
+.app-header h3 {
+  font-size: 0.8rem;
   font-weight: 700;
   margin: 0;
-  color: var(--text-color);
+  color: var(--secondary-color);
 }
 
 .modal-content input[readonly] {
@@ -71,16 +70,16 @@ body {
 
 .top-nav {
   position: fixed;
-  top: 60px;
+  top: 25px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: space-around;
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  padding: 15px 0;
+  padding: 10px 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  height: 60px;
+  height: 50px;
   width: 100%;
   max-width: 100%;
   margin: 0;
@@ -104,10 +103,10 @@ body {
 }
 
 .nav-item:hover { opacity: 0.8; }
-.nav-item i { font-size: 1.5rem; margin-bottom: 5px; }
+.nav-item i { font-size: 1.2rem; margin-bottom: 3px; }
 .nav-item span {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -233,10 +232,142 @@ button:hover {
 }
 
 @media (max-width: 600px) {
-  .pagination-btn {
-    min-width: 100px;
+  body {
+    padding: 83px 5px 10px; /* Giảm từ 88px xuống 83px để nội dung gần hơn */
+    font-size: 0.9rem;
+  }
+  .app-header {
+    padding: 3px;
+  }
+  .app-header h3 {
+    font-size: 0.7rem;
+  }
+  .top-nav {
+    top: 22px;
+    height: 40px;
+    padding: 8px 0;
+  }
+  .nav-item i {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .nav-item span {
+    font-size: 0.6rem;
+  }
+  .input-group {
+    gap: 0.5rem;
+    padding: 0 5px;
+  }
+  select,
+  input[type="date"] {
+    width: 110px;
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+  button {
     padding: 0.6rem 1rem;
     font-size: 0.85rem;
+  }
+  .stats-container {
+    gap: 0.5rem;
+  }
+  .stat-box {
+    width: 100px;
+    max-width: 100px;
+    padding: 0.8rem;
+    min-height: 70px;
+    font-size: 0.8rem;
+  }
+  canvas#myChart {
+    max-width: 320px !important;
+  }
+  canvas#monthlyChart {
+    max-width: 300px !important;
+    min-height: 250px;
+    max-height: 350px;
+  }
+  .custom-legend {
+    flex-direction: column;
+    max-width: 320px;
+    font-size: 0.85rem;
+  }
+  .transaction-box {
+    padding: 0.8rem;
+    max-width: 320px;
+  }
+  .info-section {
+    padding: 0 5px;
+  }
+  .info-card {
+    max-width: 100%;
+    padding: 0.8rem;
+  }
+  .info-card h1 {
+    font-size: 1.2rem;
+  }
+  .info-card p {
+    font-size: 0.85rem;
+  }
+  .qr-image {
+    width: 250px;
+  }
+  .modal-content input[type="date"] {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    padding-left: 0.7rem !important;
+    text-align: left !important;
+  }
+  .modal-content input[type="date"]::-webkit-date-and-time-value {
+    text-align: left !important;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1023px) {
+  body {
+    padding: 140px 20px 20px;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+  .stats-container {
+    gap: 1.5rem;
+  }
+  .stat-box {
+    width: 130px;
+    max-width: 130px;
+  }
+  canvas#myChart {
+    max-width: 450px !important;
+  }
+  canvas#monthlyChart {
+    max-width: 450px !important;
+    min-height: 300px;
+    max-height: 400px;
+  }
+  .info-card {
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .content-wrapper {
+    max-width: 800px;
+  }
+  body {
+    padding: 150px 30px 30px;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  .stats-container {
+    gap: 2rem;
+  }
+  .stat-box {
+    width: 140px;
+    max-width: 140px;
+  }
+  .info-card {
+    max-width: 450px;
   }
 }
 
@@ -575,7 +706,6 @@ canvas#monthlyChart {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Đảm bảo date picker căn trái trên tất cả thiết bị */
 input[type="date"] {
   text-align: left !important;
   padding-left: 0.7rem !important;
@@ -584,7 +714,6 @@ input[type="date"] {
   appearance: none;
 }
 
-/* Định kiểu cụ thể cho date picker trong modal */
 .modal-content input[type="date"] {
   width: 100%;
   padding: 0.7rem;
@@ -605,20 +734,17 @@ input[type="date"] {
   background-size: 1rem;
 }
 
-/* Ghi đè kiểu dáng gốc trên iOS */
 .modal-content input[type="date"]::-webkit-date-and-time-value {
   text-align: left !important;
   padding-left: 0 !important;
   margin-left: 0 !important;
 }
 
-/* Ghi đè biểu tượng điều khiển trên Webkit */
 .modal-content input[type="date"]::-webkit-inner-spin-button,
 .modal-content input[type="date"]::-webkit-calendar-picker-indicator {
   margin-right: 0.7rem;
 }
 
-/* Đảm bảo các trường select có mũi tên tùy chỉnh */
 .modal-content select {
   background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
   background-repeat: no-repeat;
@@ -629,7 +755,6 @@ input[type="date"] {
   appearance: none;
 }
 
-/* Hiệu ứng khi focus */
 .modal-content input:focus,
 .modal-content select:focus,
 .modal-content textarea:focus {
@@ -674,181 +799,6 @@ input[type="date"] {
   display: none;
 }
 
-@media (max-width: 600px) {
-  body {
-    padding: 130px 5px 10px;
-    font-size: 0.9rem;
-  }
-
-  .app-header h1 {
-    font-size: 1.3rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .top-nav {
-    height: 50px;
-    padding: 10px 0;
-  }
-
-  .nav-item i {
-    font-size: 1.2rem;
-  }
-
-  .nav-item span {
-    font-size: 0.65rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .input-group {
-    gap: 0.5rem;
-    padding: 0 5px;
-  }
-
-  select,
-  input[type="date"] {
-    width: 110px;
-    font-size: 0.85rem;
-    padding: 0.6rem;
-  }
-
-  button {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-  }
-
-  .stats-container {
-    gap: 0.5rem;
-  }
-
-  .stat-box {
-    width: 100px;
-    max-width: 100px;
-    padding: 0.8rem;
-    min-height: 70px;
-    font-size: 0.8rem;
-  }
-
-  canvas#myChart {
-    max-width: 320px !important;
-  }
-
-  canvas#monthlyChart {
-    max-width: 300px !important;
-    min-height: 250px;
-    max-height: 350px;
-  }
-
-  .custom-legend {
-    flex-direction: column;
-    max-width: 320px;
-    font-size: 0.85rem;
-  }
-
-  .transaction-box {
-    padding: 0.8rem;
-    max-width: 320px;
-  }
-
-  .info-section {
-    padding: 0 5px;
-  }
-
-  .info-card {
-    max-width: 100%;
-    padding: 0.8rem;
-  }
-
-  .info-card h1 {
-    font-size: 1.2rem;
-  }
-
-  .info-card p {
-    font-size: 0.85rem;
-  }
-
-  .qr-image {
-    width: 250px;
-  }
-
-  .modal-content input[type="date"] {
-    font-size: 0.9rem;
-    padding: 0.6rem;
-    padding-left: 0.7rem !important;
-    text-align: left !important;
-  }
-
-  .modal-content input[type="date"]::-webkit-date-and-time-value {
-    text-align: left !important;
-  }
-}
-
-@media (min-width: 601px) and (max-width: 1023px) {
-  body {
-    padding: 140px 20px 20px;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-
-  .stats-container {
-    gap: 1.5rem;
-  }
-
-  .stat-box {
-    width: 130px;
-    max-width: 130px;
-  }
-
-  canvas#myChart {
-    max-width: 450px !important;
-  }
-
-  canvas#monthlyChart {
-    max-width: 450px !important;
-    min-height: 300px;
-    max-height: 400px;
-  }
-
-  .info-card {
-    max-width: 400px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .content-wrapper {
-    max-width: 800px;
-  }
-
-  body {
-    padding: 150px 30px 30px;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
-
-  .stats-container {
-    gap: 2rem;
-  }
-
-  .stat-box {
-    width: 140px;
-    max-width: 140px;
-  }
-
-  .info-card {
-    max-width: 450px;
-  }
-}
-
-/* Điều chỉnh input-group cho tab Tìm kiếm */
 .input-group.vertical {
   flex-direction: column;
   align-items: center;
@@ -959,18 +909,15 @@ input[type="date"] {
   .input-group.vertical .input-field {
     max-width: 300px;
   }
-
   .input-group.vertical .input-field .uniform-input {
     font-size: 0.9rem;
     padding: 0.6rem 0.8rem;
   }
-
   .input-group.vertical button {
     max-width: 300px;
     font-size: 0.9rem;
     padding: 0.6rem 1rem;
   }
-
   .pagination-btn {
     min-width: 90px;
     padding: 0.5rem 0.8rem;
@@ -978,7 +925,6 @@ input[type="date"] {
   }
 }
 
-/* Thêm định kiểu cho Toast */
 .toast {
   position: fixed;
   bottom: 20px;
@@ -1053,7 +999,6 @@ input[type="date"] {
   word-wrap: break-word;
 }
 
-/* Style cho nhóm nút trong tab Từ khóa */
 .button-group {
   display: flex;
   justify-content: center;
@@ -1063,7 +1008,6 @@ input[type="date"] {
   margin: 0 auto;
 }
 
-/* Style cho nút Thêm từ khóa (thu nhỏ) */
 #addKeywordBtn {
   width: 150px;
   padding: 0.7rem 1rem;
@@ -1083,7 +1027,6 @@ input[type="date"] {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Style cho nút Xóa từ khóa (màu khác biệt) */
 #deleteKeywordBtn {
   width: 150px;
   padding: 0.7rem 1rem;
@@ -1103,13 +1046,11 @@ input[type="date"] {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Điều chỉnh cho màn hình nhỏ */
 @media (max-width: 600px) {
   .button-group {
     gap: 0.5rem;
     max-width: 300px;
   }
-
   #addKeywordBtn,
   #deleteKeywordBtn {
     width: 130px;
@@ -1118,7 +1059,6 @@ input[type="date"] {
   }
 }
 
-/* Đảm bảo nút Tải dữ liệu trong input-group vertical có cùng kiểu dáng */
 .input-group.vertical button#fetchKeywordsBtn {
   width: 100%;
   max-width: 350px;
