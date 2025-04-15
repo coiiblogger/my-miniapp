@@ -17,7 +17,7 @@ html {
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
-  padding: 140px 20px 20px; /* Giữ padding-top để nội dung không bị che */
+  padding: 108px 20px 20px; /* Giảm padding-top từ 140px xuống 108px */
   background-color: var(--background-color);
   box-sizing: border-box;
   width: 100%;
@@ -31,7 +31,7 @@ body {
 /* Làm cho tiêu đề liền khối với nền bên dưới */
 .app-header {
   background: var(--background-color); /* Đồng bộ màu với nền của body */
-  padding: 16px;
+  padding: 10px; /* Giảm từ 16px xuống 10px để thu nhỏ chiều cao */
   text-align: center;
   position: fixed;
   top: 0;
@@ -40,8 +40,8 @@ body {
   z-index: 1001; /* Đảm bảo nằm trên các phần tử khác */
 }
 
-.app-header h1 {
-  font-size: 1.5rem;
+.app-header h3 {
+  font-size: 0.8rem; /* Giảm từ 1.5rem xuống 1.2rem */
   font-weight: 700;
   margin: 0;
   color: var(--text-color);
@@ -71,7 +71,7 @@ body {
 
 .top-nav {
   position: fixed;
-  top: 60px;
+  top: 48px; /* Giảm từ 60px xuống 48px để phù hợp với .app-header nhỏ hơn */
   left: 0;
   right: 0;
   display: flex;
@@ -676,7 +676,7 @@ input[type="date"] {
 
 @media (max-width: 600px) {
   body {
-    padding: 130px 5px 10px;
+    padding: 98px 5px 10px; /* Giảm padding-top từ 130px xuống 98px */
     font-size: 0.9rem;
   }
 
@@ -790,7 +790,7 @@ input[type="date"] {
 
 @media (min-width: 601px) and (max-width: 1023px) {
   body {
-    padding: 140px 20px 20px;
+    padding: 108px 20px 20px; /* Giảm padding-top từ 140px xuống 108px */
   }
 
   h1 {
@@ -827,7 +827,7 @@ input[type="date"] {
   }
 
   body {
-    padding: 150px 30px 30px;
+    padding: 118px 30px 30px; /* Giảm padding-top từ 150px xuống 118px */
   }
 
   h1 {
