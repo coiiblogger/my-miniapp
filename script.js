@@ -431,20 +431,26 @@ async function saveTransaction(updatedTransaction) {
     if (result.error) throw new Error(result.error);
     showToast("Cập nhật giao dịch thành công!", "success");
     closeEditForm();
-    const activeTab = document.querySelector('.tab-content.active').id;
+    // Reset cache và làm mới dữ liệu
+    cachedTransactions = null;
+    cachedMonthlyExpenses = null;
+    cachedSearchResults = null;
+    const activeTab = document.querySelector('.tab-content.active')?.id;
     if (activeTab === 'tab1') {
-      window.fetchTransactions();
+      await window.fetchTransactions();
     } else if (activeTab === 'tab5') {
-      window.fetchMonthlyExpenses();
+      await window.fetchMonthlyExpenses();
     } else if (activeTab === 'tab6') {
-      window.searchTransactions();
+      await window.searchTransactions();
     }
   } catch (error) {
     showToast("Lỗi khi cập nhật giao dịch: " + error.message, "error");
+    console.error("Save transaction error:", error);
   } finally {
     showLoadingPopup(false);
   }
 }
+
 
 async function addTransaction(newTransaction) {
   showLoadingPopup(true);
@@ -459,16 +465,21 @@ async function addTransaction(newTransaction) {
     if (result.error) throw new Error(result.error);
     showToast("Thêm giao dịch thành công!", "success");
     closeAddForm();
-    const activeTab = document.querySelector('.tab-content.active').id;
+    // Reset cache và làm mới dữ liệu
+    cachedTransactions = null;
+    cachedMonthlyExpenses = null;
+    cachedSearchResults = null;
+    const activeTab = document.querySelector('.tab-content.active')?.id;
     if (activeTab === 'tab1') {
-      window.fetchTransactions();
+      await window.fetchTransactions();
     } else if (activeTab === 'tab5') {
-      window.fetchMonthlyExpenses();
+      await window.fetchMonthlyExpenses();
     } else if (activeTab === 'tab6') {
-      window.searchTransactions();
+      await window.searchTransactions();
     }
   } catch (error) {
     showToast("Lỗi khi thêm giao dịch: " + error.message, "error");
+    console.error("Add transaction error:", error);
   } finally {
     showLoadingPopup(false);
   }
@@ -477,8 +488,8 @@ async function addTransaction(newTransaction) {
 async function deleteTransaction(transactionId) {
   if (!confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) return;
 
+  const activeTab = document.querySelector('.tab-content.active')?.id;
   let cacheData = null;
-  const activeTab = document.querySelector('.tab-content.active').id;
 
   if (activeTab === 'tab1') {
     cacheData = cachedTransactions;
@@ -488,16 +499,17 @@ async function deleteTransaction(transactionId) {
     cacheData = cachedSearchResults;
   }
 
-  if (!cacheData) {
+  if (!cacheData && activeTab) {
     showToast("Không tìm thấy dữ liệu giao dịch!", "error");
+    console.error("No cache data for active tab:", activeTab);
     return;
   }
 
   showLoadingPopup(true);
   try {
-    const transaction = cacheData.data
+    const transaction = cacheData?.data
       ? cacheData.data.find(item => String(item.id) === String(transactionId))
-      : cacheData.transactions
+      : cacheData?.transactions
       ? cacheData.transactions.find(item => String(item.id) === String(transactionId))
       : null;
 
@@ -525,16 +537,20 @@ async function deleteTransaction(transactionId) {
     const result = await response.json();
     if (result.error) throw new Error(result.error);
     showToast("Xóa giao dịch thành công!", "success");
-
+    // Reset cache và làm mới dữ liệu
+    cachedTransactions = null;
+    cachedMonthlyExpenses = null;
+    cachedSearchResults = null;
     if (activeTab === 'tab1') {
-      window.fetchTransactions();
+      await window.fetchTransactions();
     } else if (activeTab === 'tab5') {
-      window.fetchMonthlyExpenses();
+      await window.fetchMonthlyExpenses();
     } else if (activeTab === 'tab6') {
-      window.searchTransactions();
+      await window.searchTransactions();
     }
   } catch (error) {
     showToast("Lỗi khi xóa giao dịch: " + error.message, "error");
+    console.error("Delete transaction error:", error);
   } finally {
     showLoadingPopup(false);
   }
