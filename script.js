@@ -494,7 +494,11 @@ async function addTransaction(newTransaction) {
 }
 
 async function deleteTransaction(transactionId) {
-  if (!confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) return;
+  const modal = document.getElementById('confirmDeleteModal');
+  if (!modal) {
+    showToast("Lỗi giao diện: Không tìm thấy modal xác nhận!", "error");
+    return;
+  }
 
   const activeTab = document.querySelector('.tab-content.active')?.id;
   let cacheData = null;
@@ -513,55 +517,64 @@ async function deleteTransaction(transactionId) {
     return;
   }
 
-  showLoadingPopup(true);
-  try {
-    const transaction = cacheData?.data
-      ? cacheData.data.find(item => String(item.id) === String(transactionId))
-      : cacheData?.transactions
-      ? cacheData.transactions.find(item => String(item.id) === String(transactionId))
-      : null;
+  modal.style.display = 'flex';
+  const confirmBtn = document.getElementById('confirmDeleteBtn');
+  confirmBtn.onclick = async () => {
+    modal.style.display = 'none';
+    showLoadingPopup(true);
+    try {
+      const transaction = cacheData?.data
+        ? cacheData.data.find(item => String(item.id) === String(transactionId))
+        : cacheData?.transactions
+        ? cacheData.transactions.find(item => String(item.id) === String(transactionId))
+        : null;
 
-    if (!transaction) throw new Error("Không tìm thấy giao dịch để xóa!");
+      if (!transaction) throw new Error("Không tìm thấy giao dịch để xóa!");
 
-    if (!transaction.date || !transaction.date.includes('/')) {
-      throw new Error("Ngày giao dịch không hợp lệ!");
+      if (!transaction.date || !transaction.date.includes('/')) {
+        throw new Error("Ngày giao dịch không hợp lệ!");
+      }
+      const dateParts = transaction.date.split('/');
+      if (dateParts.length !== 3) throw new Error("Định dạng ngày không hợp lệ!");
+      const transactionMonth = dateParts[1].padStart(2, '0');
+
+      const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
+      const response = await fetch(finalUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'deleteTransaction',
+          id: transactionId,
+          month: transactionMonth,
+          sheetId: sheetId
+        })
+      });
+
+      const result = await response.json();
+      if (result.error) throw new Error(result.error);
+      showToast("Xóa giao dịch thành công!", "success");
+      // Reset cache và làm mới dữ liệu
+      cachedTransactions = null;
+      cachedMonthlyExpenses = null;
+      cachedSearchResults = null;
+      if (activeTab === 'tab1') {
+        await window.fetchTransactions();
+      } else if (activeTab === 'tab5') {
+        await window.fetchMonthlyExpenses();
+      } else if (activeTab === 'tab6') {
+        await window.searchTransactions();
+      }
+    } catch (error) {
+      showToast("Lỗi khi xóa giao dịch: " + error.message, "error");
+      console.error("Delete transaction error:", error);
+    } finally {
+      showLoadingPopup(false);
     }
-    const dateParts = transaction.date.split('/');
-    if (dateParts.length !== 3) throw new Error("Định dạng ngày không hợp lệ!");
-    const transactionMonth = dateParts[1].padStart(2, '0');
+  };
+}
 
-    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
-    const response = await fetch(finalUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'deleteTransaction',
-        id: transactionId,
-        month: transactionMonth,
-        sheetId: sheetId
-      })
-    });
-
-    const result = await response.json();
-    if (result.error) throw new Error(result.error);
-    showToast("Xóa giao dịch thành công!", "success");
-    // Reset cache và làm mới dữ liệu
-    cachedTransactions = null;
-    cachedMonthlyExpenses = null;
-    cachedSearchResults = null;
-    if (activeTab === 'tab1') {
-      await window.fetchTransactions();
-    } else if (activeTab === 'tab5') {
-      await window.fetchMonthlyExpenses();
-    } else if (activeTab === 'tab6') {
-      await window.searchTransactions();
-    }
-  } catch (error) {
-    showToast("Lỗi khi xóa giao dịch: " + error.message, "error");
-    console.error("Delete transaction error:", error);
-  } finally {
-    showLoadingPopup(false);
-  }
+function closeConfirmDeleteModal() {
+  document.getElementById('confirmDeleteModal').style.display = 'none';
 }
 
 // Tab 2: Thống kê
@@ -1201,15 +1214,17 @@ function displayKeywords(data) {
   container.innerHTML = '';
 
   if (!data || data.error || !Array.isArray(data) || data.length === 0) {
-    container.innerHTML = '<div>Không có từ khóa nào</div>';
+    container.innerHTML = '<div class="notification">Không có từ khóa nào</div>';
     return;
   }
 
   data.forEach(item => {
     const keywordBox = document.createElement('div');
     keywordBox.className = 'keyword-box';
+    // Đếm số lượng từ khóa bằng cách tách chuỗi keywords
+    const keywordCount = item.keywords ? item.keywords.split(',').length : 0;
     keywordBox.innerHTML = `
-      <div class="category">${item.category}</div>
+      <div class="category">${item.category} (${keywordCount} từ khóa)</div>
       <div class="keywords">Từ khóa: ${item.keywords}</div>
     `;
     container.appendChild(keywordBox);
