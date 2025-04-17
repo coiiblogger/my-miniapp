@@ -418,21 +418,21 @@ canvas#monthlyChart {
 
 .month-item .difference-icon {
   font-size: 0.8rem;
-  line-height: 16px; 
+  line-height: 16px; /* Đảm bảo biểu tượng được căn giữa theo chiều dọc trong ô 16x16 */
 }
 
 .month-item .amount,
 .month-item .difference {
   font-weight: 700;
-  margin-left: 0.2rem; 
+  margin-left: 0.1rem; /* Thêm khoảng cách nhỏ để số tiền cách xa dấu hai chấm một chút */
 }
 
 .month-item span:not(.amount):not(.difference)::after {
-  content: "\0020"; 
+  content: "\0020"; /* Giữ khoảng trắng thông thường để đồng bộ giữa các mục */
 }
 
 .month-item p strong {
-  margin-left: 0.2rem; 
+  margin-left: 0.1rem; /* Đồng bộ khoảng cách với .amount và .difference */
 }
 
 .difference.positive {
