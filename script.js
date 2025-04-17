@@ -294,24 +294,24 @@ function displayTransactions(data) {
     const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
     const transactionNumber = startIndex + index + 1;
     transactionBox.innerHTML = `
-      <div style="display: flex; justify-content: space-between; width: 100%;">
-        <div style="flex: 1;">
-          <div class="date">${formatDate(item.date)}</div>
-          <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
-          <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
-          <div class="id">Mã giao dịch: ${item.id}</div>
-        </div>
-        <div style="flex: 1; text-align: right;">
-          <div class="type ${typeClass}">Phân loại: ${item.type}</div>
-          <div class="category">Phân loại chi tiết: ${item.category}</div>
-        </div>
-      </div>
-      <div style="margin-top: 0.5rem;">
-        <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
-        <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
-      </div>
-    `;
+  <div style="display: flex; justify-content: space-between; width: 100%;">
+    <div style="flex: 1;">
+      <div class="date">${formatDate(item.date)}</div>
+      <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
+      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+      <div class="category">Phân loại chi tiết:<br>${item.category}</div>
+    </div>
+    <div style="flex: 1; text-align: right;">
+      <div class="number">Giao dịch thứ: ${transactionNumber}</div>
+      <div class="id">Mã giao dịch: ${item.id}</div>
+    </div>
+  </div>
+  <div style="margin-top: 0.5rem;">
+    <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+    <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
+  </div>
+`;
     container.appendChild(transactionBox);
   });
 
@@ -1177,24 +1177,24 @@ function displayMonthlyExpenses(data) {
     const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
     const transactionNumber = startIndex + index + 1;
     transactionBox.innerHTML = `
-      <div style="display: flex; justify-content: space-between; width: 100%;">
-        <div style="flex: 1;">
-          <div class="date">${formatDate(item.date)}</div>
-          <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
-          <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
-          <div class="id">Mã giao dịch: ${item.id}</div>
-        </div>
-        <div style="flex: 1; text-align: right;">
-          <div class="type ${typeClass}">Phân loại: ${item.type}</div>
-          <div class="category">Phân loại chi tiết: ${item.category}</div>
-        </div>
-      </div>
-      <div style="margin-top: 0.5rem;">
-        <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
-        <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
-      </div>
-    `;
+  <div style="display: flex; justify-content: space-between; width: 100%;">
+    <div style="flex: 1;">
+      <div class="date">${formatDate(item.date)}</div>
+      <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
+      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+      <div class="category">Phân loại chi tiết:<br>${item.category}</div>
+    </div>
+    <div style="flex: 1; text-align: right;">
+      <div class="number">Giao dịch thứ: ${transactionNumber}</div>
+      <div class="id">Mã giao dịch: ${item.id}</div>
+    </div>
+  </div>
+  <div style="margin-top: 0.5rem;">
+    <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+    <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
+  </div>
+`;
     container.appendChild(transactionBox);
   });
 
@@ -1311,24 +1311,24 @@ function displaySearchResults(data) {
     const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
     const transactionNumber = startIndex + index + 1;
     transactionBox.innerHTML = `
-      <div style="display: flex; justify-content: space-between; width: 100%;">
-        <div style="flex: 1;">
-          <div class="date">${formatDate(item.date)}</div>
-          <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
-          <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
-          <div class="id">Mã giao dịch: ${item.id}</div>
-        </div>
-        <div style="flex: 1; text-align: right;">
-          <div class="type ${typeClass}">Phân loại: ${item.type}</div>
-          <div class="category">Phân loại chi tiết: ${item.category}</div>
-        </div>
-      </div>
-      <div style="margin-top: 0.5rem;">
-        <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
-        <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
-      </div>
-    `;
+  <div style="display: flex; justify-content: space-between; width: 100%;">
+    <div style="flex: 1;">
+      <div class="date">${formatDate(item.date)}</div>
+      <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
+      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+      <div class="category">Phân loại chi tiết:<br>${item.category}</div>
+    </div>
+    <div style="flex: 1; text-align: right;">
+      <div class="number">Giao dịch thứ: ${transactionNumber}</div>
+      <div class="id">Mã giao dịch: ${item.id}</div>
+    </div>
+  </div>
+  <div style="margin-top: 0.5rem;">
+    <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+    <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
+  </div>
+`;
     container.appendChild(transactionBox);
   });
 
