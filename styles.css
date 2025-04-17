@@ -461,6 +461,7 @@ canvas#monthlyChart {
 }
 
 .transaction-box {
+  position: relative; /* Đảm bảo layer-top nằm trong transaction-box */
   padding: 1rem;
   width: 100%;
   max-width: 600px;
@@ -473,19 +474,56 @@ canvas#monthlyChart {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s;
   margin-bottom: 1rem;
+  overflow: visible; /* Đảm bảo nội dung không bị cắt */
 }
 
 .transaction-box:hover { transform: translateY(-5px); }
 .transaction-box .date { font-weight: 500; font-size: 1.1rem; color: var(--text-color); margin-bottom: 0.5rem; }
-.transaction Rosin: none;
 .transaction-box .amount { font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem; }
 .transaction-box .type { font-size: 1rem; margin-bottom: 0.5rem; font-weight: 700; }
-.transaction-box .category { font-size: 1rem; font-style: italic; color: var(--secondary-color); }
 .transaction-box .type.expense { color: #EF4444; }
 .transaction-box .type.income { color: #10B981; }
-.transaction-box .content { font-size: 1rem; margin-bottom: 0.5rem; white-space: normal; word-wrap: break-word; }
 .transaction-box .id { font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 0.3rem; }
 .transaction-box .number { font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 0.3rem; }
+
+/* Bố cục hai layer cho transaction-box */
+.layer-container {
+  position: relative;
+  margin-bottom: 0.5rem; /* Khoảng cách dưới để tránh chồng lấn với nút Sửa/Xóa */
+  width: 100%;
+}
+
+/* Layer trên (Giao dịch thứ, Mã giao dịch) */
+.layer-top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  text-align: right;
+  font-size: 0.85rem; /* Thu nhỏ chữ để giảm chiều cao */
+  line-height: 1.2; /* Giảm khoảng cách dòng */
+}
+
+/* Layer dưới (Ngày, Số tiền, Nội dung, Phân loại, Phân loại chi tiết) */
+.layer-bottom {
+  width: 100%;
+  padding-right: 100px; /* Đảm bảo không bị layer-top che mất */
+}
+
+/* Đảm bảo Nội dung và Phân loại chi tiết tự động xuống dòng */
+.transaction-box .content {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  white-space: normal;
+  overflow-wrap: break-word; /* Đảm bảo xuống dòng cho từ dài */
+}
+
+.transaction-box .category {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--secondary-color);
+  white-space: normal; /* Cho phép xuống dòng */
+  overflow-wrap: break-word; /* Đảm bảo xuống dòng cho từ dài */
+}
 
 .keywords-list {
   display: flex;
