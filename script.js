@@ -1557,6 +1557,14 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('fetchKeywordsBtn').addEventListener('click', window.fetchKeywords);
   document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
   document.getElementById('deleteKeywordBtn').addEventListener('click', window.deleteKeyword);
+  document.getElementById('nextPage').addEventListener('click', () => {
+  currentPage++;
+  window.fetchTransactions();
+   });
+   document.getElementById('prevPage').addEventListener('click', () => {
+  currentPage--;
+  window.fetchTransactions();
+});
 
   // Thiết lập tháng mặc định cho biểu đồ và chi tiêu
   const currentMonth = new Date().getMonth() + 1;
