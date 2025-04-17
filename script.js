@@ -294,17 +294,17 @@ function displayTransactions(data) {
     const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
     const transactionNumber = startIndex + index + 1;
     transactionBox.innerHTML = `
-  <div style="display: flex; justify-content: space-between; width: 100%;">
-    <div style="flex: 1;">
-      <div class="date">${formatDate(item.date)}</div>
-      <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
-      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
-      <div class="category">Phân loại chi tiết:<br>${item.category}</div>
-    </div>
-    <div style="flex: 1; text-align: right;">
+  <div class="layer-container" style="position: relative;">
+    <div class="layer-top" style="position: absolute; top: 0; right: 0;">
       <div class="number">Giao dịch thứ: ${transactionNumber}</div>
       <div class="id">Mã giao dịch: ${item.id}</div>
+    </div>
+    <div class="layer-bottom" style="width: 100%;">
+      <div class="date">${formatDate(item.date)}</div>
+      <div class="amount" style="color: ${amountColor}; font-weight: bold;">${item.amount.toLocaleString('vi-VN')}đ</div>
+      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+      <div class="category">Phân loại chi tiết: ${item.category}</div>
     </div>
   </div>
   <div style="margin-top: 0.5rem;">
@@ -1177,17 +1177,17 @@ function displayMonthlyExpenses(data) {
     const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
     const transactionNumber = startIndex + index + 1;
     transactionBox.innerHTML = `
-  <div style="display: flex; justify-content: space-between; width: 100%;">
-    <div style="flex: 1;">
-      <div class="date">${formatDate(item.date)}</div>
-      <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
-      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
-      <div class="category">Phân loại chi tiết:<br>${item.category}</div>
-    </div>
-    <div style="flex: 1; text-align: right;">
+  <div class="layer-container" style="position: relative;">
+    <div class="layer-top" style="position: absolute; top: 0; right: 0;">
       <div class="number">Giao dịch thứ: ${transactionNumber}</div>
       <div class="id">Mã giao dịch: ${item.id}</div>
+    </div>
+    <div class="layer-bottom" style="width: 100%;">
+      <div class="date">${formatDate(item.date)}</div>
+      <div class="amount" style="color: ${amountColor}; font-weight: bold;">${item.amount.toLocaleString('vi-VN')}đ</div>
+      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+      <div class="category">Phân loại chi tiết: ${item.category}</div>
     </div>
   </div>
   <div style="margin-top: 0.5rem;">
@@ -1311,17 +1311,17 @@ function displaySearchResults(data) {
     const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
     const transactionNumber = startIndex + index + 1;
     transactionBox.innerHTML = `
-  <div style="display: flex; justify-content: space-between; width: 100%;">
-    <div style="flex: 1;">
-      <div class="date">${formatDate(item.date)}</div>
-      <div class="amount" style="color: ${amountColor}">${item.amount.toLocaleString('vi-VN')}đ</div>
-      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
-      <div class="category">Phân loại chi tiết:<br>${item.category}</div>
-    </div>
-    <div style="flex: 1; text-align: right;">
+  <div class="layer-container" style="position: relative;">
+    <div class="layer-top" style="position: absolute; top: 0; right: 0;">
       <div class="number">Giao dịch thứ: ${transactionNumber}</div>
       <div class="id">Mã giao dịch: ${item.id}</div>
+    </div>
+    <div class="layer-bottom" style="width: 100%;">
+      <div class="date">${formatDate(item.date)}</div>
+      <div class="amount" style="color: ${amountColor}; font-weight: bold;">${item.amount.toLocaleString('vi-VN')}đ</div>
+      <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+      <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+      <div class="category">Phân loại chi tiết: ${item.category}</div>
     </div>
   </div>
   <div style="margin-top: 0.5rem;">
