@@ -3,18 +3,34 @@
    Định nghĩa các biến màu sắc và giá trị dùng chung để đảm bảo tính nhất quán.
    ========================================================================== */
 :root {
-  --primary-color: #0EA5E9; /* Màu chính */
-  --secondary-color: #6C7280; /* Màu phụ */
-  --background-color: #F5F7FA; /* Màu nền */
-  --card-bg: #FFFFFF; /* Màu nền thẻ */
-  --text-color: #1E293B; /* Màu chữ */
-  --gradient-start: #0EA5E9; /* Màu bắt đầu gradient */
-  --gradient-end: #22D3EE; /* Màu kết thúc gradient */
-  --income-color: #34D399; /* Màu Tổng thu nhập */
-  --expense-color: #F87171; /* Màu Tổng chi tiêu */
-  --balance-color: #8B5CF6; /* Màu Chênh lệch */
-  --edit-btn-color: #6366F1; /* Màu nút Sửa giao dịch */
-  --delete-btn-color: #F87171; /* Màu nút Xóa giao dịch và Xóa từ khóa */
+  --primary-color: #059669; /* Xanh lá công nghệ */
+  --secondary-color: #6B7280; /* Xám trung tính */
+  --background-color: #F7FAF8; /* Nền xanh nhạt, sạch sẽ */
+  --card-bg: #FFFFFF; /* Trắng tinh cho thẻ */
+  --text-color: #1F2937; /* Xám đậm, dễ đọc */
+  --gradient-start: #059669; /* Xanh lá đậm */
+  --gradient-end: #34D399; /* Xanh lá nhạt */
+  --income-color: #10B981; /* Xanh ngọc, biểu thị thu nhập */
+  --expense-color: #F472B6; /* Hồng pastel, biểu thị chi tiêu */
+  --balance-color: #F59E0B; /* Vàng cam, biểu thị chênh lệch */
+  --edit-btn-color: #047857; /* Xanh lá đậm, nút sửa */
+  --delete-btn-color: #E11D48; /* Đỏ hồng, nút xóa */
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #10B981; /* Xanh lá công nghệ */
+    --secondary-color: #9CA3AF; /* Xám trung tính */
+    --background-color: #1E2B28; /* Nền xanh đậm, sạch sẽ */
+    --card-bg: #2D3B38; /* Xanh xám đậm cho thẻ */
+    --text-color: #E7ECE8; /* Xám nhạt, dễ đọc */
+    --gradient-start: #10B981; /* Xanh lá đậm */
+    --gradient-end: #6EE7B7; /* Xanh lá nhạt */
+    --income-color: #34D399; /* Xanh ngọc, biểu thị thu nhập */
+    --expense-color: #F9A8D4; /* Hồng pastel, biểu thị chi tiêu */
+    --balance-color: #FBBF24; /* Vàng cam, biểu thị chênh lệch */
+    --edit-btn-color: #059669; /* Xanh lá đậm, nút sửa */
+    --delete-btn-color: #F43F5E; /* Đỏ hồng, nút xóa */
+  }
 }
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
