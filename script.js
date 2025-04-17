@@ -568,6 +568,11 @@ async function saveTransaction(updatedTransaction) {
 async function addTransaction(newTransaction) {
   showLoadingPopup(true);
   try {
+    // Kiểm tra định dạng ngày
+    if (!newTransaction.date || !/^\d{2}\/\d{2}\/\d{4}$/.test(newTransaction.date)) {
+      throw new Error("Định dạng ngày không hợp lệ!");
+    }
+
     const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
     const response = await fetch(finalUrl, {
       method: 'POST',
@@ -576,14 +581,23 @@ async function addTransaction(newTransaction) {
     });
     const result = await response.json();
     if (result.error) throw new Error(result.error);
-    showToast("Thêm giao dịch thành công!", "success");
+    showToast(`Đã thêm giao dịch và tải dữ liệu cho ngày ${newTransaction.date}`, "success");
     closeAddForm();
     cachedTransactions = null;
     cachedMonthlyExpenses = null;
     cachedSearchResults = null;
     const activeTab = document.querySelector('.tab-content.active')?.id;
+
+    // Lấy ngày từ giao dịch vừa thêm
+    const transactionDate = newTransaction.date; // Định dạng DD/MM/YYYY
+    const [day, month, year] = transactionDate.split('/');
+    const formattedDateForInput = `${year}-${month}-${day}`; // Định dạng YYYY-MM-DD
+
+    // Cập nhật input ngày trong Tab 1 và tải dữ liệu cho ngày đó
     if (activeTab === 'tab1') {
-      await window.fetchTransactions();
+      const transactionDateInput = document.getElementById('transactionDate');
+      transactionDateInput.value = formattedDateForInput; // Cập nhật giá trị input
+      await window.fetchTransactions(); // Tải dữ liệu cho ngày được chọn
     } else if (activeTab === 'tab5') {
       await window.fetchMonthlyExpenses();
     } else if (activeTab === 'tab6') {
