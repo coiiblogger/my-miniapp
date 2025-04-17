@@ -1557,14 +1557,50 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('fetchKeywordsBtn').addEventListener('click', window.fetchKeywords);
   document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
   document.getElementById('deleteKeywordBtn').addEventListener('click', window.deleteKeyword);
+  
+   // Gán sự kiện cho các nút phân trang
+  document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      window.fetchTransactions();
+    }
+  });
   document.getElementById('nextPage').addEventListener('click', () => {
-  currentPage++;
-  window.fetchTransactions();
-   });
-   document.getElementById('prevPage').addEventListener('click', () => {
-  currentPage--;
-  window.fetchTransactions();
-});
+    const data = cachedTransactions?.data || [];
+    const totalPages = Math.ceil(data.length / transactionsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      window.fetchTransactions();
+    }
+  });
+  document.getElementById('prevPageMonthly').addEventListener('click', () => {
+    if (currentPageMonthly > 1) {
+      currentPageMonthly--;
+      window.fetchMonthlyExpenses();
+    }
+  });
+  document.getElementById('nextPageMonthly').addEventListener('click', () => {
+    const data = cachedMonthlyExpenses?.data || [];
+    const totalPages = Math.ceil(data.length / expensesPerPage);
+    if (currentPageMonthly < totalPages) {
+      currentPageMonthly++;
+      window.fetchMonthlyExpenses();
+    }
+  });
+  document.getElementById('prevPageSearch').addEventListener('click', () => {
+    if (currentPageSearch > 1) {
+      currentPageSearch--;
+      window.searchTransactions();
+    }
+  });
+  document.getElementById('nextPageSearch').addEventListener('click', () => {
+    const data = cachedSearchResults?.transactions || [];
+    const totalPages = Math.ceil(data.length / searchPerPage);
+    if (currentPageSearch < totalPages) {
+      currentPageSearch++;
+      window.searchTransactions();
+    }
+  });
 
   // Thiết lập tháng mặc định cho biểu đồ và chi tiêu
   const currentMonth = new Date().getMonth() + 1;
