@@ -595,6 +595,34 @@ canvas#monthlyChart {
   cursor: not-allowed;
   transform: none;
 }
+/* Bố cục hai layer cho transaction-box */
+.layer-container {
+  position: relative;
+  margin-bottom: 0.5rem; /* Khoảng cách dưới để tránh chồng lấn với nút Sửa/Xóa */
+}
+
+/* Layer trên (Giao dịch thứ, Mã giao dịch) */
+.layer-top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  text-align: right;
+  font-size: 0.85rem; /* Thu nhỏ chữ để giảm chiều cao */
+  line-height: 1.2; /* Giảm khoảng cách dòng */
+}
+
+/* Layer dưới (Ngày, Số tiền, Nội dung, Phân loại, Phân loại chi tiết) */
+.layer-bottom {
+  width: 100%;
+  padding-right: 100px; /* Đảm bảo không bị layer-top che mất */
+}
+
+/* Đảm bảo Phân loại chi tiết hiển thị trên một dòng */
+.transaction-box .category {
+  white-space: nowrap; /* Ngăn xuống dòng */
+  overflow: hidden; /* Ẩn nội dung tràn */
+  text-overflow: ellipsis; /* Thêm dấu ... nếu nội dung quá dài */
+}
 
 /* ==========================================================================
    6. Modal và Popup
