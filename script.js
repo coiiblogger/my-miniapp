@@ -1248,6 +1248,15 @@ window.searchTransactions = async function() {
     return showToast("Vui lòng nhập ít nhất một tiêu chí: nội dung, số tiền, hoặc phân loại chi tiết!", "warning");
   }
 
+  // Tạo cacheKey dựa trên các tiêu chí tìm kiếm
+  const cacheKey = `${year}-${month || 'all'}-${content || ''}-${amount || ''}-${category || ''}`;
+
+  // Kiểm tra cache
+  if (cachedSearchResults && cachedSearchResults.cacheKey === cacheKey) {
+    displaySearchResults(cachedSearchResults.transactions);
+    return;
+  }
+
   showLoading(true, 'tab6');
   try {
     let targetUrl = `${apiUrl}?action=searchTransactions&sheetId=${sheetId}&page=${currentPageSearch}&limit=${searchPerPage}`;
@@ -1267,7 +1276,8 @@ window.searchTransactions = async function() {
       transactions: searchData.transactions || [],
       totalTransactions: searchData.totalTransactions || 0,
       totalPages: searchData.totalPages || 1,
-      currentPage: searchData.currentPage || 1
+      currentPage: searchData.currentPage || 1,
+      cacheKey: cacheKey // Lưu cacheKey
     };
     currentPageSearch = searchData.currentPage || 1;
 
@@ -1591,16 +1601,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   document.getElementById('prevPageSearch').addEventListener('click', () => {
-    if (currentPageSearch > 1) {
-      currentPageSearch--;
+  if (currentPageSearch > 1) {
+    currentPageSearch--;
+    if (cachedSearchResults && cachedSearchResults.transactions) {
+      displaySearchResults(cachedSearchResults.transactions);
+    } else {
       window.searchTransactions();
     }
-  });
-  document.getElementById('nextPageSearch').addEventListener('click', () => {
+  }
+});
+
+document.getElementById('nextPageSearch').addEventListener('click', () => {
   const totalPages = cachedSearchResults?.totalPages || 1;
   if (currentPageSearch < totalPages) {
     currentPageSearch++;
-    window.searchTransactions();
+    if (cachedSearchResults && cachedSearchResults.transactions) {
+      displaySearchResults(cachedSearchResults.transactions);
+    } else {
+      window.searchTransactions();
+    }
   }
 });
 
