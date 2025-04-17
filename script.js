@@ -1264,10 +1264,10 @@ window.searchTransactions = async function() {
     if (searchData.error) throw new Error(searchData.error);
 
     cachedSearchResults = {
-      transactions: searchData.transactions,
-      totalTransactions: searchData.totalTransactions,
-      totalPages: searchData.totalPages,
-      currentPage: searchData.currentPage
+      transactions: searchData.transactions || [],
+      totalTransactions: searchData.totalTransactions || 0,
+      totalPages: searchData.totalPages || 1,
+      currentPage: searchData.currentPage || 1
     };
     currentPageSearch = searchData.currentPage || 1;
 
