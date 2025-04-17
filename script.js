@@ -308,8 +308,8 @@ function displayTransactions(data) {
     </div>
   </div>
   <div style="margin-top: 0.5rem;">
-    <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
-    <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
+    <button class="edit-btn" data-id="${item.id}" style="background: var(--edit-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+    <button class="delete-btn" data-id="${item.id}" style="background: var(--delete-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
   </div>
 `;
     container.appendChild(transactionBox);
@@ -1191,8 +1191,8 @@ function displayMonthlyExpenses(data) {
     </div>
   </div>
   <div style="margin-top: 0.5rem;">
-    <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
-    <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
+    <button class="edit-btn" data-id="${item.id}" style="background: var(--edit-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+    <button class="delete-btn" data-id="${item.id}" style="background: var(--delete-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
   </div>
 `;
     container.appendChild(transactionBox);
@@ -1325,8 +1325,8 @@ function displaySearchResults(data) {
     </div>
   </div>
   <div style="margin-top: 0.5rem;">
-    <button class="edit-btn" data-id="${item.id}" style="background: #FFA500; color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
-    <button class="delete-btn" data-id="${item.id}" style="background: #EF4444; color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
+    <button class="edit-btn" data-id="${item.id}" style="background: var(--edit-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+    <button class="delete-btn" data-id="${item.id}" style="background: var(--delete-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
   </div>
 `;
     container.appendChild(transactionBox);
