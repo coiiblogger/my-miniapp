@@ -655,13 +655,6 @@ canvas#monthlyChart {
   padding-right: 100px; /* Đảm bảo không bị layer-top che mất */
 }
 
-/* Đảm bảo Phân loại chi tiết hiển thị trên một dòng */
-.transaction-box .category {
-  white-space: nowrap; /* Ngăn xuống dòng */
-  overflow: hidden; /* Ẩn nội dung tràn */
-  text-overflow: ellipsis; /* Thêm dấu ... nếu nội dung quá dài */
-}
-
 /* ==========================================================================
    6. Modal và Popup
    Kiểu dáng cho modal, toast popup và loading popup.
