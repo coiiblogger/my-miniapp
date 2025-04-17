@@ -827,14 +827,42 @@ function updateChartData(response) {
   const categories = response.categories;
   const totalAmount = chartData.reduce((sum, item) => sum + item.amount, 0);
   const backgroundColors = [
-    '#FF6B6B', '#FF9F45', '#FFE156', '#7DC95E', '#40C4FF',
-    '#5A92FF', '#9B5DE5', '#FF66C4', '#FF7D7D', '#F88F70',
-    '#54A0FF', '#C084FC', '#FF82A9', '#6DCFF6', '#FFACC5',
-    '#E4C1F9', '#FF928B', '#FDCB98', '#B5E2FA', '#91E8BC',
-    '#FFD166', '#FF8E72', '#E57373', '#74D3AE', '#43BCCD',
-    '#D1B3E0', '#F78F8F', '#F6B17A', '#F4A261', '#FF6392',
-    '#66D9E8', '#FF85A1', '#6A0572', '#FC7A57', '#A29BFE'
-  ];
+  '#FF6B6B', // Đỏ san hô
+  '#FF8E53', // Cam cháy
+  '#FFC107', // Vàng hổ phách
+  '#4CAF50', // Xanh lá cây
+  '#40C4FF', // Xanh dương nhạt
+  '#3F51B5', // Xanh indigo
+  '#AB47BC', // Tím đậm
+  '#EC407A', // Hồng phấn
+  '#EF5350', // Đỏ tươi
+  '#FF7043', // Cam đào
+  '#FDD835', // Vàng nắng
+  '#66BB6A', // Xanh lá nhạt
+  '#29B6F6', // Xanh lam
+  '#5C6BC0', // Xanh tím
+  '#D81B60', // Hồng đậm
+  '#F06292', // Hồng đào
+  '#26A69A', // Xanh ngọc
+  '#FFA726', // Cam sáng
+  '#E91E63', // Hồng ruby
+  '#7CB342', // Xanh olive
+  '#0288D1', // Xanh sapphire
+  '#8E24AA', // Tím hoàng gia
+  '#FFCA28', // Vàng kim
+  '#FF5252', // Đỏ cherry
+  '#FFB300', // Vàng cam
+  '#689F38', // Xanh rừng
+  '#039BE5', // Xanh biển
+  '#9575CD', // Tím nhạt
+  '#F48FB1', // Hồng pastel
+  '#FFAB91', // Cam san hô
+  '#4DD0E1', // Xanh cyan
+  '#D4E157', // Vàng chanh
+  '#EF9A9A', // Đỏ pastel
+  '#80DEEA', // Xanh nhạt
+  '#CE93D8', // Tím pastel
+];
 
   const customLegend = document.getElementById('customLegend');
   customLegend.innerHTML = '';
