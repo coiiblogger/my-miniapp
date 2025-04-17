@@ -387,17 +387,69 @@ canvas#monthlyChart {
 }
 
 .monthly-column { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 1.5rem; text-align: left; }
-.month-item { text-align: left; white-space: nowrap; }
-.month-item h3 { font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: 500; }
-.month-item p { margin: 0.5rem 0; font-size: 1rem; display: flex; align-items: center; }
-.month-item .color-box { width: 16px; height: 16px; margin-right: 0.75rem; border-radius: 4px; }
-.month-item .amount { font-weight: 700; margin-left: 0.5rem; }
-.month-item .difference { font-weight: 700; margin-left: 0.5rem; }
-.month-item .difference-icon { margin-right: 0.5rem; font-size: 0.8rem; }
-.difference.positive { color: #10B981; }
-.difference.negative { color: #EF4444; }
-.difference-icon.positive { color: #10B981; }
-.difference-icon.negative { color: #EF4444; }
+.month-item {
+  text-align: left;
+  white-space: nowrap;
+}
+
+.month-item h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.month-item p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.month-item .color-box,
+.month-item .difference-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.75rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.month-item .difference-icon {
+  font-size: 0.8rem;
+  line-height: 16px; 
+}
+
+.month-item .amount,
+.month-item .difference {
+  font-weight: 700;
+  margin-left: 0.2rem; 
+}
+
+.month-item span:not(.amount):not(.difference)::after {
+  content: "\0020"; 
+}
+
+.month-item p strong {
+  margin-left: 0.2rem; 
+}
+
+.difference.positive {
+  color: #10B981;
+}
+
+.difference.negative {
+  color: #EF4444;
+}
+
+.difference-icon.positive {
+  color: #10B981;
+}
+
+.difference-icon.negative {
+  color: #EF4444;
+}
 
 .transactions-list {
   display: flex;
