@@ -1299,44 +1299,45 @@ function displaySearchResults(data) {
     return;
   }
 
-  container.innerHTML = `<div class="notification">Tìm thấy ${data.length} giao dịch phù hợp</div>`;
+  const totalTransactions = cachedSearchResults?.totalTransactions || data.length;
+  container.innerHTML = `<div class="notification">Tìm thấy ${totalTransactions} giao dịch phù hợp</div>`;
 
-  const totalPages = Math.ceil(data.length / searchPerPage);
+  const totalPages = cachedSearchResults?.totalPages || Math.ceil(totalTransactions / searchPerPage);
   const startIndex = (currentPageSearch - 1) * searchPerPage;
   const endIndex = startIndex + searchPerPage;
   const paginatedData = data.slice(startIndex, endIndex);
 
   paginatedData.forEach((item, index) => {
-  const transactionBox = document.createElement('div');
-  transactionBox.className = 'transaction-box';
-  const amountColor = item.type === 'Thu nhập' ? 'var(--income-color)' : 'var(--expense-color)';
-  const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
-  const transactionNumber = startIndex + index + 1;
-  transactionBox.innerHTML = `
-    <div class="layer-container" style="position: relative;">
-      <div class="layer-top" style="position: absolute; top: 0; right: 0;">
-        <div class="number">Giao dịch thứ: ${transactionNumber}</div>
-        <div class="id">Mã giao dịch: ${item.id}</div>
+    const transactionBox = document.createElement('div');
+    transactionBox.className = 'transaction-box';
+    const amountColor = item.type === 'Thu nhập' ? 'var(--income-color)' : 'var(--expense-color)';
+    const typeClass = item.type === 'Thu nhập' ? 'income' : 'expense';
+    const transactionNumber = startIndex + index + 1;
+    transactionBox.innerHTML = `
+      <div class="layer-container" style="position: relative;">
+        <div class="layer-top" style="position: absolute; top: 0; right: 0;">
+          <div class="number">Giao dịch thứ: ${transactionNumber}</div>
+          <div class="id">Mã giao dịch: ${item.id}</div>
+        </div>
+        <div class="layer-bottom" style="width: 100%;">
+          <div class="date">${formatDate(item.date)}</div>
+          <div class="amount" style="color: ${amountColor}; font-size: 1.4rem;">${item.amount.toLocaleString('vi-VN')}đ</div>
+          <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
+          <div class="type ${typeClass}">Phân loại: ${item.type}</div>
+          <div class="category">Phân loại chi tiết: ${item.category}</div>
+        </div>
       </div>
-      <div class="layer-bottom" style="width: 100%;">
-        <div class="date">${formatDate(item.date)}</div>
-        <div class="amount" style="color: ${amountColor}; font-size: 1.4rem;">${item.amount.toLocaleString('vi-VN')}đ</div>
-        <div class="content">Nội dung: ${item.content}${item.note ? ` (${item.note})` : ''}</div>
-        <div class="type ${typeClass}">Phân loại: ${item.type}</div>
-        <div class="category">Phân loại chi tiết: ${item.category}</div>
+      <div style="margin-top: 0.5rem;">
+        <button class="edit-btn" data-id="${item.id}" style="background: var(--edit-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
+        <button class="delete-btn" data-id="${item.id}" style="background: var(--delete-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
       </div>
-    </div>
-    <div style="margin-top: 0.5rem;">
-      <button class="edit-btn" data-id="${item.id}" style="background: var(--edit-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px;">Sửa</button>
-      <button class="delete-btn" data-id="${item.id}" style="background: var(--delete-btn-color); color: white; padding: 0.3rem 0.8rem; border-radius: 8px; margin-left: 0.5rem;">Xóa</button>
-    </div>
-  `;
-  container.appendChild(transactionBox);
-});
+    `;
+    container.appendChild(transactionBox);
+  });
 
   pageInfo.textContent = `Trang ${currentPageSearch} / ${totalPages}`;
   prevPageBtn.disabled = currentPageSearch === 1;
-  nextPageBtn.disabled = currentPageSearch === totalPages;
+  nextPageBtn.disabled = currentPageSearch >= totalPages;
 
   document.querySelectorAll('.edit-btn').forEach(button => {
     const transactionId = button.getAttribute('data-id');
