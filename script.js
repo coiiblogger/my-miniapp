@@ -1,14 +1,18 @@
-// Lấy thông số API và Sheet ID từ URL
+/* ==========================================================================
+   1. Cài đặt ban đầu (Initial Setup)
+   Lấy thông số API, Sheet ID từ URL và khởi tạo các biến toàn cục.
+   ========================================================================== */
 const urlParams = new URLSearchParams(window.location.search);
 const apiUrl = urlParams.get('api');
 const sheetId = urlParams.get('sheetId');
 const proxyUrl = 'https://miniapphmh.netlify.app/.netlify/functions/proxy?url=';
 
+// Kiểm tra thông số API và Sheet ID
 if (!apiUrl || !sheetId) {
   showToast("Thiếu thông tin API hoặc Sheet ID. Vui lòng kiểm tra lại URL!", "error");
 }
 
-// Biến toàn cục
+// Biến toàn cục để lưu trữ dữ liệu cache và trạng thái phân trang
 let cachedFinancialData = null;
 let cachedChartData = null;
 let cachedTransactions = null;
@@ -21,7 +25,15 @@ let cachedSearchResults = null;
 let currentPageSearch = 1;
 const searchPerPage = 10;
 
-// Hàm hiển thị Toast
+/* ==========================================================================
+   2. Hàm tiện ích (Utility Functions)
+   Các hàm hỗ trợ hiển thị thông báo, định dạng ngày giờ và quản lý giao diện.
+   ========================================================================== */
+/**
+ * Hiển thị thông báo dạng toast.
+ * @param {string} message - Nội dung thông báo.
+ * @param {string} type - Loại thông báo (info, success, error, warning).
+ */
 function showToast(message, type = "info") {
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
@@ -31,17 +43,18 @@ function showToast(message, type = "info") {
     </div>
   `;
   document.body.appendChild(toast);
-
-  // Show the toast
   setTimeout(() => toast.classList.add('show'), 100);
-
-  // Hide and remove the toast after 3 seconds
   setTimeout(() => {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
 
+/**
+ * Hiển thị thông báo lỗi trong modal.
+ * @param {string} modalId - ID của modal (edit, add).
+ * @param {string} message - Nội dung thông báo lỗi.
+ */
 function showModalError(modalId, message) {
   const errorDiv = document.getElementById(`${modalId}Error`);
   if (errorDiv) {
@@ -51,32 +64,20 @@ function showModalError(modalId, message) {
   }
 }
 
+/**
+ * Hiển thị hoặc ẩn biểu tượng loading cho tab.
+ * @param {boolean} show - Hiển thị (true) hoặc ẩn (false).
+ * @param {string} tabId - ID của tab (tab1, tab2, ...).
+ */
 function showLoading(show, tabId) {
   const loadingElement = document.getElementById(`loading${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
   if (loadingElement) loadingElement.style.display = show ? 'block' : 'none';
 }
 
-function formatDate(dateStr) {
-  const parts = dateStr.split('/');
-  if (parts.length !== 3) return dateStr;
-  const [day, month, year] = parts;
-  return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
-}
-
-function formatDateToYYYYMMDD(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function formatDateToDDMM(date) {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  return `${day}/${month}`;
-}
-
-// Hàm hiển thị Popup Loading
+/**
+ * Hiển thị hoặc ẩn popup loading toàn màn hình.
+ * @param {boolean} show - Hiển thị (true) hoặc ẩn (false).
+ */
 function showLoadingPopup(show) {
   let loadingPopup = document.getElementById('loadingPopup');
   if (!loadingPopup) {
@@ -125,7 +126,69 @@ function showLoadingPopup(show) {
   loadingPopup.style.display = show ? 'flex' : 'none';
 }
 
-// Mở tab
+/**
+ * Định dạng ngày từ DD/MM/YYYY thành DD/MM/YYYY.
+ * @param {string} dateStr - Chuỗi ngày cần định dạng.
+ * @returns {string} Chuỗi ngày đã định dạng.
+ */
+function formatDate(dateStr) {
+  const parts = dateStr.split('/');
+  if (parts.length !== 3) return dateStr;
+  const [day, month, year] = parts;
+  return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+}
+
+/**
+ * Định dạng ngày thành YYYY-MM-DD.
+ * @param {Date} date - Đối tượng Date.
+ * @returns {string} Chuỗi ngày định dạng YYYY-MM-DD.
+ */
+function formatDateToYYYYMMDD(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Định dạng ngày thành DD/MM.
+ * @param {Date} date - Đối tượng Date.
+ * @returns {string} Chuỗi ngày định dạng DD/MM.
+ */
+function formatDateToDDMM(date) {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${day}/${month}`;
+}
+
+/**
+ * Định dạng số với dấu chấm ngăn cách hàng nghìn.
+ * @param {string} value - Chuỗi số cần định dạng.
+ * @returns {string} Chuỗi số đã định dạng.
+ */
+function formatNumberWithCommas(value) {
+  if (!value) return '';
+  const digitsOnly = value.replace(/[^0-9]/g, '');
+  return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+/**
+ * Chuyển đổi chuỗi số có dấu chấm thành số nguyên.
+ * @param {string} value - Chuỗi số cần chuyển đổi.
+ * @returns {number} Số nguyên.
+ */
+function parseNumber(value) {
+  return parseInt(value.replace(/[^0-9]/g, '')) || 0;
+}
+
+/* ==========================================================================
+   3. Hàm điều hướng (Navigation Functions)
+   Hàm xử lý chuyển đổi giữa các tab trong ứng dụng.
+   ========================================================================== */
+/**
+ * Mở tab được chọn và cập nhật giao diện.
+ * @param {string} tabId - ID của tab cần mở (tab1, tab2, ...).
+ */
 window.openTab = function(tabId) {
   const tabs = document.querySelectorAll('.nav-item');
   const contents = document.querySelectorAll('.tab-content');
@@ -142,7 +205,13 @@ window.openTab = function(tabId) {
   }
 };
 
-// Tab 1: Giao dịch
+/* ==========================================================================
+   4. Tab 1: Giao dịch (Transactions Tab)
+   Các hàm liên quan đến lấy, hiển thị và quản lý giao dịch trong ngày.
+   ========================================================================== */
+/**
+ * Lấy danh sách giao dịch theo ngày từ API.
+ */
 window.fetchTransactions = async function() {
   const transactionDate = document.getElementById('transactionDate').value;
   if (!transactionDate) return showToast("Vui lòng chọn ngày để xem giao dịch!", "warning");
@@ -173,6 +242,10 @@ window.fetchTransactions = async function() {
   }
 };
 
+/**
+ * Hiển thị danh sách giao dịch và thống kê tổng quan.
+ * @param {Object|Array} data - Dữ liệu giao dịch từ API.
+ */
 function displayTransactions(data) {
   const container = document.getElementById('transactionsContainer');
   const summaryContainer = document.getElementById('dailySummary');
@@ -258,6 +331,14 @@ function displayTransactions(data) {
   });
 }
 
+/* ==========================================================================
+   5. Quản lý giao dịch (Transaction Management)
+   Các hàm để thêm, sửa, xóa giao dịch và lấy danh sách phân loại.
+   ========================================================================== */
+/**
+ * Lấy danh sách phân loại chi tiết từ API.
+ * @returns {Array} Danh sách phân loại.
+ */
 async function fetchCategories() {
   try {
     const targetUrl = `${apiUrl}?action=getCategories&sheetId=${sheetId}`;
@@ -272,6 +353,10 @@ async function fetchCategories() {
   }
 }
 
+/**
+ * Mở form chỉnh sửa giao dịch.
+ * @param {Object} transaction - Dữ liệu giao dịch cần chỉnh sửa.
+ */
 async function openEditForm(transaction) {
   if (!transaction) return showToast('Dữ liệu giao dịch không hợp lệ!', "error");
   const modal = document.getElementById('editModal');
@@ -350,6 +435,9 @@ async function openEditForm(transaction) {
   };
 }
 
+/**
+ * Mở form thêm giao dịch mới.
+ */
 async function openAddForm() {
   const modal = document.getElementById('addModal');
   const form = document.getElementById('addForm');
@@ -410,9 +498,24 @@ async function openAddForm() {
   };
 }
 
-function closeEditForm() { document.getElementById('editModal').style.display = 'none'; }
-function closeAddForm() { document.getElementById('addModal').style.display = 'none'; }
+/**
+ * Đóng form chỉnh sửa giao dịch.
+ */
+function closeEditForm() {
+  document.getElementById('editModal').style.display = 'none';
+}
 
+/**
+ * Đóng form thêm giao dịch.
+ */
+function closeAddForm() {
+  document.getElementById('addModal').style.display = 'none';
+}
+
+/**
+ * Lưu giao dịch đã chỉnh sửa vào Google Sheet.
+ * @param {Object} updatedTransaction - Dữ liệu giao dịch cần cập nhật.
+ */
 async function saveTransaction(updatedTransaction) {
   if (!updatedTransaction.date || !updatedTransaction.date.includes('/')) {
     showToast("Ngày giao dịch không hợp lệ!", "error");
@@ -439,7 +542,6 @@ async function saveTransaction(updatedTransaction) {
     if (result.error) throw new Error(result.error);
     showToast("Cập nhật giao dịch thành công!", "success");
     closeEditForm();
-    // Reset cache và làm mới dữ liệu
     cachedTransactions = null;
     cachedMonthlyExpenses = null;
     cachedSearchResults = null;
@@ -459,7 +561,10 @@ async function saveTransaction(updatedTransaction) {
   }
 }
 
-
+/**
+ * Thêm giao dịch mới vào Google Sheet.
+ * @param {Object} newTransaction - Dữ liệu giao dịch mới.
+ */
 async function addTransaction(newTransaction) {
   showLoadingPopup(true);
   try {
@@ -473,7 +578,6 @@ async function addTransaction(newTransaction) {
     if (result.error) throw new Error(result.error);
     showToast("Thêm giao dịch thành công!", "success");
     closeAddForm();
-    // Reset cache và làm mới dữ liệu
     cachedTransactions = null;
     cachedMonthlyExpenses = null;
     cachedSearchResults = null;
@@ -493,6 +597,10 @@ async function addTransaction(newTransaction) {
   }
 }
 
+/**
+ * Xóa giao dịch từ Google Sheet.
+ * @param {string} transactionId - ID của giao dịch cần xóa.
+ */
 async function deleteTransaction(transactionId) {
   const modal = document.getElementById('confirmDeleteModal');
   if (!modal) {
@@ -553,7 +661,6 @@ async function deleteTransaction(transactionId) {
       const result = await response.json();
       if (result.error) throw new Error(result.error);
       showToast("Xóa giao dịch thành công!", "success");
-      // Reset cache và làm mới dữ liệu
       cachedTransactions = null;
       cachedMonthlyExpenses = null;
       cachedSearchResults = null;
@@ -573,11 +680,20 @@ async function deleteTransaction(transactionId) {
   };
 }
 
+/**
+ * Đóng modal xác nhận xóa giao dịch.
+ */
 function closeConfirmDeleteModal() {
   document.getElementById('confirmDeleteModal').style.display = 'none';
 }
 
-// Tab 2: Thống kê
+/* ==========================================================================
+   6. Tab 2: Thống kê (Statistics Tab)
+   Các hàm lấy và hiển thị dữ liệu thống kê tài chính và biểu đồ chi tiêu.
+   ========================================================================== */
+/**
+ * Lấy dữ liệu thống kê tài chính và biểu đồ chi tiêu từ API.
+ */
 window.fetchData = async function() {
   const startDateInput = document.getElementById('startDate').value;
   const endDateInput = document.getElementById('endDate').value;
@@ -617,6 +733,10 @@ window.fetchData = async function() {
   }
 };
 
+/**
+ * Cập nhật giao diện thống kê tài chính.
+ * @param {Object} data - Dữ liệu tài chính từ API.
+ */
 function updateFinancialData(data) {
   const container = document.getElementById('statsContainer');
   if (!data || data.error) {
@@ -674,6 +794,10 @@ function updateFinancialData(data) {
   `;
 }
 
+/**
+ * Cập nhật biểu đồ chi tiêu theo phân loại.
+ * @param {Object} response - Dữ liệu biểu đồ từ API.
+ */
 function updateChartData(response) {
   const ctx = document.getElementById('myChart').getContext('2d');
   if (window.myChart && typeof window.myChart.destroy === 'function') {
@@ -778,7 +902,13 @@ function updateChartData(response) {
   });
 }
 
-// Tab 3: Biểu đồ
+/* ==========================================================================
+   7. Tab 3: Biểu đồ (Charts Tab)
+   Các hàm lấy và hiển thị biểu đồ thu chi theo tháng.
+   ========================================================================== */
+/**
+ * Lấy dữ liệu thu chi theo tháng từ API.
+ */
 window.fetchMonthlyData = async function() {
   const startMonth = parseInt(document.getElementById('startMonth').value);
   const endMonth = parseInt(document.getElementById('endMonth').value);
@@ -823,6 +953,10 @@ window.fetchMonthlyData = async function() {
   }
 };
 
+/**
+ * Cập nhật biểu đồ thu chi theo tháng.
+ * @param {Array} filteredData - Dữ liệu thu chi theo tháng.
+ */
 function updateMonthlyChart(filteredData) {
   const ctx = document.getElementById('monthlyChart').getContext('2d');
   if (window.monthlyChart && typeof window.monthlyChart.destroy === 'function') {
@@ -955,7 +1089,13 @@ function updateMonthlyChart(filteredData) {
   monthlyLegend.appendChild(column);
 }
 
-// Tab 5: Chi tiêu trong tháng
+/* ==========================================================================
+   8. Tab 5: Chi tiêu trong tháng (Monthly Expenses Tab)
+   Các hàm lấy và hiển thị giao dịch trong tháng.
+   ========================================================================== */
+/**
+ * Lấy danh sách giao dịch trong tháng từ API.
+ */
 window.fetchMonthlyExpenses = async function() {
   const month = document.getElementById('expenseMonth').value;
   if (!month) return showToast("Vui lòng chọn tháng để xem giao dịch!", "warning");
@@ -984,6 +1124,10 @@ window.fetchMonthlyExpenses = async function() {
   }
 };
 
+/**
+ * Hiển thị danh sách giao dịch trong tháng và thống kê tổng quan.
+ * @param {Object|Array} data - Dữ liệu giao dịch trong tháng.
+ */
 function displayMonthlyExpenses(data) {
   const container = document.getElementById('monthlyExpensesContainer');
   const summaryContainer = document.getElementById('monthlyExpenseSummary');
@@ -1070,7 +1214,13 @@ function displayMonthlyExpenses(data) {
   });
 }
 
-// Tab 6: Tìm kiếm giao dịch
+/* ==========================================================================
+   9. Tab 6: Tìm kiếm giao dịch (Search Transactions Tab)
+   Các hàm tìm kiếm và hiển thị kết quả giao dịch.
+   ========================================================================== */
+/**
+ * Điền danh sách phân loại chi tiết vào dropdown tìm kiếm.
+ */
 async function populateSearchCategories() {
   const categorySelect = document.getElementById('searchCategory');
   const categories = await fetchCategories();
@@ -1083,6 +1233,9 @@ async function populateSearchCategories() {
   });
 }
 
+/**
+ * Tìm kiếm giao dịch dựa trên các tiêu chí (tháng, nội dung, số tiền, phân loại).
+ */
 window.searchTransactions = async function() {
   const month = document.getElementById('searchMonth').value;
   const content = document.getElementById('searchContent').value.trim();
@@ -1125,6 +1278,10 @@ window.searchTransactions = async function() {
   }
 };
 
+/**
+ * Hiển thị kết quả tìm kiếm giao dịch.
+ * @param {Array} data - Danh sách giao dịch tìm được.
+ */
 function displaySearchResults(data) {
   const container = document.getElementById('searchResultsContainer');
   const pageInfo = document.getElementById('pageInfoSearch');
@@ -1191,7 +1348,13 @@ function displaySearchResults(data) {
   });
 }
 
-// Tab 7: Từ khóa
+/* ==========================================================================
+   10. Tab 7: Quản lý từ khóa (Keywords Tab)
+   Các hàm lấy, hiển thị, thêm và xóa từ khóa.
+   ========================================================================== */
+/**
+ * Lấy danh sách từ khóa từ API.
+ */
 window.fetchKeywords = async function() {
   showLoading(true, 'tab7');
   try {
@@ -1209,6 +1372,10 @@ window.fetchKeywords = async function() {
   }
 };
 
+/**
+ * Hiển thị danh sách từ khóa.
+ * @param {Array} data - Dữ liệu từ khóa từ API.
+ */
 function displayKeywords(data) {
   const container = document.getElementById('keywordsContainer');
   container.innerHTML = '';
@@ -1221,7 +1388,6 @@ function displayKeywords(data) {
   data.forEach(item => {
     const keywordBox = document.createElement('div');
     keywordBox.className = 'keyword-box';
-    // Đếm số lượng từ khóa bằng cách tách chuỗi keywords
     const keywordCount = item.keywords ? item.keywords.split(',').length : 0;
     keywordBox.innerHTML = `
       <div class="category">${item.category} (${keywordCount} từ khóa)</div>
@@ -1231,6 +1397,9 @@ function displayKeywords(data) {
   });
 }
 
+/**
+ * Điền danh sách phân loại chi tiết vào dropdown từ khóa.
+ */
 async function populateKeywordCategories() {
   const categorySelect = document.getElementById('keywordCategory');
   const categories = await fetchCategories();
@@ -1243,6 +1412,9 @@ async function populateKeywordCategories() {
   });
 }
 
+/**
+ * Thêm từ khóa mới vào Google Sheet.
+ */
 window.addKeyword = async function() {
   const category = document.getElementById('keywordCategory').value;
   const keywordsInput = document.getElementById('keywordInput').value.trim();
@@ -1282,6 +1454,9 @@ window.addKeyword = async function() {
   }
 };
 
+/**
+ * Xóa từ khóa khỏi Google Sheet.
+ */
 window.deleteKeyword = async function() {
   if (!apiUrl || !proxyUrl || !sheetId) {
     console.error("Lỗi: apiUrl, proxyUrl hoặc sheetId không được định nghĩa!");
@@ -1302,13 +1477,9 @@ window.deleteKeyword = async function() {
   }
 
   try {
-    console.log("Bắt đầu xóa từ khóa...");
     showLoading(true, 'tab7');
-
     const targetUrl = `${apiUrl}?action=getKeywords&sheetId=${sheetId}`;
     const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-    console.log("Gửi yêu cầu lấy từ khóa:", finalUrl);
-
     const response = await fetch(finalUrl);
     if (!response.ok) {
       throw new Error(`Lỗi khi lấy danh sách từ khóa: HTTP status ${response.status}`);
@@ -1328,17 +1499,12 @@ window.deleteKeyword = async function() {
     const keywordsArray = categoryData.keywords.split(", ").map(k => k.trim().toLowerCase());
     const keywordToDelete = keywordInput.trim().toLowerCase();
 
-    console.log("Danh sách từ khóa trong danh mục:", keywordsArray);
-    console.log("Từ khóa cần xóa:", keywordToDelete);
-
     if (!keywordsArray.includes(keywordToDelete)) {
       showToast(`Từ khóa '${keywordInput}' không tồn tại trong danh mục '${category}'.`, "warning");
       return;
     }
 
     const deleteUrl = proxyUrl + encodeURIComponent(apiUrl);
-    console.log("Gửi yêu cầu xóa từ khóa:", deleteUrl);
-
     const responseDelete = await fetch(deleteUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1361,28 +1527,27 @@ window.deleteKeyword = async function() {
 
     showToast("Xóa từ khóa thành công!", "success");
     document.getElementById('keywordInput').value = '';
-    if (typeof window.fetchKeywords === 'function') {
-      window.fetchKeywords();
-    } else {
-      console.error("Lỗi: Hàm fetchKeywords không được định nghĩa!");
-      showToast("Lỗi: Không thể cập nhật danh sách từ khóa!", "error");
-    }
+    window.fetchKeywords();
   } catch (error) {
     console.error("Lỗi trong deleteKeyword:", error);
     showToast("Lỗi khi xóa từ khóa: " + error.message, "error");
   } finally {
     showLoading(false, 'tab7');
-    console.log("Kết thúc xóa từ khóa.");
   }
 };
 
-// Khởi tạo
+/* ==========================================================================
+   11. Khởi tạo ứng dụng (Application Initialization)
+   Thiết lập sự kiện và giá trị mặc định khi tải trang.
+   ========================================================================== */
 document.addEventListener('DOMContentLoaded', function() {
+  // Gán sự kiện cho các tab điều hướng
   const navItems = document.querySelectorAll('.nav-item');
   navItems.forEach(item => {
     item.addEventListener('click', () => window.openTab(item.getAttribute('data-tab')));
   });
 
+  // Gán sự kiện cho các nút chức năng
   document.getElementById('fetchDataBtn').addEventListener('click', window.fetchData);
   document.getElementById('fetchMonthlyDataBtn').addEventListener('click', window.fetchMonthlyData);
   document.getElementById('fetchTransactionsBtn').addEventListener('click', window.fetchTransactions);
@@ -1390,7 +1555,10 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('fetchMonthlyExpensesBtn').addEventListener('click', window.fetchMonthlyExpenses);
   document.getElementById('searchTransactionsBtn').addEventListener('click', window.searchTransactions);
   document.getElementById('fetchKeywordsBtn').addEventListener('click', window.fetchKeywords);
+  document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
+  document.getElementById('deleteKeywordBtn').addEventListener('click', window.deleteKeyword);
 
+  // Thiết lập tháng mặc định cho biểu đồ và chi tiêu
   const currentMonth = new Date().getMonth() + 1;
   const startMonthInput = document.getElementById('startMonth');
   const endMonthInput = document.getElementById('endMonth');
@@ -1404,52 +1572,7 @@ document.addEventListener('DOMContentLoaded', function() {
     expenseMonthInput.value = currentMonth;
   }
 
-  document.getElementById('addKeywordBtn').addEventListener('click', window.addKeyword);
-  document.getElementById('deleteKeywordBtn').addEventListener('click', window.deleteKeyword);
-  populateKeywordCategories();
-
-  document.getElementById('prevPage').addEventListener('click', () => {
-    if (currentPage > 1) {
-      currentPage--;
-      window.fetchTransactions();
-    }
-  });
-  document.getElementById('nextPage').addEventListener('click', () => {
-    const totalPages = Math.ceil((cachedTransactions?.data.length || 0) / transactionsPerPage);
-    if (currentPage < totalPages) {
-      currentPage++;
-      window.fetchTransactions();
-    }
-  });
-
-  document.getElementById('prevPageMonthly').addEventListener('click', () => {
-    if (currentPageMonthly > 1) {
-      currentPageMonthly--;
-      window.fetchMonthlyExpenses();
-    }
-  });
-  document.getElementById('nextPageMonthly').addEventListener('click', () => {
-    const totalPages = Math.ceil((cachedMonthlyExpenses?.data.length || 0) / expensesPerPage);
-    if (currentPageMonthly < totalPages) {
-      currentPageMonthly++;
-      window.fetchMonthlyExpenses();
-    }
-  });
-
-  document.getElementById('prevPageSearch').addEventListener('click', () => {
-    if (currentPageSearch > 1) {
-      currentPageSearch--;
-      window.searchTransactions();
-    }
-  });
-  document.getElementById('nextPageSearch').addEventListener('click', () => {
-    const totalPages = Math.ceil((cachedSearchResults?.transactions.length || 0) / searchPerPage);
-    if (currentPageSearch < totalPages) {
-      currentPageSearch++;
-      window.searchTransactions();
-    }
-  });
-
+  // Thiết lập định dạng số cho ô tìm kiếm số tiền
   const searchAmountInput = document.getElementById('searchAmount');
   if (searchAmountInput) {
     searchAmountInput.addEventListener('input', function() {
@@ -1467,6 +1590,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // Thiết lập ngày mặc định cho các ô nhập
   const today = new Date();
   const formattedToday = formatDateToYYYYMMDD(today);
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -1484,17 +1608,10 @@ document.addEventListener('DOMContentLoaded', function() {
     endDateInput.value = formattedToday;
   }
 
+  // Khởi tạo dropdown phân loại
   populateSearchCategories();
+  populateKeywordCategories();
+
+  // Mở tab mặc định
   window.openTab('tab1');
 });
-
-// Hàm định dạng số
-function formatNumberWithCommas(value) {
-  if (!value) return '';
-  const digitsOnly = value.replace(/[^0-9]/g, '');
-  return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-function parseNumber(value) {
-  return parseInt(value.replace(/[^0-9]/g, '')) || 0;
-}
