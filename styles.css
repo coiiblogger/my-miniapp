@@ -3,16 +3,19 @@
    Định nghĩa các biến màu sắc và giá trị dùng chung để đảm bảo tính nhất quán.
    ========================================================================== */
 :root {
-  --primary-color: #16A34A;
-  --secondary-color: #6B7280;
-  --background-color: #F7F9FC;
-  --card-bg: #FFFFFF;
-  --text-color: #1F2A44;
-  --gradient-start: #16A34A;
-  --gradient-end: #4ADE80;  
-  --accent-color: #16A34A; 
+  --primary-color: #0EA5E9; /* Màu chính */
+  --secondary-color: #6C7280; /* Màu phụ */
+  --background-color: #F5F7FA; /* Màu nền */
+  --card-bg: #FFFFFF; /* Màu nền thẻ */
+  --text-color: #1E293B; /* Màu chữ */
+  --gradient-start: #0EA5E9; /* Màu bắt đầu gradient */
+  --gradient-end: #22D3EE; /* Màu kết thúc gradient */
+  --income-color: #34D399; /* Màu Tổng thu nhập */
+  --expense-color: #F87171; /* Màu Tổng chi tiêu */
+  --balance-color: #8B5CF6; /* Màu Chênh lệch */
+  --edit-btn-color: #6366F1; /* Màu nút Sửa giao dịch */
+  --delete-btn-color: #F87171; /* Màu nút Xóa giao dịch và Xóa từ khóa */
 }
-
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
    Thiết lập kiểu dáng cơ bản cho toàn bộ trang web.
@@ -252,7 +255,7 @@ button:hover {
   font-size: 1rem;
   font-weight: 500;
   border-radius: 10px;
-  background: linear-gradient(135deg, #16A34A, #4ADE80);
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   color: white;
   border: none;
   cursor: pointer;
@@ -308,9 +311,9 @@ button:hover {
 .stat-box .title { font-weight: 500; margin-bottom: 0.5rem; color: var(--text-color); font-size: 0.9rem; }
 .stat-box .amount { font-weight: 700; font-size: 1.2rem; }
 .stat-box .amount.no-data { font-size: 1rem; white-space: pre-line; text-align: center; line-height: 1.2; }
-.income .amount { color: #10B981; }
-.expense .amount { color: #EF4444; }
-.balance .amount { color: var(--primary-color); }
+.income .amount { color: var(--income-color); }
+.expense .amount { color: var(--expense-color); }
+.balance .amount { color: var(--balance-color); }
 
 .chart-container {
   margin-top: 0;
@@ -436,19 +439,19 @@ canvas#monthlyChart {
 }
 
 .difference.positive {
-  color: #10B981;
+  color: var(--income-color);
 }
 
 .difference.negative {
-  color: #EF4444;
+  color: var(--expense-color);
 }
 
 .difference-icon.positive {
-  color: #10B981;
+  color: var(--income-color);
 }
 
 .difference-icon.negative {
-  color: #EF4444;
+  color: var(--expense-color);
 }
 
 .transactions-list {
@@ -481,8 +484,8 @@ canvas#monthlyChart {
 .transaction-box .date { font-weight: 500; font-size: 1.1rem; color: var(--text-color); margin-bottom: 0.5rem; }
 .transaction-box .amount { font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem; }
 .transaction-box .type { font-size: 1rem; margin-bottom: 0.5rem; font-weight: 700; }
-.transaction-box .type.expense { color: #EF4444; }
-.transaction-box .type.income { color: #10B981; }
+.transaction-box .type.expense { color: var(--expense-color); }
+.transaction-box .type.income { color: var(--income-color); }
 .transaction-box .id { font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 0.3rem; }
 .transaction-box .number { font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 0.3rem; }
 
@@ -587,7 +590,7 @@ canvas#monthlyChart {
   font-size: 1rem;
   font-weight: 500;
   border-radius: 10px;
-  background: linear-gradient(135deg, #EF4444, #F87171);
+  background: linear-gradient(135deg, var(--delete-btn-color), #F87171);
   color: white;
   border: none;
   cursor: pointer;
@@ -612,7 +615,7 @@ canvas#monthlyChart {
 .pagination-btn {
   min-width: 110px;
   padding: 0.6rem 1rem;
-  background: linear-gradient(135deg, #16A34A, #4ADE80);
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   color: white;
   border: none;
   cursor: pointer;
@@ -632,27 +635,6 @@ canvas#monthlyChart {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-}
-/* Bố cục hai layer cho transaction-box */
-.layer-container {
-  position: relative;
-  margin-bottom: 0.5rem; /* Khoảng cách dưới để tránh chồng lấn với nút Sửa/Xóa */
-}
-
-/* Layer trên (Giao dịch thứ, Mã giao dịch) */
-.layer-top {
-  position: absolute;
-  top: 0;
-  right: 0;
-  text-align: right;
-  font-size: 0.85rem; /* Thu nhỏ chữ để giảm chiều cao */
-  line-height: 1.2; /* Giảm khoảng cách dòng */
-}
-
-/* Layer dưới (Ngày, Số tiền, Nội dung, Phân loại, Phân loại chi tiết) */
-.layer-bottom {
-  width: 100%;
-  padding-right: 100px; /* Đảm bảo không bị layer-top che mất */
 }
 
 /* ==========================================================================
@@ -792,17 +774,17 @@ input[type="date"] {
 }
 
 .modal-content .btn-group .save-btn {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(135deg, var(--edit-btn-color), #60A5FA);
   color: white;
 }
 
 .modal-content .btn-group .cancel-btn {
-  background-color: #EF4444;
+  background: linear-gradient(135deg, var(--delete-btn-color), #F87171);
   color: white;
 }
 
 .modal-content .error-message {
-  color: red;
+  color: var(--delete-btn-color);
   font-size: 0.9rem;
   margin-bottom: 1rem;
   display: none;
@@ -847,8 +829,8 @@ input[type="date"] {
   line-height: 1.4;
 }
 
-.toast.success > div > span { color: #10B981; }
-.toast.error > div > span { color: #EF4444; }
+.toast.success > div > span { color: var(--income-color); }
+.toast.error > div > span { color: var(--delete-btn-color); }
 .toast.warning > div > span { color: #F59E0B; }
 
 #loadingPopup {
@@ -876,7 +858,7 @@ input[type="date"] {
 }
 
 #loadingPopup > div > div {
-  border: 4px solid #16A34A;
+  border: 4px solid var(--primary-color);
   border-top: 4px solid transparent;
   border-radius: 50%;
   width: 40px;
@@ -886,7 +868,7 @@ input[type="date"] {
 
 #loadingPopup > div > span {
   font-size: 1rem;
-  color: #1F2A44;
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -933,7 +915,7 @@ input[type="date"] {
   margin-bottom: 0.75rem;
   text-align: left;
   color: var(--text-color);
-  border-left: 4px solid var(--primary-color);
+  border-left: 4px solid var(--gradient-start);
   padding-left: 0.5rem;
 }
 
@@ -946,8 +928,12 @@ input[type="date"] {
   gap: 8px;
 }
 
+.info-card i {
+  color: var(--gradient-start);
+}
+
 .info-card a {
-  color: var(--primary-color);
+  color: var(--gradient-start);
   text-decoration: none;
 }
 
@@ -1018,7 +1004,7 @@ input[type="date"] {
 }
 
 .highlight-color {
-  color: var(--primary-color);
+  color: var(--gradient-start);
 }
 
 /* ==========================================================================
