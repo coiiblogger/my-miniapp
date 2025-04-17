@@ -3,33 +3,34 @@
    Định nghĩa các biến màu sắc và giá trị dùng chung để đảm bảo tính nhất quán.
    ========================================================================== */
 :root {
-  --primary-color: #059669; /* Xanh lá công nghệ */
+  --primary-color: #16A34A; /* Xanh lá cây đậm */
   --secondary-color: #6B7280; /* Xám trung tính */
-  --background-color: #F7FAF8; /* Nền xanh nhạt, sạch sẽ */
+  --background-color: #FFFDFB; /* Nền trắng ngà, sạch sẽ */
   --card-bg: #FFFFFF; /* Trắng tinh cho thẻ */
   --text-color: #1F2937; /* Xám đậm, dễ đọc */
-  --gradient-start: #059669; /* Xanh lá đậm */
-  --gradient-end: #34D399; /* Xanh lá nhạt */
-  --income-color: #10B981; /* Xanh ngọc, biểu thị thu nhập */
-  --expense-color: #F472B6; /* Hồng pastel, biểu thị chi tiêu */
-  --balance-color: #F59E0B; /* Vàng cam, biểu thị chênh lệch */
-  --edit-btn-color: #047857; /* Xanh lá đậm, nút sửa */
-  --delete-btn-color: #E11D48; /* Đỏ hồng, nút xóa */
+  --gradient-start: #16A34A; /* Xanh lá cây đậm */
+  --gradient-end: #22C55E; /* Xanh lá cây sáng */
+  --income-color: #16A34A; /* Xanh lá cây đậm, biểu thị thu nhập */
+  --expense-color: #DC2626; /* Đỏ đậm, biểu thị chi tiêu */
+  --balance-color: #7C3AED; /* Tím đậm, biểu thị chênh lệch */
+  --edit-btn-color: #15803D; /* Xanh lá cây đậm hơn, nút sửa */
+  --delete-btn-color: #B91C1C; /* Đỏ đậm hơn, nút xóa */
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary-color: #10B981; /* Xanh lá công nghệ */
+    --primary-color: #22C55E; /* Xanh lá cây đậm */
     --secondary-color: #9CA3AF; /* Xám trung tính */
-    --background-color: #1E2B28; /* Nền xanh đậm, sạch sẽ */
-    --card-bg: #2D3B38; /* Xanh xám đậm cho thẻ */
-    --text-color: #E7ECE8; /* Xám nhạt, dễ đọc */
-    --gradient-start: #10B981; /* Xanh lá đậm */
-    --gradient-end: #6EE7B7; /* Xanh lá nhạt */
-    --income-color: #34D399; /* Xanh ngọc, biểu thị thu nhập */
-    --expense-color: #F9A8D4; /* Hồng pastel, biểu thị chi tiêu */
-    --balance-color: #FBBF24; /* Vàng cam, biểu thị chênh lệch */
-    --edit-btn-color: #059669; /* Xanh lá đậm, nút sửa */
-    --delete-btn-color: #F43F5E; /* Đỏ hồng, nút xóa */
+    --background-color: #2F2A44; /* Nền xám tím đậm, sạch sẽ */
+    --card-bg: #433D5B; /* Xám tím nhạt cho thẻ */
+    --text-color: #E5E7EB; /* Xám nhạt, dễ đọc */
+    --gradient-start: #22C55E; /* Xanh lá cây đậm */
+    --gradient-end: #4ADE80; /* Xanh lá cây sáng */
+    --income-color: #22C55E; /* Xanh lá cây đậm, biểu thị thu nhập */
+    --expense-color: #EF4444; /* Đỏ đậm, biểu thị chi tiêu */
+    --balance-color: #A78BFA; /* Tím đậm, biểu thị chênh lệch */
+    --edit-btn-color: #16A34A; /* Xanh lá cây đậm hơn, nút sửa */
+    --delete-btn-color: #991B1B; /* Đỏ đậm hơn, nút xóa */
   }
 }
 /* ==========================================================================
