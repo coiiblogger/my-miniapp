@@ -1250,15 +1250,17 @@ window.searchTransactions = async function() {
 
   showLoading(true, 'tab6');
   try {
-    let targetUrl = `${apiUrl}?action=searchTransactions&sheetId=${sheetId}`;
+    let targetUrl = `${apiUrl}?action=searchTransactions&sheetId=${sheetId}&page=${currentPageSearch}&limit=${searchPerPage}`;
     if (month) targetUrl += `&month=${month}&year=${year}`;
     if (content) targetUrl += `&content=${encodeURIComponent(content)}`;
     if (amount) targetUrl += `&amount=${encodeURIComponent(amount)}`;
     if (category) targetUrl += `&category=${encodeURIComponent(category)}`;
 
+    console.log("API URL:", targetUrl);
     const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
     const response = await fetch(finalUrl);
     const searchData = await response.json();
+    console.log("API Response:", searchData);
     if (searchData.error) throw new Error(searchData.error);
 
     cachedSearchResults = {
@@ -1594,13 +1596,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   document.getElementById('nextPageSearch').addEventListener('click', () => {
-    const data = cachedSearchResults?.transactions || [];
-    const totalPages = Math.ceil(data.length / searchPerPage);
-    if (currentPageSearch < totalPages) {
-      currentPageSearch++;
-      window.searchTransactions();
-    }
-  });
+  const totalPages = cachedSearchResults?.totalPages || 1;
+  if (currentPageSearch < totalPages) {
+    currentPageSearch++;
+    window.searchTransactions();
+  }
+});
 
   // Thiết lập tháng mặc định cho biểu đồ và chi tiêu
   const currentMonth = new Date().getMonth() + 1;
