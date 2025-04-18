@@ -30,8 +30,8 @@
     --income-color: #2EE59D;
     --expense-color: #FF6B81;
     --balance-color: #B388FF;
-    --edit-btn-color: #0E7490; /* Xanh cyan đậm, trầm hơn */
-    --delete-btn-color: #B91C1C; /* Đỏ đậm, trầm hơn */
+    --edit-btn-color: #0E7490; /* Xanh cyan đậm, trầm */
+    --delete-btn-color: #B91C1C; /* Đỏ đậm, trầm */
     --stat-box-bg-start: #181A1B;
     --stat-box-bg-end: #252729;
     --input-bg: #1E2022;
@@ -86,7 +86,7 @@
 
   .transaction-item button.edit {
     background-color: var(--edit-btn-color) !important;
-    color: #E4E7EB !important; /* Trắng xám nhẹ, trầm hơn */
+    color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
     padding: 6px 12px;
@@ -94,7 +94,67 @@
 
   .transaction-item button.delete {
     background-color: var(--delete-btn-color) !important;
-    color: #E4E7EB !important; /* Trắng xám nhẹ, trầm hơn */
+    color: #E4E7EB !important;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+  }
+
+  /* Transaction-box (khối giao dịch trong tab 1, 5, 6) */
+  .transaction-box {
+    background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: none !important;
+  }
+
+  .transaction-box .date {
+    color: var(--text-color) !important;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .transaction-box .amount {
+    color: var(--text-color) !important;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .transaction-box .type,
+  .transaction-box .content,
+  .transaction-box .category {
+    color: var(--text-color) !important;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .transaction-box .id,
+  .transaction-box .number {
+    color: var(--secondary-color) !important;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .transaction-box .type.expense { color: var(--expense-color) !important; }
+  .transaction-box .type.income { color: var(--income-color) !important; }
+  .transaction-box .income .amount { color: var(--income-color) !important; }
+  .transaction-box .expense .amount { color: var(--expense-color) !important; }
+
+  .transaction-box button.edit {
+    background-color: var(--edit-btn-color) !important;
+    color: #E4E7EB !important;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+  }
+
+  .transaction-box button.delete {
+    background-color: var(--delete-btn-color) !important;
+    color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
     padding: 6px 12px;
@@ -176,7 +236,7 @@
 
   .locker-management button.delete {
     background-color: var(--delete-btn-color) !important;
-    color: #E4E7EB !important; /* Đồng bộ với nút Xóa trong .transaction-item */
+    color: #E4E7EB !important;
     border: none;
   }
 }
