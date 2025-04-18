@@ -2,37 +2,144 @@
    1. Biến CSS (Root Variables)
    Định nghĩa các biến màu sắc và giá trị dùng chung để đảm bảo tính nhất quán.
    ========================================================================== */
+/*Light Mode
 :root {
-  --primary-color: #16A34A; /* Xanh lá cây đậm */
-  --secondary-color: #6B7280; /* Xám trung tính */
-  --background-color: #FFFDFB; /* Nền trắng ngà, sạch sẽ */
-  --card-bg: #FFFFFF; /* Trắng tinh cho thẻ */
-  --text-color: #1F2937; /* Xám đậm, dễ đọc */
-  --gradient-start: #16A34A; /* Xanh lá cây đậm */
-  --gradient-end: #22C55E; /* Xanh lá cây sáng */
-  --income-color: #16A34A; /* Xanh lá cây đậm, biểu thị thu nhập */
-  --expense-color: #DC2626; /* Đỏ đậm, biểu thị chi tiêu */
-  --balance-color: #7C3AED; /* Tím đậm, biểu thị chênh lệch */
-  --edit-btn-color: #15803D; /* Xanh lá cây đậm hơn, nút sửa */
-  --delete-btn-color: #B91C1C; /* Đỏ đậm hơn, nút xóa */
+  --primary-color: #0F62FE;        /* Xanh dương công nghệ IBM Blue */
+  --secondary-color: #6C757D;      /* Xám lạnh trung tính */
+  --background-color: #F8F9FA;     /* Gần như trắng, cảm giác nhẹ nhàng hiện đại */
+  --card-bg: #FFFFFF;              /* Trắng tinh khôi cho card */
+  --text-color: #1B1F23;           /* Gần đen, rất dễ đọc */
+  --gradient-start: #0F62FE;       /* Gradient bắt đầu - xanh công nghệ */
+  --gradient-end: #36D1DC;         /* Gradient kết thúc - xanh cyan sáng */
+  --income-color: #198754;         /* Xanh ngọc lục bảo, hiện đại */
+  --expense-color: #D32F2F;        /* Đỏ đô, mạnh và rõ ràng */
+  --balance-color: #8E24AA;        /* Tím công nghệ */
+  --edit-btn-color: #0DCAF0;       /* Xanh cyan – gợi ý hành động */
+  --delete-btn-color: #DC3545;     /* Đỏ mạnh – cảnh báo/xóa */
 }
-
+/*Dark Mode
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary-color: #22C55E; /* Xanh lá cây đậm */
-    --secondary-color: #9CA3AF; /* Xám trung tính */
-    --background-color: #2F2A44; /* Nền xám tím đậm, sạch sẽ */
-    --card-bg: #433D5B; /* Xám tím nhạt cho thẻ */
-    --text-color: #E5E7EB; /* Xám nhạt, dễ đọc */
-    --gradient-start: #22C55E; /* Xanh lá cây đậm */
-    --gradient-end: #4ADE80; /* Xanh lá cây sáng */
-    --income-color: #22C55E; /* Xanh lá cây đậm, biểu thị thu nhập */
-    --expense-color: #EF4444; /* Đỏ đậm, biểu thị chi tiêu */
-    --balance-color: #A78BFA; /* Tím đậm, biểu thị chênh lệch */
-    --edit-btn-color: #16A34A; /* Xanh lá cây đậm hơn, nút sửa */
-    --delete-btn-color: #991B1B; /* Đỏ đậm hơn, nút xóa */
+    --primary-color: #4F9AFF;
+    --secondary-color: #8B9098;
+    --background-color: #181A1B;
+    --card-bg: #1C1E1F;
+    --text-color: #E4E7EB;
+    --gradient-start: #3B82F6; /* Xanh đậm, trầm hơn */
+    --gradient-end: #7C3AED; /* Tím đậm, sang trọng */
+    --income-color: #2EE59D;
+    --expense-color: #FF6B81;
+    --balance-color: #B388FF;
+    --edit-btn-color: #26C6DA;
+    --delete-btn-color: #EF5350;
+    --stat-box-bg-start: #1C1E1F;
+    --stat-box-bg-end: #2A2C2E;
+    --input-bg: #1E2022;
+    --input-border: #45484C;
+    --stat-title-color: #E4E7EB;
+  }
+
+  /* Stat-box */
+  .stat-box {
+    background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
+  }
+
+  .stat-box .title {
+    color: var(--stat-title-color) !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .stat-box .amount {
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  .income .amount { color: var(--income-color) !important; }
+  .expense .amount { color: var(--expense-color) !important; }
+  .balance .amount { color: var(--balance-color) !important; }
+
+  /* Trường nhập liệu tất cả các tab */
+  select,
+  input[type="month"],
+  input[type="date"],
+  input[type="text"],
+  input[type="number"] {
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 4px;
+  }
+
+  input::placeholder,
+  select::placeholder {
+    color: var(--secondary-color) !important;
+    opacity: 0.8;
+  }
+
+  /* Biểu tượng lịch */
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(90%) !important;
+    cursor: pointer;
+  }
+
+  /* Mũi tên select */
+  select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23E4E7EB" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') !important;
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+  }
+
+  /* Tab 6 (Tìm kiếm giao dịch) */
+  .search-transaction label {
+    color: var(--text-color) !important;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .search-transaction button[type="submit"] {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+    color: #FFFFFF !important;
+    border: none;
+    border-radius: 4px;
+  }
+
+  .search-transaction button:not([type="submit"]) {
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 4px;
+  }
+
+  /* Tab 7 (Quản lý tủ khóa) */
+  .locker-management select,
+  .locker-management input[type="text"] {
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+  }
+
+  .locker-management label {
+    color: var(--text-color) !important;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .locker-management button {
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 4px;
+  }
+
+  .locker-management button.delete {
+    background-color: var(--delete-btn-color) !important;
+    color: #FFFFFF !important;
+    border: none;
   }
 }
+
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
    Thiết lập kiểu dáng cơ bản cho toàn bộ trang web.
