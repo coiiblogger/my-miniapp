@@ -105,20 +105,21 @@
   .transaction-box .type.expense + .amount { color: var(--expense-color) !important; }
 
   .transaction-box button.edit {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
-    color: #E4E7EB !important;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-  }
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+  color: #E4E7EB !important;
+  border: none;
+  border-radius: 8px;
+  padding: 0.3rem 0.8rem;
+  margin-right: 0.5rem;
+}
 
-  .transaction-box button.delete {
-    background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
-    color: #E4E7EB !important;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-  }
+.transaction-box button.delete {
+  background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
+  color: #E4E7EB !important;
+  border: none;
+  border-radius: 8px;
+  padding: 0.3rem 0.8rem;
+}
 
   /* Transaction-item (dự phòng nếu HTML dùng lớp này) */
   .transaction-item {
@@ -478,16 +479,17 @@ button:hover {
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
   color: #FFFFFF !important;
   border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
+  border-radius: 8px;
+  padding: 0.3rem 0.8rem;
+  margin-right: 0.5rem;
 }
 
 .transaction-box button.delete {
   background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
   color: #FFFFFF !important;
   border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
+  border-radius: 8px;
+  padding: 0.3rem 0.8rem;
 }
 
 .transaction-item button.edit {
