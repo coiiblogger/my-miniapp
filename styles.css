@@ -25,22 +25,22 @@
     --background-color: #181A1B;
     --card-bg: #1C1E1F;
     --text-color: #E4E7EB;
-    --gradient-start: #3B82F6; /* Xanh đậm, giữ vì đã trầm */
-    --gradient-end: #7C3AED; /* Tím đậm, giữ vì đã trầm */
+    --gradient-start: #3B82F6;
+    --gradient-end: #7C3AED;
     --income-color: #2EE59D;
     --expense-color: #FF6B81;
     --balance-color: #B388FF;
     --edit-btn-color: #26C6DA;
     --delete-btn-color: #EF5350;
-    --stat-box-bg-start: #181A1B; /* Tối hơn cho stat-box */
-    --stat-box-bg-end: #252729; /* Trầm hơn */
+    --stat-box-bg-start: #181A1B;
+    --stat-box-bg-end: #252729;
     --input-bg: #1E2022;
     --input-border: #45484C;
     --stat-title-color: #E4E7EB;
-    --transaction-bg: #171819; /* Nền trầm cho khối giao dịch */
+    --transaction-bg: #171819; /* Nền trầm cho stat-box giao dịch */
   }
 
-  /* Stat-box */
+  /* Stat-box tổng quan (Tổng thu nhập, Tổng chi tiêu, Số dư) */
   .stat-box {
     background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
   }
@@ -60,22 +60,46 @@
   .expense .amount { color: var(--expense-color) !important; }
   .balance .amount { color: var(--balance-color) !important; }
 
-  /* Khối liệt kê giao dịch (tab 1, 5, 6) */
+  /* Stat-box giao dịch (tab 1, 5, 6) */
   .transaction-item {
     background-color: var(--transaction-bg) !important;
     color: var(--text-color) !important;
     border: 1px solid var(--input-border) !important;
     border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .transaction-item .date,
+  .transaction-item .code,
+  .transaction-item .description {
+    color: var(--text-color) !important;
+    font-size: 0.95rem;
   }
 
   .transaction-item .amount {
     font-weight: 600;
+    font-size: 1.1rem;
   }
 
   .transaction-item .income .amount { color: var(--income-color) !important; }
   .transaction-item .expense .amount { color: var(--expense-color) !important; }
+
+  .transaction-item button.edit {
+    background-color: var(--edit-btn-color) !important;
+    color: #FFFFFF !important;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+  }
+
+  .transaction-item button.delete {
+    background-color: var(--delete-btn-color) !important;
+    color: #FFFFFF !important;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+  }
 
   /* Trường nhập liệu tất cả các tab */
   select,
@@ -157,7 +181,6 @@
     border: none;
   }
 }
-
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
    Thiết lập kiểu dáng cơ bản cho toàn bộ trang web.
