@@ -105,7 +105,7 @@
   .transaction-box .type.expense + .amount { color: var(--expense-color) !important; }
 
   .transaction-box button.edit {
-    background-color: var(--edit-btn-color) !important;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
@@ -113,7 +113,7 @@
   }
 
   .transaction-box button.delete {
-    background-color: var(--delete-btn-color) !important;
+    background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
@@ -148,7 +148,7 @@
   .transaction-item .type.expense + .amount { color: var(--expense-color) !important; }
 
   .transaction-item button.edit {
-    background-color: var(--edit-btn-color) !important;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
@@ -156,7 +156,7 @@
   }
 
   .transaction-item button.delete {
-    background-color: var(--delete-btn-color) !important;
+    background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
@@ -242,11 +242,17 @@
     color: #E4E7EB !important;
     border: none;
   }
+
+  /* Nút lưu trong modal ở dark mode */
+  .modal-content .btn-group .save-btn {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+    color: white;
+  }
 }
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
    Thiết lập kiểu dáng cơ bản cho toàn bộ trang web.
-   ========================================================================== */
+ Temperatures   ========================================================================== */
 html { 
   font-size: 16px; 
   overflow-x: hidden;
@@ -1001,7 +1007,7 @@ input[type="date"] {
 }
 
 .modal-content .btn-group .save-btn {
-  background: linear-gradient(135deg, var(--edit-btn-color), #60A5FA);
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   color: white;
 }
 
