@@ -4,18 +4,18 @@
    ========================================================================== */
 /*Light Mode*/
 :root {
-  --primary-color: #0F62FE;        /* Xanh dương công nghệ IBM Blue */
-  --secondary-color: #6C757D;      /* Xám lạnh trung tính */
-  --background-color: #F8F9FA;     /* Gần như trắng, cảm giác nhẹ nhàng hiện đại */
-  --card-bg: #FFFFFF;              /* Trắng tinh khôi cho card */
-  --text-color: #1B1F23;           /* Gần đen, rất dễ đọc */
-  --gradient-start: #0F62FE;       /* Gradient bắt đầu - xanh công nghệ */
-  --gradient-end: #36D1DC;         /* Gradient kết thúc - xanh cyan sáng */
-  --income-color: #198754;         /* Xanh ngọc lục bảo, hiện đại */
-  --expense-color: #D32F2F;        /* Đỏ đô, mạnh và rõ ràng */
-  --balance-color: #8E24AA;        /* Tím công nghệ */
-  --edit-btn-color: #0DCAF0;       /* Xanh cyan – gợi ý hành động */
-  --delete-btn-color: #DC3545;     /* Đỏ mạnh – cảnh báo/xóa */
+  --primary-color: #0F62FE;       
+  --secondary-color: #6C757D;      
+  --background-color: #F8F9FA;     
+  --card-bg: #FFFFFF;              
+  --text-color: #1B1F23;           
+  --gradient-start: #0F62FE;       
+  --gradient-end: #36D1DC;         
+  --income-color: #2ECC71;         
+  --expense-color: #E74C3C;        
+  --balance-color: #3498DB;        
+  --edit-btn-color: #0DCAF0;       
+  --delete-btn-color: #DC3545;     
 }
 /*Dark Mode*/
 @media (prefers-color-scheme: dark) {
@@ -27,9 +27,9 @@
     --text-color: #E4E7EB;
     --gradient-start: #3B82F6;
     --gradient-end: #7C3AED;
-    --income-color: #2EE59D;
-    --expense-color: #FF6B81;
-    --balance-color: #B388FF;
+    --income-color: #2ECC71;
+    --expense-color: #E74C3C;        
+    --balance-color: #3498DB;        
     --edit-btn-color: #0E7490;
     --delete-btn-color: #B91C1C;
     --stat-box-bg-start: #181A1B;
@@ -763,14 +763,14 @@ canvas#monthlyChart {
   top: 0;
   right: 0;
   text-align: right;
-  font-size: 0.85rem; /* Thu nhỏ chữ để giảm chiều cao */
-  line-height: 1.2; /* Giảm khoảng cách dòng */
+  font-size: 0.85rem; 
+  line-height: 1.2;
 }
 
 /* Layer dưới (Ngày, Số tiền, Nội dung, Phân loại, Phân loại chi tiết) */
 .layer-bottom {
   width: 100%;
-  padding-right: 100px; /* Đảm bảo không bị layer-top che mất */
+  padding-right: 100px;
 }
 
 /* Đảm bảo Nội dung và Phân loại chi tiết tự động xuống dòng */
@@ -778,7 +778,7 @@ canvas#monthlyChart {
   font-size: 1rem;
   margin-bottom: 0.5rem;
   white-space: normal;
-  overflow-wrap: break-word; /* Đảm bảo xuống dòng cho từ dài */
+  overflow-wrap: break-word;
 }
 
 .transaction-box .category {
