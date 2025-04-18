@@ -30,14 +30,13 @@
     --income-color: #2EE59D;
     --expense-color: #FF6B81;
     --balance-color: #B388FF;
-    --edit-btn-color: #26C6DA;
-    --delete-btn-color: #EF5350;
+    --edit-btn-color: #0E7490; /* Xanh cyan đậm, trầm hơn */
+    --delete-btn-color: #B91C1C; /* Đỏ đậm, trầm hơn */
     --stat-box-bg-start: #181A1B;
     --stat-box-bg-end: #252729;
     --input-bg: #1E2022;
     --input-border: #45484C;
     --stat-title-color: #E4E7EB;
-    --transaction-bg: #171819; /* Nền trầm cho stat-box giao dịch */
   }
 
   /* Stat-box tổng quan (Tổng thu nhập, Tổng chi tiêu, Số dư) */
@@ -62,7 +61,7 @@
 
   /* Stat-box giao dịch (tab 1, 5, 6) */
   .transaction-item {
-    background-color: var(--transaction-bg) !important;
+    background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
     color: var(--text-color) !important;
     border: 1px solid var(--input-border) !important;
     border-radius: 4px;
@@ -87,7 +86,7 @@
 
   .transaction-item button.edit {
     background-color: var(--edit-btn-color) !important;
-    color: #FFFFFF !important;
+    color: #E4E7EB !important; /* Trắng xám nhẹ, trầm hơn */
     border: none;
     border-radius: 4px;
     padding: 6px 12px;
@@ -95,7 +94,7 @@
 
   .transaction-item button.delete {
     background-color: var(--delete-btn-color) !important;
-    color: #FFFFFF !important;
+    color: #E4E7EB !important; /* Trắng xám nhẹ, trầm hơn */
     border: none;
     border-radius: 4px;
     padding: 6px 12px;
@@ -177,7 +176,7 @@
 
   .locker-management button.delete {
     background-color: var(--delete-btn-color) !important;
-    color: #FFFFFF !important;
+    color: #E4E7EB !important; /* Đồng bộ với nút Xóa trong .transaction-item */
     border: none;
   }
 }
