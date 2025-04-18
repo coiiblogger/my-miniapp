@@ -2,7 +2,7 @@
    1. Biến CSS (Root Variables)
    Định nghĩa các biến màu sắc và giá trị dùng chung để đảm bảo tính nhất quán.
    ========================================================================== */
-/*Light Mode*/
+/* Light Mode */
 :root {
   --primary-color: #0F62FE;       
   --secondary-color: #6C757D;      
@@ -17,7 +17,8 @@
   --edit-btn-color: #0DCAF0;       
   --delete-btn-color: #DC3545;     
 }
-/*Dark Mode*/
+
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #4F9AFF;
@@ -105,21 +106,46 @@
   .transaction-box .type.expense + .amount { color: var(--expense-color) !important; }
 
   .transaction-box button.edit {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
-  color: #E4E7EB !important;
-  border: none;
-  border-radius: 8px;
-  padding: 0.3rem 0.8rem;
-  margin-right: 0.5rem;
-}
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+    color: #E4E7EB !important;
+    border: none;
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+    margin-right: 0.5rem;
+  }
 
-.transaction-box button.delete {
-  background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
-  color: #E4E7EB !important;
-  border: none;
-  border-radius: 8px;
-  padding: 0.3rem 0.8rem;
-}
+  .transaction-box button.delete {
+    background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
+    color: #E4E7EB !important;
+    border: none;
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+  }
+
+  /* Keyword-box (khối từ khóa trong tab 7) */
+  .keyword-box {
+    background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: none !important;
+  }
+
+  .keyword-box .category {
+    color: var(--text-color) !important;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .keyword-box .keywords {
+    color: var(--secondary-color) !important;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
 
   /* Transaction-item (dự phòng nếu HTML dùng lớp này) */
   .transaction-item {
@@ -170,7 +196,7 @@
   input[type="date"],
   input[type="text"],
   input[type="number"] {
-    background-color: var(--input-bg) !important;
+    background-color: var_credit_card(--input-bg) !important;
     color: var(--text-color) !important;
     border: 1px solid var(--input-border) !important;
     border-radius: 4px;
@@ -217,7 +243,7 @@
     border-radius: 4px;
   }
 
-  /* Tab 7 (Quản lý tủ khóa) */
+  /* Tab 7 (Quản lý từ khóa) */
   .locker-management select,
   .locker-management input[type="text"] {
     background-color: var(--input-bg) !important;
@@ -244,6 +270,7 @@
     border: none;
   }
 }
+
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
    Thiết lập kiểu dáng cơ bản cho toàn bộ trang web.
@@ -405,7 +432,7 @@ select, input[type="date"], input[type="text"], input[type="number"] {
 
 select:focus, input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
   outline: none;
-  border-color: var(--primary-color);
+  Likecredit_card border-color: var(--primary-color);
 }
 
 .input-group.vertical {
@@ -682,21 +709,21 @@ canvas#monthlyChart {
 
 .month-item .difference-icon {
   font-size: 0.8rem;
-  line-height: 16px; /* Đảm bảo biểu tượng được căn giữa theo chiều dọc trong ô 16x16 */
+  line-height: 16px;
 }
 
 .month-item .amount,
 .month-item .difference {
   font-weight: 700;
-  margin-left: 0.1rem; /* Thêm khoảng cách nhỏ để số tiền cách xa dấu hai chấm một chút */
+  margin-left: 0.1rem;
 }
 
 .month-item span:not(.amount):not(.difference)::after {
-  content: "\0020"; /* Giữ khoảng trắng thông thường để đồng bộ giữa các mục */
+  content: "\0020";
 }
 
 .month-item p strong {
-  margin-left: 0.1rem; /* Đồng bộ khoảng cách với .amount và .difference */
+  margin-left: 0.1rem;
 }
 
 .difference.positive {
@@ -725,7 +752,7 @@ canvas#monthlyChart {
 }
 
 .transaction-box {
-  position: relative; /* Đảm bảo layer-top nằm trong transaction-box */
+  position: relative;
   padding: 1rem;
   width: 100%;
   max-width: 600px;
@@ -738,7 +765,7 @@ canvas#monthlyChart {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s;
   margin-bottom: 1rem;
-  overflow: visible; /* Đảm bảo nội dung không bị cắt */
+  overflow: visible;
 }
 
 .transaction-box:hover { transform: translateY(-5px); }
@@ -750,30 +777,26 @@ canvas#monthlyChart {
 .transaction-box .id { font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 0.3rem; }
 .transaction-box .number { font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 0.3rem; }
 
-/* Bố cục hai layer cho transaction-box */
 .layer-container {
   position: relative;
-  margin-bottom: 0.5rem; /* Khoảng cách dưới để tránh chồng lấn với nút Sửa/Xóa */
+  margin-bottom: 0.5rem;
   width: 100%;
 }
 
-/* Layer trên (Giao dịch thứ, Mã giao dịch) */
 .layer-top {
   position: absolute;
   top: 0;
   right: 0;
   text-align: right;
-  font-size: 0.85rem; 
+  font-size: 0.85rem;
   line-height: 1.2;
 }
 
-/* Layer dưới (Ngày, Số tiền, Nội dung, Phân loại, Phân loại chi tiết) */
 .layer-bottom {
   width: 100%;
   padding-right: 100px;
 }
 
-/* Đảm bảo Nội dung và Phân loại chi tiết tự động xuống dòng */
 .transaction-box .content {
   font-size: 1rem;
   margin-bottom: 0.5rem;
@@ -785,8 +808,8 @@ canvas#monthlyChart {
   font-size: 1rem;
   font-style: italic;
   color: var(--secondary-color);
-  white-space: normal; /* Cho phép xuống dòng */
-  overflow-wrap: break-word; /* Đảm bảo xuống dòng cho từ dài */
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .keywords-list {
@@ -799,6 +822,7 @@ canvas#monthlyChart {
 }
 
 .keyword-box {
+  position: relative;
   padding: 1rem;
   width: 100%;
   max-width: 600px;
@@ -810,11 +834,12 @@ canvas#monthlyChart {
   background: linear-gradient(135deg, #F8FAFC, #E5E7EB);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s;
+  margin-bottom: 1rem;
+  overflow: visible;
 }
 
 .keyword-box:hover { transform: translateY(-5px); }
-.keyword-box .category { font-weight: 600; font-size: 1.1rem; color: var(--primary-color); margin-bottom: 0.5rem; }
-.keyword-box .category::after { content: ''; display: inline-block; margin-left: 0.5rem; }
+.keyword-box .category { font-weight: 500; font-size: 1.1rem; color: var(--text-color); margin-bottom: 0.5rem; }
 .keyword-box .keywords { font-size: 1rem; color: var(--secondary-color); white-space: normal; word-wrap: break-word; }
 
 .button-group {
@@ -847,7 +872,7 @@ canvas#monthlyChart {
 
 #deleteKeywordBtn {
   width: 150px;
-  padding: 0.7rem 1最后rem;
+  padding: 0.7rem 1rem;
   font-size: 1rem;
   font-weight: 500;
   border-radius: 10px;
@@ -1377,6 +1402,11 @@ input[type="date"] {
     max-width: 320px;
   }
 
+  .keyword-box {
+    padding: 0.8rem;
+    max-width: 320px;
+  }
+
   .info-section {
     padding: 0 5px;
   }
@@ -1466,7 +1496,7 @@ input[type="date"] {
 /* Desktop (min-width: 1024px) */
 @media (min-width: 1024px) {
   .content-wrapper {
-    max客人-width: 800px;
+    max-width: 800px;
   }
 
   body {
