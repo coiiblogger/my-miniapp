@@ -242,17 +242,11 @@
     color: #E4E7EB !important;
     border: none;
   }
-
-  /* Nút lưu trong modal ở dark mode */
-  .modal-content .btn-group .save-btn {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
-    color: white;
-  }
 }
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
    Thiết lập kiểu dáng cơ bản cho toàn bộ trang web.
- Temperatures   ========================================================================== */
+   ========================================================================== */
 html { 
   font-size: 16px; 
   overflow-x: hidden;
@@ -478,6 +472,38 @@ button {
 
 button:hover { 
   transform: translateY(-2px); 
+}
+
+.transaction-box button.edit {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+  color: #FFFFFF !important;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+.transaction-box button.delete {
+  background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
+  color: #FFFFFF !important;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+.transaction-item button.edit {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+  color: #FFFFFF !important;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+.transaction-item button.delete {
+  background: linear-gradient(135deg, var(--delete-btn-color), #F87171) !important;
+  color: #FFFFFF !important;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
 }
 
 .input-group.vertical button {
@@ -819,7 +845,7 @@ canvas#monthlyChart {
 
 #deleteKeywordBtn {
   width: 150px;
-  padding: 0.7rem 1rem;
+  padding: 0.7rem 1最后rem;
   font-size: 1rem;
   font-weight: 500;
   border-radius: 10px;
@@ -1007,7 +1033,7 @@ input[type="date"] {
 }
 
 .modal-content .btn-group .save-btn {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(135deg, var(--edit-btn-color), #60A5FA);
   color: white;
 }
 
@@ -1438,7 +1464,7 @@ input[type="date"] {
 /* Desktop (min-width: 1024px) */
 @media (min-width: 1024px) {
   .content-wrapper {
-    max-width: 800px;
+    max客人-width: 800px;
   }
 
   body {
