@@ -30,8 +30,8 @@
     --income-color: #2EE59D;
     --expense-color: #FF6B81;
     --balance-color: #B388FF;
-    --edit-btn-color: #0E7490; /* Xanh cyan đậm, trầm */
-    --delete-btn-color: #B91C1C; /* Đỏ đậm, trầm */
+    --edit-btn-color: #0E7490;
+    --delete-btn-color: #B91C1C;
     --stat-box-bg-start: #181A1B;
     --stat-box-bg-end: #252729;
     --input-bg: #1E2022;
@@ -59,47 +59,6 @@
   .expense .amount { color: var(--expense-color) !important; }
   .balance .amount { color: var(--balance-color) !important; }
 
-  /* Stat-box giao dịch (tab 1, 5, 6) */
-  .transaction-item {
-    background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
-    color: var(--text-color) !important;
-    border: 1px solid var(--input-border) !important;
-    border-radius: 4px;
-    padding: 12px;
-    margin-bottom: 10px;
-  }
-
-  .transaction-item .date,
-  .transaction-item .code,
-  .transaction-item .description {
-    color: var(--text-color) !important;
-    font-size: 0.95rem;
-  }
-
-  .transaction-item .amount {
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
-
-  .transaction-item .income .amount { color: var(--income-color) !important; }
-  .transaction-item .expense .amount { color: var(--expense-color) !important; }
-
-  .transaction-item button.edit {
-    background-color: var(--edit-btn-color) !important;
-    color: #E4E7EB !important;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-  }
-
-  .transaction-item button.delete {
-    background-color: var(--delete-btn-color) !important;
-    color: #E4E7EB !important;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-  }
-
   /* Transaction-box (khối giao dịch trong tab 1, 5, 6) */
   .transaction-box {
     background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
@@ -118,7 +77,6 @@
   }
 
   .transaction-box .amount {
-    color: var(--text-color) !important;
     font-weight: 700;
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
@@ -141,8 +99,10 @@
 
   .transaction-box .type.expense { color: var(--expense-color) !important; }
   .transaction-box .type.income { color: var(--income-color) !important; }
-  .transaction-box .income .amount { color: var(--income-color) !important; }
-  .transaction-box .expense .amount { color: var(--expense-color) !important; }
+  .transaction-box .income .amount,
+  .transaction-box .type.income + .amount { color: var(--income-color) !important; }
+  .transaction-box .expense .amount,
+  .transaction-box .type.expense + .amount { color: var(--expense-color) !important; }
 
   .transaction-box button.edit {
     background-color: var(--edit-btn-color) !important;
@@ -153,6 +113,49 @@
   }
 
   .transaction-box button.delete {
+    background-color: var(--delete-btn-color) !important;
+    color: #E4E7EB !important;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+  }
+
+  /* Transaction-item (dự phòng nếu HTML dùng lớp này) */
+  .transaction-item {
+    background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .transaction-item .date,
+  .transaction-item .code,
+  .transaction-item .description {
+    color: var(--text-color) !important;
+    font-size: 0.95rem;
+  }
+
+  .transaction-item .amount {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .transaction-item .income .amount,
+  .transaction-item .type.income + .amount { color: var(--income-color) !important; }
+  .transaction-item .expense .amount,
+  .transaction-item .type.expense + .amount { color: var(--expense-color) !important; }
+
+  .transaction-item button.edit {
+    background-color: var(--edit-btn-color) !important;
+    color: #E4E7EB !important;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+  }
+
+  .transaction-item button.delete {
     background-color: var(--delete-btn-color) !important;
     color: #E4E7EB !important;
     border: none;
