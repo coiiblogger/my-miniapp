@@ -25,13 +25,14 @@
     --background-color: #181A1B;
     --card-bg: #1C1E1F;
     --text-color: #E4E7EB;
-    --gradient-start: #3B82F6;
-    --gradient-end: #7C3AED;
+    --gradient-start: #3B82F6;       /* Gradient chỉnh sửa/lưu - xanh lam đậm */
+    --gradient-end: #7DD3FC;         /* Gradient chỉnh sửa/lưu - xanh lam sáng */
     --income-color: #2EE59D;
     --expense-color: #FF6B81;
     --balance-color: #B388FF;
-    --edit-btn-color: #0E7490;
-    --delete-btn-color: #B91C1C;
+    --edit-btn-color: #3B82F6;       /* Xanh lam đậm, dùng cho nút chỉnh sửa/lưu */
+    --delete-btn-color: #B91C1C;     /* Đỏ đậm, dùng cho nút xóa/hủy */
+    --delete-gradient-end: #7F1D1D;  /* Đỏ rất đậm cho gradient xóa */
     --stat-box-bg-start: #181A1B;
     --stat-box-bg-end: #252729;
     --input-bg: #1E2022;
@@ -105,7 +106,7 @@
   .transaction-box .type.expense + .amount { color: var(--expense-color) !important; }
 
   .transaction-box button.edit {
-    background-color: var(--edit-btn-color) !important;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
@@ -113,14 +114,14 @@
   }
 
   .transaction-box button.delete {
-    background-color: var(--delete-btn-color) !important;
+    background: linear-gradient(135deg, var(--delete-btn-color), var(--delete-gradient-end)) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
     padding: 6px 12px;
   }
 
-  /* Transaction-item (dự phòng nếu HTML dùng lớp này) */
+ /* Transaction-item (dự phòng nếu HTML dùng lớp này) */
   .transaction-item {
     background: linear-gradient(135deg, var(--stat-box-bg-start), var(--stat-box-bg-end)) !important;
     color: var(--text-color) !important;
@@ -148,7 +149,7 @@
   .transaction-item .type.expense + .amount { color: var(--expense-color) !important; }
 
   .transaction-item button.edit {
-    background-color: var(--edit-btn-color) !important;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
@@ -156,7 +157,7 @@
   }
 
   .transaction-item button.delete {
-    background-color: var(--delete-btn-color) !important;
+    background: linear-gradient(135deg, var(--delete-btn-color), var(--delete-gradient-end)) !important;
     color: #E4E7EB !important;
     border: none;
     border-radius: 4px;
@@ -243,6 +244,18 @@
     border: none;
   }
 }
+/* Modal và Popup */
+  .modal-content .btn-group .save-btn {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+    color: white;
+  }
+
+  .modal-content .btn-group .cancel-btn {
+    background: linear-gradient(135deg, var(--delete-btn-color), var(--delete-gradient-end)) !important;
+    color: white;
+  }
+}
+
 /* ==========================================================================
    2. Cài đặt chung (Global Styles)
    Thiết lập kiểu dáng cơ bản cho toàn bộ trang web.
@@ -817,7 +830,7 @@ canvas#monthlyChart {
   font-size: 1rem;
   font-weight: 500;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--delete-btn-color), #F87171);
+  background: linear-gradient(135deg, var(--delete-btn-color), var(--delete-gradient-end, #F87171));
   color: white;
   border: none;
   cursor: pointer;
