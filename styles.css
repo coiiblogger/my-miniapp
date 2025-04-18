@@ -2,7 +2,6 @@
    1. Biến CSS (Root Variables)
    Định nghĩa các biến màu sắc và giá trị dùng chung để đảm bảo tính nhất quán.
    ========================================================================== */
-/*Light Mode
 :root {
   --primary-color: #0F62FE;        /* Xanh dương công nghệ IBM Blue */
   --secondary-color: #6C757D;      /* Xám lạnh trung tính */
@@ -17,7 +16,6 @@
   --edit-btn-color: #0DCAF0;       /* Xanh cyan – gợi ý hành động */
   --delete-btn-color: #DC3545;     /* Đỏ mạnh – cảnh báo/xóa */
 }
-/*Dark Mode
 @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #4F9AFF;
