@@ -16,6 +16,7 @@ if (!apiUrl || !sheetId) {
 let cachedFinancialData = null;
 let cachedChartData = null;
 let cachedTransactions = null;
+let cachedKeywords = null;
 let currentPage = 1;
 const transactionsPerPage = 10;
 let cachedMonthlyExpenses = null;
@@ -200,7 +201,11 @@ window.openTab = function(tabId) {
   if (tabId === 'tab7') {
     const container = document.getElementById('keywordsContainer');
     if (container) {
-      container.innerHTML = '<div>Vui lòng nhấn "Tải dữ liệu" để xem danh sách từ khóa.</div>';
+      if (cachedKeywords) {
+        displayKeywords(cachedKeywords);
+      } else {
+        container.innerHTML = '<div>Vui lòng nhấn "Tải dữ liệu" để xem danh sách từ khóa.</div>';
+      }
     }
   }
 };
@@ -1418,6 +1423,7 @@ window.fetchKeywords = async function() {
     const response = await fetch(finalUrl);
     const keywordsData = await response.json();
     if (keywordsData.error) throw new Error(keywordsData.error);
+    cachedKeywords = keywordsData;
     displayKeywords(keywordsData);
   } catch (error) {
     showToast("Lỗi khi lấy dữ liệu từ khóa: " + error.message, "error");
