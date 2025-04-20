@@ -1452,7 +1452,7 @@ function displayKeywords(data) {
     const keywordCount = item.keywords ? item.keywords.split(',').length : 0;
     keywordBox.innerHTML = `
       <div class="category">${item.category} (${keywordCount} từ khóa)</div>
-      <div class="keywords">Từ khóa: ${item.keywords}</div>
+      <div class="keywords"><span style="font-weight: bold;">Từ khóa:</span> ${item.keywords}</div>
     `;
     container.appendChild(keywordBox);
   });
