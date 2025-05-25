@@ -368,6 +368,7 @@ async function openEditForm(transaction) {
   const form = document.getElementById('editForm');
   const categorySelect = document.getElementById('editCategory');
   const amountInput = document.getElementById('editAmount');
+  const modalContent = document.querySelector('#editModal .modal-content'); // Thêm dòng này để lấy modal-content
 
   document.getElementById('editTransactionId').value = transaction.id || '';
   document.getElementById('editContent').value = transaction.content || '';
@@ -415,6 +416,18 @@ async function openEditForm(transaction) {
   });
 
   modal.style.display = 'flex';
+
+  // Điều chỉnh vị trí modal khi bàn phím mở
+  const inputs = modalContent.querySelectorAll('input, textarea, select');
+  inputs.forEach(input => {
+    input.addEventListener('focus', () => {
+      setTimeout(() => {
+        modal.scrollTop = input.offsetTop - 50; // Cuộn modal đến vị trí của ô đang nhập
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Đưa ô nhập liệu vào giữa màn hình
+      }, 300); // Delay để bàn phím mở hoàn toàn
+    });
+  });
+
   form.onsubmit = async function(e) {
     e.preventDefault();
     const dateInput = document.getElementById('editDate').value;
